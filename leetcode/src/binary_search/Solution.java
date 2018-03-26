@@ -374,16 +374,52 @@ public class Solution {
             return half * half / x;
     }
 
+    public boolean isPerfectSquare(int num) {
+        if ( num == 1)
+            return true;
+        int l = 0, r = num;
+        java.math.BigInteger numBI = java.math.BigInteger.valueOf(num);
+        while (l < r) {
+            int m = l + (r - l)/2;
+            java.math.BigInteger mBI = java.math.BigInteger.valueOf(m);
+            java.math.BigInteger mSquare = mBI.multiply(mBI);
+            int compare1 = mSquare.compareTo(numBI);
+            if ( compare1 <= 0 ) {
+                java.math.BigInteger mPlusOneSquare = java.math.BigInteger.valueOf(m + 1).multiply(java.math.BigInteger.valueOf(m + 1));;
+                int compare2 = mPlusOneSquare.compareTo(numBI);
+                if (compare2 >= 0) {
+                    if (compare1 == 0 || compare2 == 0)
+                        return true;
+                    else
+                        return false;
+                }
+                else if (compare1 == 1) {
+                    r = m;
+                }
+                else {
+                    l = m;
+                }
+            }
+            else if (compare1 == 1) {
+                r = m;
+            }
+            else {
+                l = m;
+            }
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         Solution obj = new Solution();
 
-        System.out.println(obj.mySqrt(8));
+        /*System.out.println(obj.mySqrt(8));
         System.out.println(obj.mySqrt(2));
         System.out.println(obj.mySqrt(4));
         System.out.println(obj.mySqrt(14));
         System.out.println(obj.mySqrt(9));
         System.out.println(obj.mySqrt(2147395599));
-
+        */
         //System.out.println(obj.guessNumber(2126753390));
         /*System.out.println(obj.search(new int[] {4, 5, 6, 7, 13, 20, 0, 2, 3}, 0));
         System.out.println(obj.search(new int[] {4, 5, 6, 7, 13, 20, 0, 2, 3}, 8));
@@ -407,11 +443,23 @@ public class Solution {
         //System.out.println(intListToString(obj.findClosestElements(new int[] {1,2,3,4,5}, 4, 20)));
 
 
-        System.out.println(obj.findPeakElement(new int[]{3,2,1}));
+        /*System.out.println(obj.findPeakElement(new int[]{3,2,1}));
         System.out.println(obj.findPeakElement(new int[]{1,2}));
         System.out.println(obj.findPeakElement(new int[]{1}));
         System.out.println(obj.findPeakElement(new int[]{1,2,3,5, 6, 8, 3, 2, 10,1}));
         System.out.println(obj.findPeakElement(new int[]{-2147483648}));
+        */
+
+        System.out.println(obj.isPerfectSquare(16));
+        System.out.println(obj.isPerfectSquare(17));
+        System.out.println(obj.isPerfectSquare(3));
+        System.out.println(obj.isPerfectSquare(4));
+        System.out.println(obj.isPerfectSquare(5));
+        System.out.println(obj.isPerfectSquare(125));
+        System.out.println(obj.isPerfectSquare(2147483647));
+        System.out.println(obj.isPerfectSquare(808201));
+        System.out.println(obj.isPerfectSquare(2147395600));
+
     }
 
     static String intArrayToString(int[] a) {
