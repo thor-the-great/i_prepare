@@ -1,5 +1,8 @@
 package binary_search;
 
+import java.util.*;
+import java.util.List;
+
 public class Solution {
 
         public int[] twoSum(int[] nums, int target) {
@@ -170,7 +173,7 @@ public class Solution {
         return x;
     }
 
-    public int[] searchRange(int[] nums, int target) {
+    /*public int[] searchRange(int[] nums, int target) {
         int left = 0, right = nums.length - 1;
         int x = -1;
         while (left < right) {
@@ -201,7 +204,7 @@ public class Solution {
             k++;
         }
         return new int[]{j, k};
-    }
+    }*/
 
 
     public int[] searchRange(int[] nums, int target) {
@@ -259,6 +262,118 @@ public class Solution {
         return -1;
     }
 
+    public List<Integer> findClosestElements(int[] arr, int k, int x) {
+        if (x < arr[0])
+            return getListFromArray(arr, 0, k - 1);
+
+        if (x > arr[arr.length - 1])
+            return getListFromArray(arr, arr.length - k, arr.length - 1);
+
+        int l=0, r = arr.length-1;
+        List<Integer> result = new ArrayList<Integer>();
+
+        int xPlace = -1;
+        while (l < r) {
+            int m = l + (r - l)/2;
+            if (x == arr[m]) {
+                xPlace = m;
+                break;
+            }
+            if (arr[m] > x) {
+                r = m -1;
+            } else
+                l = m +1;
+        }
+        if (xPlace == -1) {
+            int numOfElementsToReturn = k <= arr.length ? k : arr.length;
+            //int[] result = new int[numOfElementsToReturn];
+            for (int i =0; i < numOfElementsToReturn; i++) {
+                result.add(arr[i]);
+            }
+        }
+        return result;
+    }
+
+    List<Integer> getListFromArray(int[] array, int start, int end) {
+        List<Integer> result = new ArrayList<Integer>();
+        for(int i = start; i <= end; i++) {
+            result.add(array[i]);
+        }
+        return result;
+    }
+
+    public int findPeakElement(int[] nums) {
+        int l = -1, r = nums.length;
+        int p = -1;
+        while (l<r) {
+            int m = l + (r-l)/2;
+            boolean isMGreaterMPlus1 = getArrayElement(nums, m) >= getArrayElement(nums, m + 1);
+            boolean isMGreaterMMinus1 = getArrayElement(nums, m) >= getArrayElement(nums, m - 1);
+            if ( isMGreaterMPlus1 && isMGreaterMMinus1) {
+                p = m;
+                break;
+            } else if (isMGreaterMPlus1 && !isMGreaterMMinus1) {
+                r = m;
+            } else {
+                l = m;
+            }
+        }
+        return p == -1 ? l : p;
+    }
+
+    int getArrayElement(int[] array, int index) {
+        if (index < 0 || index >= array.length) {
+            return Integer.MIN_VALUE;
+        } else
+            return array[index];
+    }
+
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        if (nums2.length < nums1.length) {
+            return findMedianSortedArrays(nums2, nums1);
+        }
+        int r = nums1.length;
+        int l = 0;
+        int partYOffset = (nums1.length + nums2.length + 1)/2;
+        while (l <= r) {
+            int partitionX = r + (l - r)/2;
+            int partitionY = partYOffset - partitionX;
+
+            int maxLeftX = partitionX == 0 ? Integer.MIN_VALUE : nums1[partitionX - 1];
+            int maxLeftY = partitionY == 0 ? Integer.MIN_VALUE : nums2[partitionY - 1];
+
+            int minRightX = partitionX >= nums1.length ? Integer.MAX_VALUE : nums1[partitionX];
+            int minRightY = partitionY >= nums2.length ? Integer.MAX_VALUE : nums2[partitionY];
+
+            if (maxLeftX <= minRightY && maxLeftY <= minRightX) {
+                if ((nums1.length + nums2.length) % 2 == 0) {
+                    double median = ((double)(Math.max(maxLeftX, maxLeftY) + Math.min(minRightX, minRightY))) /2;
+                    return median;
+                } else {
+                    return (double) Math.max(maxLeftX, maxLeftY);
+                }
+            }
+            else if (maxLeftX > minRightY) {
+                r = partitionX - 1;
+            } else {
+                l = partitionX + 1;
+            }
+        }
+        return 0.0;
+    }
+
+    public double myPow(double x, int n) {
+        if (n == 0)
+            return 1;
+        double half = myPow(x, n / 2);
+        if (n % 2 == 0)
+            return half * half;
+        else if (n > 0)
+            return half * half * x;
+        else
+            return half * half / x;
+    }
+
     public static void main(String[] args) {
         Solution obj = new Solution();
 
@@ -282,12 +397,21 @@ public class Solution {
         //System.out.println(obj.findMin(new int[]{ 0, 1, 2, 4, 5, 6, 7 }));
         //System.out.println(obj.findMin(new int[]{ 3, 1, 2 }));
         //System.out.println(obj.searchRange(new int[]{ 1, 3}, 0));
-        System.out.println(obj.searchRange(new int[]{ 1}, 0));
-        System.out.println(obj.searchRange(new int[]{ 5,7,7,8,8,10}, 10));
+        //System.out.println(obj.searchRange(new int[]{ 1}, 0));
+        //System.out.println(obj.searchRange(new int[]{ 5,7,7,8,8,10}, 10));
 
         //System.out.println(intArrayToString(obj.searchRange(new int[]{5, 7, 7, 8, 8, 10}, 7)));
         //System.out.println(intArrayToString(obj.searchRange(new int[]{1}, 0)));
-        System.out.println(intArrayToString(obj.searchRange(new int[]{0,0,0,0,1,2,3,3,4,5,6,6,7,8,8,8,9,9,10,10,11,11}, 0)));
+        //System.out.println(intArrayToString(obj.searchRange(new int[]{0,0,0,0,1,2,3,3,4,5,6,6,7,8,8,8,9,9,10,10,11,11}, 0)));
+
+        //System.out.println(intListToString(obj.findClosestElements(new int[] {1,2,3,4,5}, 4, 20)));
+
+
+        System.out.println(obj.findPeakElement(new int[]{3,2,1}));
+        System.out.println(obj.findPeakElement(new int[]{1,2}));
+        System.out.println(obj.findPeakElement(new int[]{1}));
+        System.out.println(obj.findPeakElement(new int[]{1,2,3,5, 6, 8, 3, 2, 10,1}));
+        System.out.println(obj.findPeakElement(new int[]{-2147483648}));
     }
 
     static String intArrayToString(int[] a) {
@@ -301,4 +425,17 @@ public class Solution {
         sb.append("]");
         return sb.toString();
     }
+
+    static String intListToString(List<Integer> a) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for(int i =0;i < a.size(); i++) {
+            sb.append(a.get(i));
+            if (i < a.size() - 1)
+                sb.append(", ");
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
 }
