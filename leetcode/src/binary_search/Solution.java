@@ -328,6 +328,7 @@ public class Solution {
             return array[index];
     }
 
+/*
     public double findMedianSortedArrays(int[] nums1, int[] nums2) {
         if (nums2.length < nums1.length) {
             return findMedianSortedArrays(nums2, nums1);
@@ -359,6 +360,41 @@ public class Solution {
                 l = partitionX + 1;
             }
         }
+        return 0.0;
+    }
+*/
+
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        if (nums2.length < nums1.length)
+            return findMedianSortedArrays(nums2, nums1);
+
+        int l=0, r = nums1.length;
+        int largeOffset = (nums1.length + nums2.length + 1) / 2;
+        while (l <= r) {
+            int mSmall = l + (r- l)/2;
+            int mLarge = largeOffset - mSmall;
+
+            int minSmall = mSmall == 0 ? Integer.MIN_VALUE : nums1[mSmall - 1];
+            int minLarge = mLarge == 0 ? Integer.MIN_VALUE : nums2[mLarge - 1];
+
+            int maxSmall = mSmall >= nums1.length ? Integer.MAX_VALUE : nums1[mSmall];
+            int maxLarge = mLarge >= nums2.length ? Integer.MAX_VALUE : nums2[mLarge];
+
+            if (minSmall <= maxLarge && maxSmall >= minLarge) {
+                if ((nums1.length + nums2.length) % 2 == 0) {
+                    double med = ((double)(Math.max(minSmall, minLarge) + Math.min(maxSmall, maxLarge))) / 2;
+                    return med;
+                }
+                else
+                    return (double) Math.max(minSmall, minLarge);
+            }
+
+            if (minSmall > maxLarge)
+                r = mSmall - 1;
+            else
+                l = mSmall + 1;
+        }
+
         return 0.0;
     }
 
@@ -410,6 +446,28 @@ public class Solution {
         return false;
     }
 
+    public int smallestDistancePair(int[] nums, int k) {
+        Arrays.sort(nums);
+
+        int low = 0, high = nums[nums.length - 1] - nums[0];
+        while (low < high) {
+            int mid = low + (high - low)/2;
+            int l = 0, count = 0;
+            for (int r = 0; r < nums.length; r++) {
+                while (nums[r] - nums[l] > mid) {
+                    l++;
+                }
+                count+= r - l;
+            }
+            if (count < k)
+                low = mid + 1;
+            else
+                high = mid;
+
+        }
+        return low;
+    }
+
     public static void main(String[] args) {
         Solution obj = new Solution();
 
@@ -450,7 +508,7 @@ public class Solution {
         System.out.println(obj.findPeakElement(new int[]{-2147483648}));
         */
 
-        System.out.println(obj.isPerfectSquare(16));
+        /*System.out.println(obj.isPerfectSquare(16));
         System.out.println(obj.isPerfectSquare(17));
         System.out.println(obj.isPerfectSquare(3));
         System.out.println(obj.isPerfectSquare(4));
@@ -458,7 +516,11 @@ public class Solution {
         System.out.println(obj.isPerfectSquare(125));
         System.out.println(obj.isPerfectSquare(2147483647));
         System.out.println(obj.isPerfectSquare(808201));
-        System.out.println(obj.isPerfectSquare(2147395600));
+        System.out.println(obj.isPerfectSquare(2147395600));*/
+
+        System.out.println(obj.smallestDistancePair(new int[] {1, 3, 1}, 1));
+
+        System.out.println(obj.smallestDistancePair(new int[] {0, 5, 5, 3, 8, 10, 12 ,7}, 4));
 
     }
 
