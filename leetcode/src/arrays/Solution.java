@@ -2,8 +2,16 @@ package arrays;
 
 import java.util.*;
 
+/**
+ * https://leetcode.com/explore/learn/card/array-and-string/
+ */
 public class Solution {
 
+    /**
+     * https://leetcode.com/explore/learn/card/array-and-string/201/introduction-to-array/1144/
+     * @param nums
+     * @return
+     */
     public int pivotIndex(int[] nums) {
         if (nums.length == 0)
             return -1;
@@ -184,7 +192,7 @@ public class Solution {
 
         //initialize direction and state after first step
         //direction -   index 0 - horizontal, N
-        //              inde x 1 - vertical, M
+        //              index 1 - vertical, M
         int dir0 = 1;
         int dir1 = 0;
 
@@ -226,8 +234,7 @@ public class Solution {
         return result;
     }
 
-    boolean isStepPossible(int currentN, int currentM, int M, int N, int dir0, int dir1, boolean[][] seen) {
-        //boolean result = false;
+    private boolean isStepPossible(int currentN, int currentM, int M, int N, int dir0, int dir1, boolean[][] seen) {
         int nextN = currentN + dir0;
         int nextM = currentM + dir1;
 
@@ -264,6 +271,11 @@ public class Solution {
         return result;
     }
 
+    /**
+     * https://leetcode.com/explore/learn/card/array-and-string/201/introduction-to-array/1147/
+     * @param nums
+     * @return
+     */
     public int dominantIndex(int[] nums) {
         if (nums.length == 1)
             return 0;
