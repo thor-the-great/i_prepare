@@ -303,10 +303,132 @@ public class Solution {
             return largeIndex;
     }
 
+    public String addBinary(String a, String b) {
+        //make sure a is always longer
+        if (b.length() > a.length())
+            return addBinary(b, a);
+
+        char[] aChar = a.toCharArray();
+        char[] bChar = b.toCharArray();
+
+        StringBuilder sb = new StringBuilder();
+        boolean carryOn = false;
+        int shift = aChar.length - bChar.length;
+        for (int i = aChar.length - 1; i >=0; i--) {
+            int nextChar = aChar[i] - 48;
+            if (i - shift >= 0 ) {
+                int nextCharB = bChar[i - shift] - 48;
+                nextChar +=nextCharB;
+            }
+            if (carryOn)
+                nextChar++;
+
+            if (nextChar == 0) {
+                sb.append('0');
+                carryOn = false;
+            } else if (nextChar == 1) {
+                sb.append('1');
+                carryOn = false;
+            } else if (nextChar == 2) {
+                sb.append('0');
+                carryOn = true;
+            } else if (nextChar == 3) {
+                sb.append('1');
+                carryOn = true;
+            }
+        }
+        if (carryOn)
+            sb.append('1');
+
+        return sb.reverse().toString();
+    }
+
+    /**
+     * https://leetcode.com/explore/learn/card/array-and-string/203/introduction-to-string/1161/
+     * @param haystack
+     * @param needle
+     * @return
+     */
+    public int strStr(String haystack, String needle) {
+        int hL = haystack.length();
+        int nL = needle.length();
+
+        if (nL > hL)
+            return -1;
+        if (nL == 0)
+            return 0;
+
+        int[] kmpArray = getPartMatchTable(needle);
+
+        int c = 0;
+        while ( c <= hL - nL) {
+            boolean found = true;
+            for (int j = 0; j < nL; j++) {
+                if (haystack.charAt(c) != needle.charAt(0)) {
+                    found = false;
+                    c++;
+                    break; //from for loop
+                }
+                else if (haystack.charAt(j + c) != needle.charAt(j)) {
+                    found = false;
+                    c = c + j - kmpArray[j - 1];
+                    break;
+                }
+            }
+            if (found)
+                return c;
+        }
+        return -1;
+    }
+
+    private int[] getPartMatchTable(String needle) {
+        int[] result = new int[needle.length()];
+        for (int i = 1; i < needle.length(); i++) {
+            //fragment length is i
+            int prevIndex = result[i - 1];
+            while (prevIndex > 0 && needle.charAt(i) != needle.charAt(prevIndex)) {
+                prevIndex = result[prevIndex - 1];
+            }
+            if (needle.charAt(i) == needle.charAt(prevIndex))
+                result[i] = prevIndex + 1;
+            else
+                result[i] = 0;
+        }
+        return result;
+    }
+
+    public int[] getNext(String needle) {
+        int[] next = new int[needle.length()];
+        next[0] = 0;
+
+        for (int i = 1; i < needle.length(); i++) {
+            int index = next[i - 1];
+            while (index > 0 && needle.charAt(index) != needle.charAt(i)) {
+                index = next[index - 1];
+            }
+
+            if (needle.charAt(index) == needle.charAt(i)) {
+                next[i] = next[i - 1] + 1;
+            } else {
+                next[i] = 0;
+            }
+        }
+
+        return next;
+    }
+
     public static void main(String[] args) {
         Solution obj = new Solution();
 
-        System.out.println(listToString(obj.spiralOrder(new int[][]{
+        obj.getNext("ababcaabc");
+
+        //System.out.println(obj.strStr("hello", "ll"));
+
+        System.out.println(obj.strStr("ababcaababcaabc", "ababcaabc"));
+
+        //System.out.println(obj.addBinary("1", "111"));
+
+        /*System.out.println(listToString(obj.spiralOrder(new int[][]{
                 {1, 2,  3 },
                 {4, 5,  6 },
                 {7, 8,  9}
@@ -316,7 +438,7 @@ public class Solution {
                 {1, 2,  3,  4},
                 {5, 6,  7,  8},
                 {9, 10, 11, 12}
-        })));
+        })));*/
 
         /*System.out.println(intArrayToString(obj.findDiagonalOrder(new int[][]{
                 {2,   3,  4 },
