@@ -253,7 +253,7 @@ public class Solution {
             oneRow.add(1);
             if (i > 0) {
                 //List<Integer> prevRow = result.get(result.size() - 1);
-                for (int j = 0; j < prevRow.size() - 1; j ++) {
+                for (int j = 0; j < prevRow.size() - 1; j++) {
                     oneRow.add(prevRow.get(j) + prevRow.get(j + 1));
                 }
                 oneRow.add(1);
@@ -262,6 +262,33 @@ public class Solution {
             prevRow = oneRow;
         }
         return result;
+    }
+
+    public int dominantIndex(int[] nums) {
+        if (nums.length == 1)
+            return 0;
+
+        int largest = nums[0];
+        //, nextLarge = Integer.MIN_VALUE;
+        int largeIndex = 0;
+        boolean isTwiceLarge = true;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] > largest) {
+                if (nums[i] >= largest*2)
+                    isTwiceLarge = true;
+                else
+                    isTwiceLarge = false;
+                largest = nums[i];
+                largeIndex = i;
+            } else {
+                if (largest < nums[i]*2)
+                    isTwiceLarge = false;
+            }
+        }
+        if (!isTwiceLarge)
+            return -1;
+        else
+            return largeIndex;
     }
 
     public static void main(String[] args) {
@@ -320,6 +347,7 @@ public class Solution {
                 {4}
         })));*/
 
+        System.out.println(obj.dominantIndex(new int[] {3, 4, 9, 1, 0}));
 
     }
 
@@ -335,12 +363,12 @@ public class Solution {
         return sb.toString();
     }
 
-    static String listToString (List l) {
+    static String intListToString(List<Integer> a) {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
-        for(int i =0;i < l.size(); i++) {
-            sb.append(l.get(i));
-            if (i < l.size() - 1)
+        for(int i =0;i < a.size(); i++) {
+            sb.append(a.get(i));
+            if (i < a.size() - 1)
                 sb.append(", ");
         }
         sb.append("]");
