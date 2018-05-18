@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Solution {
 
+ /*
         public int[] twoSum(int[] nums, int target) {
         int[] result = new int[2];
         if (nums.length < 2)
@@ -31,6 +32,7 @@ public class Solution {
         }
         return result;
     }
+    */
 
     /*public int search(int[] nums, int target) {
         int begPointer = 0;
@@ -262,6 +264,7 @@ public class Solution {
         }
         return -1;
     }
+    /*
     public boolean isPerfectSquare(int num) {
         if ( num == 1)
             return true;
@@ -282,7 +285,7 @@ public class Solution {
                 l = (int) m;
         }
         return false;
-    }
+    }*/
 
     public char nextGreatestLetter(char[] letters, char target) {
         int l = 0, r = letters.length - 1;

@@ -363,7 +363,7 @@ public class Solution {
         return sb.toString();
     }
 
-    static String intListToString(List<Integer> a) {
+    static String listToString(List<Integer> a) {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
         for(int i =0;i < a.size(); i++) {
