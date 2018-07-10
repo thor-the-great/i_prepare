@@ -60,8 +60,68 @@ public class Solution {
         return result;
     }
 
+    /**
+     * https://leetcode.com/explore/learn/card/array-and-string/205/array-two-pointer-technique/1151/
+     * @param nums
+     * @param val
+     * @return
+     */
+    public int removeElement(int[] nums, int val) {
+        int cnt = 0;
+        int i = 0;
+        while (i < nums.length - cnt) {
+            if (nums[i] == val) {
+                int f = i + 1;
+                while ( f < (nums.length - cnt)) {
+                    nums[f - 1] = nums[f];
+                    f++;
+                }
+                cnt++;
+            } else {
+                i++;
+            }
+        }
+        return nums.length - cnt;
+    }
+
+    /**
+     * https://leetcode.com/explore/learn/card/array-and-string/205/array-two-pointer-technique/1301/
+     * @param nums
+     * @return
+     */
+    public int findMaxConsecutiveOnes(int[] nums) {
+        int count = 0;
+        int f, s = 0;
+        while (s < nums.length) {
+            if (nums[s] == 1) {
+                int c = 1;
+                f = s + 1;
+                while (f < nums.length) {
+                    if (nums[f] == 1) {
+                        c++;
+                        f++;
+                    } else
+                        break;
+                }
+                if (count < c)
+                    count = c;
+                s = f++;
+            }
+            else
+                s++;
+        }
+        return count;
+    }
+
+
     public static void main(String[] args) {
         Solution obj = new Solution();
-        System.out.println(obj.twoSum(new int[] {2,7,11,15}, 9));
+        //System.out.println(obj.twoSum(new int[] {2,7,11,15}, 9));
+
+        //System.out.println(obj.removeElement(new int[] {3, 2, 2, 3}, 3));
+
+        //System.out.println(obj.removeElement(new int[]{0,1,2,2,3,0,4,2},2));
+
+        System.out.println(obj.findMaxConsecutiveOnes(new int[]{1,0,1,1,0,1}));
     }
 }
