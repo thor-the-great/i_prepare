@@ -417,6 +417,42 @@ public class Solution {
         return next;
     }
 
+
+    /**
+     * https://leetcode.com/explore/learn/card/array-and-string/203/introduction-to-string/1162/
+     * @param strs
+     * @return
+     */
+    public String longestCommonPrefix(String[] strs) {
+        StringBuilder resultSB = new StringBuilder();
+        if (strs.length == 0)
+            return "";
+        int maxPreffixLength = Integer.MAX_VALUE;
+        for(String str : strs) {
+            if (str.length() < maxPreffixLength)
+                maxPreffixLength = str.length();
+        }
+
+        int cursorPosition = 0;
+        boolean isSearchDone = false;
+
+        while (cursorPosition < maxPreffixLength && !isSearchDone) {
+            char nextChar = strs[0].charAt(cursorPosition);
+            for(int i = 1; i < strs.length; i++) {
+                if (nextChar != strs[i].charAt(cursorPosition)) {
+                    isSearchDone = true;
+                    break;
+                }
+            }
+            if (!isSearchDone) {
+                resultSB.append(nextChar);
+                cursorPosition++;
+            }
+        }
+
+        return resultSB.toString();
+    }
+
     public static void main(String[] args) {
         Solution obj = new Solution();
 
@@ -482,6 +518,9 @@ public class Solution {
         })));*/
 
         System.out.println(obj.dominantIndex(new int[] {3, 4, 9, 1, 0}));
+
+        String[] data = new String[]{"flower","flow","flight"};
+        System.out.println(obj.longestCommonPrefix(data));
 
     }
 
