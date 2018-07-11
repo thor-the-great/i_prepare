@@ -453,6 +453,220 @@ public class Solution {
         return resultSB.toString();
     }
 
+    public void rotate(int[] nums, int k) {
+        int N = nums.length;
+        int realSteps = k % N;
+        int[] tmpArray = new int[realSteps];
+        for (int i = N - realSteps; i < N; i ++) {
+            tmpArray[i - (N - realSteps)] = nums[i];
+        }
+        for(int i = N - realSteps - 1; i >= 0; i--) {
+            nums[i + realSteps] = nums[i];
+        }
+        for(int i = 0; i < tmpArray.length; i++) {
+            nums[i] = tmpArray[i];
+        }
+    }
+
+    public List<Integer> getRow(int rowIndex) {
+        if (rowIndex == 0)
+            return Arrays.asList(new Integer[]{1});
+        int[] oneRow = new int[rowIndex];
+        oneRow[0] = 1;
+        int[] secondRow = new int[rowIndex + 1];
+        secondRow[0] = 1;
+        secondRow[1] = 1;
+        for (int i = 2; i <= rowIndex; i++) {
+            for(int j = 0; j < i; j++) {
+                oneRow[j] = secondRow[j];
+            }
+            secondRow[0] = 1;
+            for (int j = 1; j < i; j++) {
+                secondRow[j] = oneRow[j-1] + oneRow[j];
+            }
+            secondRow[i] = 1;
+        }
+        List<Integer> result = new ArrayList<>();
+        for (int arrayElement: secondRow) {
+            result.add(arrayElement);
+        }
+        return result;
+    }
+
+    /**
+     * https://leetcode.com/explore/learn/card/array-and-string/204/conclusion/1164/
+     * @param s
+     * @return
+     */
+    public String reverseWords1(String s) {
+        /*List<String> wordList = new ArrayList();
+        boolean isNewWordStarted = false;
+        //char[] sCharArray = s.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        StringBuilder resSb = new StringBuilder();
+        for (int i=0; i < s.length(); i++) {
+            if (s.charAt(i) != ' ') {
+                sb.append(s.charAt(i));
+                if (sb.length() == 1)
+                    isNewWordStarted = true;
+            } else {
+                if (isNewWordStarted) {
+                    wordList.add(sb.toString());
+                    isNewWordStarted = false;
+                    sb.setLength(0);
+                }
+            }
+        }
+        if (sb.length() > 0 && wordList.size() > 0)
+            sb.append(" ");
+        for(int i = wordList.size() - 1; i >= 0; i--) {
+            sb.append(wordList.get(i));
+            if (i > 0 )
+                sb.append(" ");
+        }
+        return sb.toString();*/
+
+        //working solution 2
+        /*boolean isNewWordStarted = false;
+        StringBuilder resSb = new StringBuilder();
+        int wordL = 0;
+        int wordC = 0;
+        int insertLocation = 0;
+        for (int i = s.length() - 1; i >= 0 ; i--) {
+            if (s.charAt(i) != ' ') {
+                wordL++;
+                if (wordL == 1) {
+                    if (wordC > 0)
+                        resSb.append(" ");
+                    resSb.append(s.charAt(i));
+                    isNewWordStarted = true;
+                    insertLocation = resSb.length() - 1;
+                } else {
+                    resSb.insert(insertLocation, s.charAt(i));
+                }
+            } else {
+                if (isNewWordStarted) {
+                    wordC++;
+                    isNewWordStarted = false;
+                    wordL = 0;
+                }
+            }
+        }
+        return resSb.toString();*/
+
+        //fastest solution - 92%
+        int countSymbolsInWord = 0;
+        int pointerWordStart = 0;
+        StringBuilder resSb = new StringBuilder();
+        for (int i = s.length() - 1; i >= 0 ; i--) {
+            if (s.charAt(i) != ' ') {
+                countSymbolsInWord++;
+                if (countSymbolsInWord == 1)
+                    pointerWordStart = i;
+            } else {
+                if (countSymbolsInWord >= 1) {
+                    getTheWord(s, countSymbolsInWord, pointerWordStart, resSb);
+                    resSb.append(" ");
+                    countSymbolsInWord = 0;
+                }
+            }
+        }
+
+        if (countSymbolsInWord >= 1) {
+            getTheWord(s, countSymbolsInWord, pointerWordStart, resSb);
+        }
+
+        return resSb.toString().trim();
+    }
+
+    private void getTheWord(String s, int countSymbolsInWord, int pointerWordStart, StringBuilder resSb) {
+        for (int j = pointerWordStart - countSymbolsInWord + 1; j <= pointerWordStart; j++) {
+            resSb.append(s.charAt(j));
+        }
+    }
+
+    /**
+     * https://leetcode.com/explore/learn/card/array-and-string/204/conclusion/1165/
+     * @param s
+     * @return
+     */
+    public String reverseWords2(String s) {
+        int countSymbolsInWord = 0;
+        int pointerWordStart = 0;
+        StringBuilder resSb = new StringBuilder();
+        for (int i = 0; i < s.length() ; i++) {
+            if (s.charAt(i) != ' ') {
+                countSymbolsInWord++;
+                if (countSymbolsInWord == 1)
+                    pointerWordStart = i;
+            } else {
+                if (countSymbolsInWord >= 1) {
+                    getTheWord2(s, countSymbolsInWord, pointerWordStart, resSb);
+                    resSb.append(" ");
+                    countSymbolsInWord = 0;
+                }
+            }
+        }
+
+        if (countSymbolsInWord >= 1) {
+            getTheWord2(s, countSymbolsInWord, pointerWordStart, resSb);
+        }
+
+        return resSb.toString();
+    }
+
+    private void getTheWord2(String s, int countSymbolsInWord, int pointerWordStart, StringBuilder resSb) {
+        for (int j = pointerWordStart + countSymbolsInWord - 1; j >= pointerWordStart; j--) {
+            resSb.append(s.charAt(j));
+        }
+    }
+
+    /**
+     * https://leetcode.com/explore/learn/card/array-and-string/204/conclusion/1173/
+     * @param nums
+     * @return
+     */
+    public int removeDuplicates(int[] nums) {
+        int newPointer = 0, oldPointer = 0;
+        while (oldPointer < nums.length) {
+            int number = nums[oldPointer];
+            while(oldPointer < nums.length && nums[oldPointer] == number) {
+                oldPointer++;
+            }
+            nums[newPointer] = number;
+            newPointer++;
+        }
+        return newPointer;
+    }
+
+    /**
+     * https://leetcode.com/explore/learn/card/array-and-string/204/conclusion/1174/
+     * @param nums
+     */
+    public void moveZeroes(int[] nums) {
+        int leftZeroPointer = -1;
+        int leftNonZeroPointer = 0;
+        while (leftNonZeroPointer < nums.length) {
+            if (nums[leftNonZeroPointer] == 0) {
+                int nextPointer = leftNonZeroPointer + 1;
+                int firstZeroIndex = leftZeroPointer == -1 ? nextPointer - 1 : leftZeroPointer;
+                while (nextPointer < nums.length && nums[nextPointer] != 0 ) {
+                    if (nums[nextPointer] != 0) {
+                        nums[firstZeroIndex] = nums[nextPointer];
+                        nums[nextPointer] = 0;
+                        nextPointer++;
+                        firstZeroIndex++;
+                    }
+                }
+                leftZeroPointer = firstZeroIndex;
+                leftNonZeroPointer = nextPointer;
+            }
+            else {
+                leftNonZeroPointer++;
+            }
+        }
+    }
+
     public static void main(String[] args) {
         Solution obj = new Solution();
 
@@ -517,11 +731,34 @@ public class Solution {
                 {4}
         })));*/
 
-        System.out.println(obj.dominantIndex(new int[] {3, 4, 9, 1, 0}));
+        //System.out.println(obj.dominantIndex(new int[] {3, 4, 9, 1, 0}));
 
-        String[] data = new String[]{"flower","flow","flight"};
-        System.out.println(obj.longestCommonPrefix(data));
+        //String[] data = new String[]{"flower","flow","flight"};
+        //System.out.println(obj.longestCommonPrefix(data));
 
+        /*int[] array = new int[]{1,2,3,4,5,6,7};
+        obj.rotate(array, 3);
+        System.out.println(intArrayToString(array));*/
+
+        //System.out.println(obj.getRow(0));
+
+        //System.out.println(obj.reverseWords1("   a   "));
+
+        //System.out.println(obj.reverseWords1(" 1"));
+
+        //System.out.println(obj.reverseWords1("the sky is blue"));
+
+        int[] nums = new int[]{0, 1, 2, 0, 3, 0, 4, 5};
+        obj.moveZeroes(nums);
+        System.out.println(intArrayToString(nums));
+
+        nums = new int[]{0, 1, 0, 0, 2, 3, 4, 0, 0, 5, 6, 7};
+        obj.moveZeroes(nums);
+        System.out.println(intArrayToString(nums));
+
+        nums = new int[]{0, 0, 0, 0, 0};
+        obj.moveZeroes(nums);
+        System.out.println(intArrayToString(nums));
     }
 
     static String intArrayToString(int[] a) {
