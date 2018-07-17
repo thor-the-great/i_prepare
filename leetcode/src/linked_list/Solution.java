@@ -1,7 +1,5 @@
 package linked_list;
 
-import java.util.List;
-
 public class Solution {
 
     static class ListNode {
