@@ -667,6 +667,49 @@ public class Solution {
         }
     }
 
+    public boolean isSumPairInArray(int[] arr, int sum) {
+        HashSet<Integer> compliments = new HashSet();
+        for (int i=0; i<arr.length; i++) {
+            if (compliments.contains(arr[i]))
+                return true;
+            int nextCompliment = sum - arr[i];
+            compliments.add(nextCompliment);
+        }
+        return false;
+    }
+
+    /**
+     * Print all subsets of set - FB interview question
+     * @param array
+     */
+    public void getAllSubsetsOfSet(int[] array) {
+        int[] subsets = new int[array.length];
+        helperSubset(array, subsets, 0);
+    }
+
+    void helperSubset(int[] originalArray, int[] subsets, int i) {
+        if (i>= originalArray.length) {
+            printSubset(subsets);
+            return;
+        }
+        //decide on elements
+        subsets[i] = Integer.MIN_VALUE;
+        helperSubset(originalArray, subsets, i+1);
+        subsets[i] = originalArray[i];
+        helperSubset(originalArray, subsets, i+1);
+    }
+
+    void printSubset(int[] subset) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for(int i=0; i<subset.length; i++) {
+            if (subset[i] != Integer.MIN_VALUE)
+                sb.append(subset[i]);
+        }
+        sb.append("]");
+        System.out.println(sb.toString());
+    }
+
     public static void main(String[] args) {
         Solution obj = new Solution();
 
@@ -748,7 +791,7 @@ public class Solution {
 
         //System.out.println(obj.reverseWords1("the sky is blue"));
 
-        int[] nums = new int[]{0, 1, 2, 0, 3, 0, 4, 5};
+        /*int[] nums = new int[]{0, 1, 2, 0, 3, 0, 4, 5};
         obj.moveZeroes(nums);
         System.out.println(intArrayToString(nums));
 
@@ -758,7 +801,11 @@ public class Solution {
 
         nums = new int[]{0, 0, 0, 0, 0};
         obj.moveZeroes(nums);
-        System.out.println(intArrayToString(nums));
+        System.out.println(intArrayToString(nums));*/
+
+        //System.out.println(obj.isSumPairInArray(new int[] {1, 3, 9, 0, 4}, 3));
+
+        obj.getAllSubsetsOfSet(new int[] {1,3,2});
     }
 
     static String intArrayToString(int[] a) {
