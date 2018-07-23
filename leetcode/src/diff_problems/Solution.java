@@ -57,6 +57,7 @@ public class Solution {
         return true;
     }
 
+
     public static void main(String[] args) {
         Solution obj = new Solution();
         //[3,5,1,6,2,9,8,null,null,7,4]
