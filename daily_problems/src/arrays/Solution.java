@@ -2,6 +2,9 @@ package arrays;
 
 import utils.StringUtils;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class Solution {
 
     /**
@@ -37,12 +40,53 @@ public class Solution {
         return products;
     }
 
+    String serialize(Node root) {
+        StringBuilder sb = new StringBuilder();
+        Queue<Node> q = new LinkedList<>();
+        q.add(root);
+        sb.append(root.val + ",");
+        while(!q.isEmpty()) {
+            Node n = q.poll();
+            if (n.left != null) {
+                sb.append(n.left.val).append(",");
+                q.add(n.left);
+            }
+            else
+                sb.append("null").append(",");
+            if (n.right != null) {
+                sb.append(n.right.val).append(",");
+                q.add(n.right);
+            }
+            else
+                sb.append("null").append(",");
+        }
+        return sb.toString();
+    }
+
+
     public static void main(String[] args) {
         Solution obj = new Solution();
-        int[] prodArray = obj.productArray(new int[]{5, 7, 3, 4});
+
+        /*int[] prodArray = obj.productArray(new int[]{5, 7, 3, 4});
         System.out.println(StringUtils.intArrayToString(prodArray));
 
         prodArray = obj.productArray(new int[]{10, 3, 5, 6, 2});
         System.out.println(StringUtils.intArrayToString(prodArray));
+        */
+
+        Node root = new Node("root", new Node("left", new Node("left.left", null, null), null), new Node("right", null, null));
+
+        System.out.println(obj.serialize(root));
+    }
+
+    static class Node {
+        String val;
+        Node left;
+        Node right;
+        Node(String val, Node left, Node right) {
+            this.val = val;
+            this.left = left;
+            this.right = right;
+        }
     }
 }
