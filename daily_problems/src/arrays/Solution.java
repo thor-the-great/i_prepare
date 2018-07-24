@@ -4,6 +4,7 @@ import utils.StringUtils;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Stack;
 
 public class Solution {
 
@@ -40,7 +41,29 @@ public class Solution {
         return products;
     }
 
+    /**
+     * Problem asked by Google
+     *
+     * Given the root to a binary tree, implement serialize(root), which serializes the tree into a string, and deserialize(s), which deserializes the string back into the tree.
+     *
+     * For example, given the following Node class
+     *
+     * class Node:
+     *     def __init__(self, val, left=None, right=None):
+     *         self.val = val
+     *         self.left = left
+     *         self.right = right
+     * The following test should pass:
+     *
+     * node = Node('root', Node('left', Node('left.left')), Node('right'))
+     * assert deserialize(serialize(node)).left.left.val == 'left.left'
+     *
+     * @param root
+     * @return
+     */
     String serialize(Node root) {
+        if (root == null)
+            return "#";
         StringBuilder sb = new StringBuilder();
         Queue<Node> q = new LinkedList<>();
         q.add(root);
@@ -63,6 +86,33 @@ public class Solution {
         return sb.toString();
     }
 
+    Node deserialize(String s) {
+        if (s.equals("#"))
+            return null;
+        String[] indStrings = s.split(",");
+        Node root = new Node(indStrings[0], null, null);
+        Queue<Node> stack = new LinkedList<>();
+        stack.add(root);
+        int pointer = 0;
+        while (pointer < indStrings.length - 1) {
+            Node node = stack.poll();
+            pointer++;
+            String nextVal = indStrings[pointer];
+            if (!nextVal.equals("null")) {
+                Node left = new Node(nextVal, null, null);
+                node.left = left;
+                stack.add(left);
+            }
+            pointer++;
+            nextVal = indStrings[pointer];
+            if (!nextVal.equals("null")) {
+                Node right = new Node(nextVal, null, null);
+                node.right = right;
+                stack.add(right);
+            }
+        }
+        return root;
+    }
 
     public static void main(String[] args) {
         Solution obj = new Solution();
@@ -74,9 +124,12 @@ public class Solution {
         System.out.println(StringUtils.intArrayToString(prodArray));
         */
 
-        Node root = new Node("root", new Node("left", new Node("left.left", null, null), null), new Node("right", null, null));
+        Node root = new Node("root", new Node("left", new Node("left.left", null, null), new Node("left.right", null, new Node("left.right.left", null,null))), new Node("right", null, new Node("right.right", null, null)));
+        String serString = obj.serialize(root);
+        System.out.println(serString);
 
-        System.out.println(obj.serialize(root));
+        Node desRoot = obj.deserialize(serString);
+        System.out.println(desRoot);
     }
 
     static class Node {
