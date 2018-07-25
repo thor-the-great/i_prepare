@@ -140,17 +140,17 @@ public class Solution {
         for (int i = offset; i < arr.length; i++) {
             int modifIndex = Math.abs(arr[i]) - 1;
             if (modifIndex < arr.length - offset && modifIndex >= 0) {
+                //we use abs() because number could be negative already due to previous iterations
+                //idea is to have always negative number but keep absolute value unchanged
                 arr[modifIndex + offset] = -Math.abs(arr[modifIndex + offset]);
             }
         }
-        int result = 1;
         for (int i = offset; i < arr.length; i++) {
             if (arr[i] > 0) {
-                result = i - offset +1;
-                break;
+                return (i - offset +1);
             }
         }
-        return result;
+        return (arr.length - offset + 1);
     }
 
     public static void main(String[] args) {
@@ -177,6 +177,8 @@ public class Solution {
         System.out.println(obj.findMissing(new int[]{2, 3, -7, 6, 8, 1, -10, 15}));
 
         System.out.println(obj.findMissing(new int[]{1, 1, 0, -1, -2}));
+
+        System.out.println(obj.findMissing(new int[]{1, 2, 3, 4, 5}));
     }
 
     static class Node {
