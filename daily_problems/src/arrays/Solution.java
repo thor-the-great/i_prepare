@@ -114,6 +114,45 @@ public class Solution {
         return root;
     }
 
+    /**
+     * This problem was asked by Stripe.
+     *
+     * Given an array of integers, find the first missing positive integer in linear time and constant space. In other words,
+     * find the lowest positive integer that does not exist in the array. The array can contain duplicates and negative numbers as well.
+     *
+     * For example, the input [3, 4, -1, 1] should give 2. The input [1, 2, 0] should give 3.
+     *
+     * You can modify the input array in-place.
+     * @param arr
+     * @return
+     */
+    int findMissing(int[] arr) {
+        //shift all non-positive numbers
+        int offset = 0;
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] < 1) {
+                arr[i] = arr[offset];;
+                arr[offset] = 0;
+                offset++;
+            }
+        }
+        //do the cycle on elements and do the trick
+        for (int i = offset; i < arr.length; i++) {
+            int modifIndex = Math.abs(arr[i]) - 1;
+            if (modifIndex < arr.length - offset && modifIndex >= 0) {
+                arr[modifIndex + offset] = -Math.abs(arr[modifIndex + offset]);
+            }
+        }
+        int result = 1;
+        for (int i = offset; i < arr.length; i++) {
+            if (arr[i] > 0) {
+                result = i - offset +1;
+                break;
+            }
+        }
+        return result;
+    }
+
     public static void main(String[] args) {
         Solution obj = new Solution();
 
@@ -124,12 +163,20 @@ public class Solution {
         System.out.println(StringUtils.intArrayToString(prodArray));
         */
 
-        Node root = new Node("root", new Node("left", new Node("left.left", null, null), new Node("left.right", null, new Node("left.right.left", null,null))), new Node("right", null, new Node("right.right", null, null)));
+        /*Node root = new Node("root", new Node("left", new Node("left.left", null, null), new Node("left.right", null, new Node("left.right.left", null,null))), new Node("right", null, new Node("right.right", null, null)));
         String serString = obj.serialize(root);
         System.out.println(serString);
 
         Node desRoot = obj.deserialize(serString);
-        System.out.println(desRoot);
+        System.out.println(desRoot);*/
+
+        System.out.println(obj.findMissing(new int[]{0, 6000, 5, 1}));
+
+        System.out.println(obj.findMissing(new int[]{2, 3, 7, 6, 8, -1, -10, 15}));
+
+        System.out.println(obj.findMissing(new int[]{2, 3, -7, 6, 8, 1, -10, 15}));
+
+        System.out.println(obj.findMissing(new int[]{1, 1, 0, -1, -2}));
     }
 
     static class Node {
