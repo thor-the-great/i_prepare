@@ -1,5 +1,7 @@
 package diff_problems;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 
 public class Solution {
@@ -57,11 +59,67 @@ public class Solution {
         return true;
     }
 
+    /**
+     * https://leetcode.com/contest/weekly-contest-94/problems/walking-robot-simulation/
+      * @param commands
+     * @param obstacles
+     * @return
+     */
+    public int robotSim(int[] commands, int[][] obstacles) {
+        //map of dirrections
+        // 0 ^, 1 >, 2 down, 3 <
+        int currentDirection = 0;
+        int[] dirX = new int[] {0, 1, 0, -1};
+        int[] dirY = new int[] {1, 0, -1, 0};
+        int x = 0, y = 0;
+        Set<Long> obstacleSet = new HashSet<>();
+        for (int j=0; j<obstacles.length; j++) {
+            int[] nextObst = obstacles[j];
+            long obstacleCoded = encode(nextObst[0], nextObst[1]);
+            obstacleSet.add(obstacleCoded);
+        }
+        int maxDistance = 0;
+        for (int i=0; i < commands.length; i++) {
+            int command = commands[i];
+            if (command == -2) {
+                currentDirection = currentDirection == 0 ? 3 : currentDirection-1;
+                continue;
+            }
+            if (command == -1) {
+                currentDirection = currentDirection == 3 ? 0 : currentDirection+1;
+                continue;
+            }
+
+            //now go step by step
+            int dx = dirX[currentDirection];
+            int dy = dirY[currentDirection];
+            for (int s = 1; s <= command; s++) {
+                int newX = x + dx;
+                int newY = y + dy;
+                long newCoordinatesCoded = encode(newX, newY);
+                if (!obstacleSet.contains(newCoordinatesCoded)) {
+                    x = newX;
+                    y = newY;
+                }
+                else
+                    break;
+            }
+            int newPossibleDistance = ((x*x) + (y*y));
+            if (maxDistance < newPossibleDistance) {
+                maxDistance = newPossibleDistance;
+            }
+        }
+        return maxDistance;
+    }
+
+    private long encode(int x, int y) {
+        return (((long) x + 30000) << 16) + ((long) y + 30000);
+    }
 
     public static void main(String[] args) {
         Solution obj = new Solution();
         //[3,5,1,6,2,9,8,null,null,7,4]
-        TreeNode three = new TreeNode(3);
+        /*TreeNode three = new TreeNode(3);
         TreeNode five = new TreeNode(5);
         TreeNode one = new TreeNode(1);
         three.left = five;
@@ -69,7 +127,21 @@ public class Solution {
         TreeNode six = new TreeNode(6);
         TreeNode two = new TreeNode(2);
         five.left = six;
-        five.right = two;
+        five.right = two;*/
 
+        System.out.println(obj.robotSim(new int[] {4,-1,4,-2,4}, new int[][]{{2,4}}));
+
+        System.out.println(obj.robotSim(new int[] {7,-2,-2,7,5}, new int[][] {
+                {-3, 2},
+                {-2, 1},
+                {0, 1},
+                {-2, 4},
+                {-1, 0},
+                {-2, -3},
+                {0, -3},
+                {4, 4},
+                {-3, 3},
+                {2, 2}
+        }));
     }
 }
