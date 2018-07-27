@@ -186,6 +186,52 @@ public class Solution {
         return result >= 3 ? result : 0;
     }
 
+    /**
+     * This problem was asked by Facebook.
+     *
+     * Given the mapping a = 1, b = 2, ... z = 26, and an encoded message, count the number of ways it can be decoded.
+     *
+     * For example, the message '111' would give 3, since it could be decoded as 'aaa', 'ka', and 'ak'.
+     *
+     * You can assume that the messages are decodable. For example, '001' is not allowed.
+     *
+     * @param message
+     * @return
+     */
+    int getNumberOfEncodings(char[] message) {
+        //return internalMsg(message, message.length);
+        return internalMsg2(message);
+    }
+
+    //first approach - naive iteration, exponential O
+    int internalMsg(char[] m, int n) {
+        //base case, wraps up the recursion
+        if (n == 1 || n == 0)
+            return 1;
+        //start recursion on next symbol
+        int count = internalMsg(m, n-1);
+        //check last 2 numbers, if it's between 10 and 26 - add one more recursion iteration
+        if ((m[n - 2] == '1' || m[n - 2] == '2') && m[n - 1] <= '6' )
+            count += internalMsg(m, n -2);
+        return count;
+    }
+
+    int internalMsg2(char[] m) {
+        //results, index is represent number of chars checked in the message
+        //memorize the number of decodings for each number of chars, then re-use it on next step (dynamic programming)
+        int[] memoSols = new int[m.length +1];
+        //base cases
+        memoSols[0] = 1;
+        memoSols[1] = 1;
+        //iterate, start from numbers of decoding on previous step, then add delta on current step
+        for (int i = 2; i <= m.length; i++) {
+            memoSols[i] = memoSols[i - 1];
+            if ((m[i - 2] == '1' || m[i - 2] == '2') && m[i - 1] <= '6' )
+                memoSols[i] += memoSols[i -2];
+        }
+        return memoSols[m.length];
+    }
+
     public static void main(String[] args) {
         Solution obj = new Solution();
         //[3,5,1,6,2,9,8,null,null,7,4]
@@ -214,6 +260,9 @@ public class Solution {
                 {2, 2}
         }));*/
 
-        System.out.println(obj.minEatingSpeed(new int[]{3,6,7,11}, 8));
+        //System.out.println(obj.minEatingSpeed(new int[]{3,6,7,11}, 8));
+
+        System.out.println(obj.getNumberOfEncodings("111".toCharArray()));
+        System.out.println(obj.getNumberOfEncodings("2712211".toCharArray()));
     }
 }
