@@ -116,6 +116,76 @@ public class Solution {
         return (((long) x + 30000) << 16) + ((long) y + 30000);
     }
 
+    /**
+     * https://leetcode.com/contest/weekly-contest-94/problems/koko-eating-bananas/
+     * @param H
+     * @param piles
+     * @return
+     */
+    public int minEatingSpeed(int[] piles, int H) {
+        //max should not be higher than greatest element in array
+        int max = 0;
+        for (int i = 0; i < piles.length; i++) {
+            if(piles[i] > max)
+                max = piles[i];
+        }
+        //now do the binary search on possible solutions. there is a linear dependency - the lower is k the longer (higher H)
+        //it will take
+        int min = 1;
+        while (max > min) {
+            int med = (max + min) /2;
+            if (isBelowH(H, med, piles)) {
+                max = med;
+            } else {
+                min = med + 1;
+            }
+        }
+        return min;
+    }
+
+    boolean isBelowH(int H, int k, int[] piles) {
+        int counter = 0;
+        for(int i = 0; i < piles.length; i++) {
+            counter = counter + (piles[i]-1)/k+1;
+        }
+        return (counter <= H);
+    }
+
+    /**
+     * https://leetcode.com/contest/weekly-contest-94/problems/length-of-longest-fibonacci-subsequence/
+     * @param A
+     * @return
+     */
+    public int lenLongestFibSubseq(int[] A) {
+        //create set of numbers so we can lookup efficiently
+        Set<Integer> set = new HashSet();
+        for (int i = 0; i < A.length; i++) {
+            set.add(A[i]);
+        }
+        //iterate over numbers in array, i represents first and j - second number to add for Fibo check
+        int result = 0;
+        for (int i =0 ; i < A.length; i++) {
+            for (int j = i + 1 ; j < A.length; j++) {
+                int cur = A[j];
+                int next = A[i] + A[j];
+                int len = 2;
+                //go over values in array, if the number is in array - increment len
+                while(set.contains(next)) {
+                    //do the shift of numbers for next possible Fibo number
+                    //cur,next -> next, next+cur
+                    int tmp = next;
+                    next = next + cur;
+                    cur = tmp;
+                    len++;
+                }
+                //save the len if it's higher than already saved result
+                if (len > result)
+                    result = len;
+            }
+        }
+        return result >= 3 ? result : 0;
+    }
+
     public static void main(String[] args) {
         Solution obj = new Solution();
         //[3,5,1,6,2,9,8,null,null,7,4]
@@ -129,7 +199,7 @@ public class Solution {
         five.left = six;
         five.right = two;*/
 
-        System.out.println(obj.robotSim(new int[] {4,-1,4,-2,4}, new int[][]{{2,4}}));
+        /*System.out.println(obj.robotSim(new int[] {4,-1,4,-2,4}, new int[][]{{2,4}}));
 
         System.out.println(obj.robotSim(new int[] {7,-2,-2,7,5}, new int[][] {
                 {-3, 2},
@@ -142,6 +212,8 @@ public class Solution {
                 {4, 4},
                 {-3, 3},
                 {2, 2}
-        }));
+        }));*/
+
+        System.out.println(obj.minEatingSpeed(new int[]{3,6,7,11}, 8));
     }
 }
