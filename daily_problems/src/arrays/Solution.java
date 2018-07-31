@@ -1,10 +1,7 @@
 package arrays;
 
-import utils.StringUtils;
-
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Stack;
 
 public class Solution {
 
@@ -153,6 +150,68 @@ public class Solution {
         return (arr.length - offset + 1);
     }
 
+    /**
+     * This problem was asked by Google.
+     *
+     * A unival tree (which stands for "universal value") is a tree where all nodes under it have the same value.
+     *
+     * Given the root to a binary tree, count the number of unival subtrees.
+     *
+     * For example, the following tree has 5 unival subtrees:
+     *
+     *    0
+     *   / \
+     *  1   0
+     *     / \
+     *    1   0
+     *   / \
+     *  1   1
+     * @param node
+     * @return
+     */
+    int getNumberUnivalTrees(IntNode node) {
+        //traverse sub-trees starting from the bottom. The trick is to save counter is a global like variable. We also return
+        //whether sub-tree is unival or not.
+        TreeCounter counter = new TreeCounter();
+        traverseTree(node, counter);
+        return counter.count;
+
+    }
+
+    boolean traverseTree(IntNode node, TreeCounter counter) {
+        if (node == null)
+            return true;
+        //check if sub-trees are unival or not. also counter will have number of unival trees accumulated
+        boolean isLeft = traverseTree(node.left, counter);
+        boolean isRight = traverseTree(node.right, counter);
+        //only if both sub-trees are unival make sense to go deeper
+        if (isLeft && isRight) {
+            if (node.left != null && node.val != node.left.val)
+                return false;
+            if (node.right != null && node.val != node.right.val)
+                return false;
+            //if both children are of the same value - increment unival trees counter and return true
+            counter.count++;
+            return true;
+        }
+        return false;
+    }
+
+    /*boolean isTreeUnival(IntNode node, int value) {
+        if (node == null)
+            return true;
+        if (node.val == value) {
+            boolean isChildUnival = isTreeUnival(node.left, value) && isTreeUnival(node.right, value);
+            return isChildUnival;
+        }
+        else
+            return false;
+    }*/
+
+    class TreeCounter {
+        int count = 0;
+    }
+
     public static void main(String[] args) {
         Solution obj = new Solution();
 
@@ -170,7 +229,7 @@ public class Solution {
         Node desRoot = obj.deserialize(serString);
         System.out.println(desRoot);*/
 
-        System.out.println(obj.findMissing(new int[]{0, 6000, 5, 1}));
+        /*System.out.println(obj.findMissing(new int[]{0, 6000, 5, 1}));
 
         System.out.println(obj.findMissing(new int[]{2, 3, 7, 6, 8, -1, -10, 15}));
 
@@ -178,7 +237,28 @@ public class Solution {
 
         System.out.println(obj.findMissing(new int[]{1, 1, 0, -1, -2}));
 
-        System.out.println(obj.findMissing(new int[]{1, 2, 3, 4, 5}));
+        System.out.println(obj.findMissing(new int[]{1, 2, 3, 4, 5}));*/
+
+        IntNode root = new IntNode(0,
+                new IntNode(1, null, null),
+                new IntNode(0,
+                    new IntNode(1,
+                            new IntNode(1, null, null),
+                            new IntNode(1, null, null)
+                    ),
+                        new IntNode(0, null, null)
+                )
+        );
+        System.out.println(obj.getNumberUnivalTrees(root));
+
+        root = new IntNode(5,
+                new IntNode(1, new IntNode(5, null, null), new IntNode(5, null, null)),
+                new IntNode(5,
+                        null,
+                        new IntNode(5, null, null)
+                )
+        );
+        System.out.println(obj.getNumberUnivalTrees(root));
     }
 
     static class Node {
@@ -186,6 +266,17 @@ public class Solution {
         Node left;
         Node right;
         Node(String val, Node left, Node right) {
+            this.val = val;
+            this.left = left;
+            this.right = right;
+        }
+    }
+
+    static class IntNode {
+        int val;
+        IntNode left;
+        IntNode right;
+        IntNode(int val, IntNode left, IntNode right) {
             this.val = val;
             this.left = left;
             this.right = right;
