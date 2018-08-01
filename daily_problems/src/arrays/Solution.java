@@ -212,6 +212,37 @@ public class Solution {
         int count = 0;
     }
 
+    /**
+     * This problem was asked by Airbnb.
+     *
+     * Given a list of integers, write a function that returns the largest sum of non-adjacent numbers. Numbers can be 0 or negative.
+     *
+     * For example, [2, 4, 6, 2, 5] should return 13, since we pick 2, 6, and 5. [5, 1, 1, 5] should return 10, since we pick 5 and 5.
+     *
+     * Follow-up: Can you do this in O(N) time and constant space?
+     *
+     * @param arr
+     * @return
+     */
+    int largestSum(int[] arr) {
+        //base cases
+        if (arr.length == 1)
+            return arr[0];
+        if (arr.length == 2)
+            return Math.max(arr[0], arr[1]);
+        //save two steps data as a cache
+        int prev2Steps = Math.max(0, arr[0]);
+        int prev1Step  = Math.max(prev2Steps, arr[1]);
+        //iterate over the array, compare on each steps which is greater -
+        //arr[i-2]+arr[i] or arr[i-1]. then memoize result for the next step
+        for (int i = 2; i < arr.length; i++) {
+            int tmp = prev1Step;
+            prev1Step = Math.max(prev2Steps + arr[i], prev1Step);
+            prev2Steps = tmp;
+        }
+        return Math.max(prev2Steps, prev1Step);
+    }
+
     public static void main(String[] args) {
         Solution obj = new Solution();
 
@@ -239,7 +270,7 @@ public class Solution {
 
         System.out.println(obj.findMissing(new int[]{1, 2, 3, 4, 5}));*/
 
-        IntNode root = new IntNode(0,
+        /*IntNode root = new IntNode(0,
                 new IntNode(1, null, null),
                 new IntNode(0,
                     new IntNode(1,
@@ -258,7 +289,11 @@ public class Solution {
                         new IntNode(5, null, null)
                 )
         );
-        System.out.println(obj.getNumberUnivalTrees(root));
+        System.out.println(obj.getNumberUnivalTrees(root));*/
+
+        System.out.println(obj.largestSum(new int[] {2, 4, 6, 2 ,5}));
+
+        System.out.println(obj.largestSum(new int[] {5, 1, 1,5}));
     }
 
     static class Node {
