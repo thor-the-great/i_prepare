@@ -17,7 +17,6 @@ public class Solution {
         firstT.add(root1);
         Stack<TreeNode> secondT = new Stack();
         secondT.add(root2);
-
         boolean isCheckReady1 = false;
         boolean isCheckReady2 = false;
         int val1 = -1, val2 = -1;
@@ -28,24 +27,18 @@ public class Solution {
                     val1 = n1.val;
                     isCheckReady1 = true;
                 } else {
-                    if (n1.left != null)
-                        firstT.add(n1.left);
-                    if (n1.right != null)
-                        firstT.add(n1.right);
+                    addNode(n1.left, firstT);
+                    addNode(n1.right, firstT);
                 }
-
             }
-
             if (!isCheckReady2) {
                 TreeNode n2 = secondT.pop();
                 if (n2.left == null && n2.right == null) {
                     val2 = n2.val;
                     isCheckReady2 = true;
                 } else {
-                    if (n2.left != null)
-                        secondT.add(n2.left);
-                    if (n2.right != null)
-                        secondT.add(n2.right);
+                    addNode(n2.left, secondT);
+                    addNode(n2.right, secondT);
                 }
             }
 
@@ -57,6 +50,11 @@ public class Solution {
             }
         }
         return true;
+    }
+
+    private void addNode(TreeNode node, Stack stack) {
+        if (node != null)
+            stack.push(node);
     }
 
     /**
