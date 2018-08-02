@@ -40,18 +40,33 @@ public class Solution {
         pref = "table";
         prefCol = tst.getStringsByPreffix(pref);
         System.out.println("For pref " + pref + " found # of words " + prefCol.size());
+
+        pref = "c";
+        prefCol = tst.getStringsByPreffix(pref);
+        System.out.println("For pref " + pref + " found # of words " + prefCol.size());
+
+        pref = "p";
+        prefCol = tst.getStringsByPreffix(pref);
+        System.out.println("For pref " + pref + " found # of words " + prefCol.size());
+
+        pref = "a";
+        prefCol = tst.getStringsByPreffix(pref);
+        System.out.println("For pref " + pref + " found # of words " + prefCol.size());
     }
 }
 
 class TST {
-    Node root = null;
+    Node[] root = new Node[26];
 
     void add(String value) {
-        if (root == null) {
-            root = new Node();
-            root.ch = ' ';
+        int startCharInt = value.charAt(0) - 97;
+        Node node = root[startCharInt];
+        if (node == null) {
+            node = new Node();
+            node.ch = value.charAt(0);
+            root[startCharInt] = node;
         }
-        addInternal(value, root, 0);
+        addInternal(value, node, 1);
     }
 
     Node addInternal(String value, Node node, int pointer) {
@@ -73,7 +88,10 @@ class TST {
     }
 
     boolean contains(String val) {
-        return get(val, 0, root) != null;
+        if (val == null || val.equals(""))
+            return false;
+        int startCharInt = val.charAt(0) - 97;
+        return get(val, 1, root[startCharInt]) != null;
     }
 
     Node get(String s, int pointer, Node node) {
@@ -92,9 +110,11 @@ class TST {
     }
 
     Collection<String> getStringsByPreffix(String preffix) {
-        Node prefNode = get(preffix, 0, root);
+        int startCharInt = preffix.charAt(0) - 97;
+        Node prefNode = root[startCharInt];
+        //Node prefNode = get(preffix, 1, root[startCharInt]);
         if (prefNode == null)
-            return new ArrayList<String>();
+            return new ArrayList<>();
         List<String> result = new ArrayList<>();
         collect(prefNode, preffix, result);
         return result;
