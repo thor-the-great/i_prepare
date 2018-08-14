@@ -1,5 +1,9 @@
 package diff_problems;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -343,6 +347,42 @@ public class Solution {
         return pi;
     }
 
+    /**
+     * This problem was asked by Facebook.
+     *
+     * Given a stream of elements too large to store in memory, pick a random element from the stream with uniform probability.
+     *
+     * @return
+     */
+    int pickRandom() {
+        //reservoir sampling, on each next pick generate random number from 1 to current count, and compare with some constant (e.g. 1)
+        //if they are equals - cunt this number as selected
+        int pickedSymbol = 0;
+        String fileName = "C:\\tmp\\99394_9142017_TEMPLATE_FULL.csv";
+        try(InputStream is = new FileInputStream(fileName)) {
+            int count = 1;
+            int next = is.read();
+            Random rand = new Random();
+            while(next != -1) {
+                int nextRand = rand.nextInt(count) + 1;
+                if (nextRand == 1) {
+                    pickedSymbol = next;
+                    System.out.println("Picked next number " + pickedSymbol + " at count " + count);
+                }
+                next = is.read();
+                count++;
+            }
+            System.out.println("Total number of symbols " + count);
+            System.out.println("Direct random pick " + rand.nextInt(count + 1));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return pickedSymbol;
+    }
+
+
     public static void main(String[] args) {
         Solution obj = new Solution();
         //[3,5,1,6,2,9,8,null,null,7,4]
@@ -380,6 +420,8 @@ public class Solution {
 
         //System.out.println(obj.longestSubstringLength("abbgbbcba", 2));
 
-        System.out.println(obj.getPi());
+        //System.out.println(obj.getPi());
+
+        System.out.println(obj.pickRandom());
     }
 }
