@@ -4,10 +4,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class Solution {
 
@@ -382,6 +380,251 @@ public class Solution {
         return pickedSymbol;
     }
 
+    /**
+     * The N queens puzzle
+     * The N queens puzzle is the classic backtracking problem. The question is this:
+     *
+     * You have an N by N board. Write a function that returns the number of possible arrangements of the board where
+     * N queens can be placed on the board without threatening each other, i.e. no two queens share the same row,
+     * column, or diagonal.
+     *
+     * @param n
+     * @return
+     */
+    int nQueensPuzzle(int n) {
+        //this is recursive backtracking approach
+        return checkBoard(n, new ArrayList());
+    }
+
+    int checkBoard(int n, ArrayList board) {
+        //base case
+        if (n == board.size())
+            return 1;
+
+        //iterate over board. Board is a 1D array, where index is a row and value in the index is column positions
+        int count =0;
+        //jump to next row
+        board.add(0);
+        for (int i =0; i < n; i++) {
+            //trying different columns for one row in sequence
+            //replacing elements, should be more efficient comparing to add/remove cycle
+            board.set(board.size() - 1, i);
+            if (isValid(board)) {
+                count += checkBoard(n, board);
+            }
+        }
+        board.remove(board.size() -1);
+        return count;
+    }
+
+    boolean isValid(ArrayList<Integer> board) {
+        int currentQueenRow = board.size() - 1;
+        int currentQueenColumn = board.get(currentQueenRow);
+        for (int row = 0; row < board.size() - 1; row++) {
+            int col = board.get(row);
+            int diff = Math.abs(currentQueenColumn - col);
+            if (diff == 0 || diff == (currentQueenRow - row)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * The flight itinerary problem is as follows:
+     *
+     * Given an unordered list of flights taken by someone, each represented as (origin, destination) pairs, and a starting airport, compute the person's itinerary. If no such itinerary exists, return null. All flights must be used in the itinerary.
+     *
+     * For example, given the following list of flights:
+     *
+     * HNL ➔ AKL
+     * YUL ➔ ORD
+     * ORD ➔ SFO
+     * SFO ➔ HNL
+     * and starting airport YUL, you should return YUL ➔ ORD ➔ SFO ➔ HNL ➔ AKL. (This also happens to be the actual itinerary for the trip I'm about to take.)
+     *
+     * @param flights
+     * @param startPoint
+     * @return
+     */
+    List<String> getItinerary(List<String[]> flights, String startPoint) {
+        List<String> itinerary = new ArrayList<>();
+        itinerary.add("YUL");
+        return getItineraryInternal(flights, itinerary);
+    }
+
+    List<String> getItineraryInternal(List<String[]> flights, List<String> itinerary) {
+        if (flights == null || flights.isEmpty())
+            return itinerary;
+
+        String lastStop = itinerary.get(itinerary.size() - 1);
+        for (int i = 0; i < flights.size(); i++) {
+            List<String[]> flightsMinusCurrent = new ArrayList<>();
+            for (int j = 0; j < flights.size(); j++) {
+                if(i != j) {
+                    String[] flight = flights.get(j);
+                    flightsMinusCurrent.add(flight);
+                }
+            }
+            String origin = flights.get(i)[0];
+            String dest = flights.get(i)[1];
+            itinerary.add(dest);
+            if (origin.equals(lastStop)) {
+                return getItineraryInternal(flightsMinusCurrent, itinerary);
+            }
+            itinerary.remove(itinerary.size() - 1);
+        }
+        return null;
+    }
+
+    /**
+     * This problem was asked by Google.
+     *
+     * Suppose we represent our file system by a string in the following manner:
+     *
+     * The string "dir\n\tsubdir1\n\tsubdir2\n\t\tfile.ext" represents:
+     *
+     * dir
+     *     subdir1
+     *     subdir2
+     *         file.ext
+     * The directory dir contains an empty sub-directory subdir1 and a sub-directory subdir2 containing a file file.ext.
+     *
+     * The string "dir\n\tsubdir1\n\t\tfile1.ext\n\t\tsubsubdir1\n\tsubdir2\n\t\tsubsubdir2\n\t\t\tfile2.ext" represents:
+     *
+     * dir
+     *     subdir1
+     *         file1.ext
+     *         subsubdir1
+     *     subdir2
+     *         subsubdir2
+     *             file2.ext
+     * The directory dir contains two sub-directories subdir1 and subdir2. subdir1 contains a file file1.ext and an empty second-level sub-directory subsubdir1. subdir2 contains a second-level sub-directory subsubdir2 containing a file file2.ext.
+     *
+     * We are interested in finding the longest (number of characters) absolute path to a file within our file system. For example, in the second example above, the longest absolute path is "dir/subdir2/subsubdir2/file2.ext", and its length is 32 (not including the double quotes).
+     *
+     * Given a string representing the file system in the above format, return the length of the longest absolute path to a file in the abstracted file system. If there is no file in the system, return 0.
+     *
+     * Note:
+     *
+     * The name of a file contains at least a period and an extension.
+     *
+     * The name of a directory or sub-directory will not contain a period.
+     *
+     * @param pathString
+     * @return
+     */
+    int findLongestPath(String pathString) {
+        int maxPath = 0;
+        String[] pathParts = pathString.split("\\n");
+        FSNode root = new FSNode();
+        root.isFolder = true;
+        root.pathLength = 0;
+        //this is indentation counter, this is how we can calculate level of the fs item
+        int currentInt = -1;
+        FSNode currentNode = root;
+        for (int i = 0; i < pathParts.length; i++) {
+            int lastTab = pathParts[i].lastIndexOf("\t");
+            FSNode nextNode = new FSNode();
+            String itemName = lastTab == -1 ? pathParts[i] : pathParts[i].substring(lastTab + 1);
+            nextNode.isFolder = !itemName.contains(".");
+            int nextInt = lastTab == -1 ? 0 : (lastTab + 1);
+            //previous parent - identify it based on the current level (copare it via indentation counter)
+            FSNode prevParentNode;
+            if (nextInt > currentInt) { //this is when when we jump one level deeper
+                prevParentNode = currentNode;
+                if (currentInt > 0)
+                    nextNode.pathLength++;
+            } else if (nextInt == currentInt) { //same level - sibling
+                prevParentNode = currentNode.parent;
+                nextNode.pathLength++;
+            } else { //if nextInt < currentInt - we going back on higher levels
+                prevParentNode = currentNode.parent.parent;
+                nextNode.pathLength++;
+            }
+            prevParentNode.child.add(nextNode);
+            nextNode.parent = prevParentNode;
+            nextNode.pathLength += prevParentNode.pathLength + itemName.length();
+            currentNode = nextNode;
+            currentInt = nextInt;
+            //this is where we save current max path length
+            if (!nextNode.isFolder && nextNode.pathLength > maxPath)
+                maxPath = nextNode.pathLength;
+        }
+        return maxPath;
+    }
+
+    class FSNode {
+        boolean isFolder;
+        List<FSNode> child = new LinkedList<>();
+        FSNode parent;
+        int pathLength;
+    }
+
+    /**
+     * This problem was asked by Google.
+     *
+     * Given an array of integers and a number k, where 1 <= k <= length of the array, compute the maximum values of each subarray of length k.
+     *
+     * For example, given array = [10, 5, 2, 7, 8, 7] and k = 3, we should get: [10, 7, 8, 8], since:
+     *
+     * 10 = max(10, 5, 2)
+     * 7 = max(5, 2, 7)
+     * 8 = max(2, 7, 8)
+     * 8 = max(7, 8, 7)
+     * Do this in O(n) time and O(k) space. You can modify the input array in-place and you do not need to store the results. You can simply print them out as you compute them.
+     *
+     * @param array
+     * @param k
+     */
+    void getMaxValues(int[] array, int k) {
+        //getMaxValuesMaxHeap(array, k);
+        getMaxValuesDeque(array, k);
+    }
+
+    void getMaxValuesDeque(int[] array, int k) {
+        //this one based on tricky invariant of array and two-ended (double-ended) queue. We keep in the queue only
+        //indexes!! of those elements that are potentially valid to be selected. Left side (first) is greatest element
+        //and right side (last) is smallest but potentially valuable element
+        Deque<Integer> deque = new LinkedBlockingDeque<>();
+        //init deque
+        for (int i = 0; i < k; i++) {
+            while (!deque.isEmpty() && array[i] >= array[deque.peekLast()]) {
+                deque.pollLast();
+            }
+            deque.addLast(i);
+        }
+
+        for (int i = k; i < array.length; i++) {
+            int nextMaxElement = array[deque.peekFirst()];
+            System.out.println(nextMaxElement);
+            //remove element of sub-array that are out of next subarray edge
+            while (!deque.isEmpty() && deque.peekFirst() <= i - k)
+                deque.pollFirst();
+            //remove elements based on their value, compare to the next array element
+            while (!deque.isEmpty() && array[i] >= array[deque.peekLast()])
+                deque.pollLast();
+            deque.addLast(i);
+        }
+        //last cycle is skipped because i reached end of the array. Need to catch up, simply get first element
+        System.out.println(array[deque.peekFirst()]);
+    }
+
+    void getMaxValuesMaxHeap(int[] array, int k) {
+        //using binary max-heap to get max element from sub-array. O(n) = N*logN, too slow
+        PriorityQueue<Integer> pQueue = new PriorityQueue<>(array.length, (o1, o2) -> o2 - o1);
+        //init heap for the firt sub-array, for k -1 elements
+        for (int i=0; i < k - 1; i++) {
+            pQueue.add(array[i]);
+        }
+        for (int j = k - 1; j < array.length; j++) {
+            pQueue.add(array[j]);
+            int elements = pQueue.peek();
+            System.out.println("Max element : " + elements);
+            //remove first element of sub-array
+            pQueue.remove(array[j - k + 1]);
+        }
+    }
 
     public static void main(String[] args) {
         Solution obj = new Solution();
@@ -422,6 +665,30 @@ public class Solution {
 
         //System.out.println(obj.getPi());
 
-        System.out.println(obj.pickRandom());
+        //System.out.println(obj.pickRandom());
+
+        /*for (int i =0; i < 100; i++) {
+            System.out.println("Checking n = " + i + " " + obj.nQueensPuzzle(i));
+        }*/
+
+        //flights
+        /*List<String[]> flights = new ArrayList<>();
+        flights.add(new String[] {"HNL", "AKL"});
+        flights.add(new String[] {"YUL", "ORD"});
+        flights.add(new String[] {"ORD", "SFO"});
+        flights.add(new String[] {"SFO", "HNL"});
+
+
+
+        List<String> itinerary = obj.getItinerary(flights, "YUL");
+        System.out.println(StringUtils.listStringsToString(itinerary));*/
+
+        /*String pathString = "dir\n\tsubdir1\n\tsubdir2\n\t\tfile.ext";
+        System.out.println(pathString +"\n longest path is : " + obj.findLongestPath(pathString));
+
+        pathString = "dir\n\tsubdir1\n\t\tfile1.ext\n\t\tsubsubdir1\n\tsubdir2\n\t\tsubsubdir2\n\t\t\tfile2.ext";
+        System.out.println(pathString +"\n longest path is : " + obj.findLongestPath(pathString));
+*/
+        obj.getMaxValues(new int[] {10, 5, 2, 7, 8, 7}, 3);
     }
 }

@@ -1,0 +1,80 @@
+package diff_problems.log_append;
+
+import java.util.Random;
+
+public class Solution {
+
+    void testLogging() {
+        int biggerOrderId = Integer.MAX_VALUE;
+        Log log = new Log(6);
+        Random rand = new Random(45);
+        log.add(rand.nextInt(biggerOrderId));
+        log.add(rand.nextInt(biggerOrderId));
+        log.add(rand.nextInt(biggerOrderId));
+        log.add(rand.nextInt(biggerOrderId));
+        System.out.println(log.getElement(0));
+        System.out.println(log.getElement(1));
+        log.add(rand.nextInt(biggerOrderId));
+        log.add(rand.nextInt(biggerOrderId));
+        log.add(rand.nextInt(biggerOrderId));
+        log.add(rand.nextInt(biggerOrderId));
+        log.add(rand.nextInt(biggerOrderId));
+        log.add(rand.nextInt(biggerOrderId));
+        log.add(rand.nextInt(biggerOrderId));
+        //log.add(rand.nextInt(biggerOrderId));
+        //System.out.println(log.getElement(0));
+        //System.out.println(log.getElement(3));
+        System.out.println(log.getElement(5));
+        log.add(rand.nextInt(biggerOrderId));
+        log.add(rand.nextInt(biggerOrderId));
+        log.add(rand.nextInt(biggerOrderId));
+        System.out.println(log.getElement(0));
+    }
+
+    public static void main(String[] args) {
+        Solution obj = new Solution();
+        obj.testLogging();
+    }
+}
+
+/**
+ * This problem was asked by Twitter.
+ *
+ * You run an e-commerce website and want to record the last N order ids in a log. Implement a data structure to accomplish this, with the following API:
+ *
+ * record(order_id): adds the order_id to the log
+ * get_last(i): gets the ith last element from the log. i is guaranteed to be smaller than or equal to N.
+ * You should be as efficient with time and space as possible.
+ *
+ */
+class Log {
+    int N = 0;
+    int[] log;
+    int count = 0;
+
+    Log(int N) {
+        this.N = N;
+        log = new int[N];
+    }
+
+    void add(int recordId) {
+        if (count == N) {
+            count = 0;
+        }
+        log[count] = recordId;
+        count++;
+    }
+
+    int getElement(int i) {
+        if (i > count) {
+            int index = N - (i - count);
+            return log[index];
+        }
+        else {
+            int index = count - i -1 ;
+            if (index < 0)
+                index = N + index;
+            return log[index];
+        }
+    }
+}

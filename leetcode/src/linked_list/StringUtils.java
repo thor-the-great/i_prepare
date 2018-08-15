@@ -28,6 +28,18 @@ public class StringUtils {
         return sb.toString();
     }
 
+    public static String listStringsToString(List<String> a) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for(int i =0;i < a.size(); i++) {
+            sb.append(a.get(i));
+            if (i < a.size() - 1)
+                sb.append(", ");
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
     public static String singlyListNodeToString(ListNode head) {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
