@@ -1,5 +1,7 @@
 package diff_problems;
 
+import linked_list.StringUtils;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -626,6 +628,347 @@ public class Solution {
         }
     }
 
+    /**
+     * This problem was asked by Facebook.
+     *
+     * A builder is looking to build a row of N houses that can be of K different colors. He has a goal of minimizing
+     * cost while ensuring that no two neighboring houses are of the same color.
+     *
+     * Given an N by K matrix where the nth row and kth column represents the cost to build the nth house with kth color,
+     * return the minimum cost which achieves this goal.
+     *
+     * @param housePaintCost
+     * @return
+     */
+    int getMinimumCost(int[][] housePaintCost) {
+        int n = housePaintCost.length;
+        int k = housePaintCost[0].length;
+        int[] solutions = new int[k];
+
+        for (int i = 0; i < n; i++) {
+            int[] nextSolutions = new int[k];
+            for (int j = 0; j < k; j++) {
+                int min = Integer.MAX_VALUE;
+                for (int l = 0; l < k; l++) {
+                    if ((l != j) && (solutions[l] < min)){
+                        min = solutions[l];
+                    }
+                }
+                nextSolutions[j] = min + housePaintCost[i][j];
+            }
+            solutions = nextSolutions;
+        }
+
+        int min = Integer.MAX_VALUE;
+        for(int i = 0; i < k; i++) {
+            if (solutions[i] < min)
+                min = solutions[i];
+        }
+        return min;
+    }
+
+    Node findTreeIntersection(Node treeA, Node treeB) {
+        Node n = treeA;
+        int countA = 0;
+        while(n != null) {
+            n = n.next;
+            countA++;
+        }
+
+        int countB = 0;
+        n = treeB;
+        while(n != null) {
+            n = n.next;
+            countB++;
+        }
+
+        if (countA > countB)
+            return findIntersection(treeA, treeB, countA - countB);
+        else
+            return findIntersection(treeB, treeA, countB - countA);
+    }
+
+    Node findIntersection(Node longerTree, Node shorterTree, int diff) {
+        for (int i = 0 ; i < diff; i++) {
+            longerTree = longerTree.next;
+        }
+
+        Node node1 = longerTree;
+        Node node2 = shorterTree;
+        while (node1 != null) {
+            if (node1.val == node2.val)
+                break;
+            else {
+                node1 = node1.next;
+                node2 = node2.next;
+            }
+        }
+        return node1;
+    }
+
+    static class Node {
+        int val;
+        Node next;
+        Node(int val) {
+            this.val = val;
+        }
+
+        @Override
+        public String toString() {
+            return Integer.toString(val);
+        }
+    }
+
+    /**
+     * This problem was asked by Snapchat.
+     *
+     * Given an array of time intervals (start, end) for classroom lectures (possibly overlapping), find the minimum number of rooms required.
+     *
+     * For example, given [(30, 75), (0, 50), (60, 150)], you should return 2.
+     *
+     * @param intervals
+     * @return
+     */
+    int getMinRooms(List<int[]> intervals) {
+        //return getMinRoomsBrute(intervals);
+        return  getMinRoomsEffective(intervals);
+    }
+
+    int getMinRoomsEffective(List<int[]> intervals) {
+        //trick is to sort times - separately start and end. This is n*log(n)
+        int[] sortedStarts = new int[intervals.size()];
+        int[] sortedEnds = new int[intervals.size()];
+        int count = 0;
+        for (int[] interval : intervals) {
+            sortedStarts[count] = interval[0];
+            sortedEnds[count] = interval[1];
+            count++;
+        }
+        Arrays.sort(sortedStarts);
+        Arrays.sort(sortedEnds);
+
+        //now do the scan for both arrays at the same time. Compare current start and current end
+        //if end > start - this is overlap. Record it and more to the next start/end element.
+        int i = 0, j = 0;
+        int currentMax = 0, currentOverlap = 0;
+
+        while( i < sortedStarts.length && j < sortedEnds.length) {
+            if (sortedStarts[i] > sortedEnds[j]) {
+                currentOverlap--;
+                j++;
+            }
+            else {
+                currentOverlap++;
+                currentMax = Math.max(currentMax, currentOverlap);
+                i++;
+            }
+        }
+        return currentMax;
+    }
+
+    //brute force solution - check intervals pairs one by one
+    int getMinRoomsBrute(List<int[]> intervals) {
+        int currentMax = 0;
+        for (int i = 0; i < intervals.size(); i++) {
+            int numOverlapping = 0;
+            for (int j = 0; j < intervals.size(); j++) {
+                if (i != j) {
+                    int[] int1 = intervals.get(i);
+                    int[] int2 = intervals.get(j);
+                    if (isOverlaps(int1, int2))
+                        numOverlapping++;
+                }
+            }
+            currentMax = Math.max(currentMax, numOverlapping);
+        }
+        return currentMax;
+    }
+
+    boolean isOverlaps(int[] int1, int[] int2) {
+        if ((int1[1] > int2[0] && int1[1] < int2[1])
+                || (int2[1] > int1[0] && int2[1] < int1[1]))
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * This problem was asked by Microsoft.
+     *
+     * Given a dictionary of words and a string made up of those words (no spaces), return the original sentence in a list. If there is more than one possible reconstruction, return any of them. If there is no possible reconstruction, then return null.
+     *
+     * For example, given the set of words 'quick', 'brown', 'the', 'fox', and the string "thequickbrownfox", you should return ['the', 'quick', 'brown', 'fox'].
+     *
+     * Given the set of words 'bed', 'bath', 'bedbath', 'and', 'beyond', and the string "bedbathandbeyond", return either ['bed', 'bath', 'and', 'beyond] or ['bedbath', 'and', 'beyond'].
+     *
+     * @param s
+     * @param words
+     * @return
+     */
+    List<String> getSentenseFromString(String s, String[] words) {
+        //return getSentenseFromStringBackTracking(s, words);
+        return getSentenseFromStringDP(s, words);
+    }
+
+    List<String> getSentenseFromStringDP(String s, String[] words) {
+        //this is DP solution. We craft array of Lists, where each list is possible words from start to this index.
+        //if words are not possible array will be null
+        List<String> dp[] = new ArrayList[s.length() + 1];
+        dp[0] = new ArrayList<>();
+        for (int i = 0; i < s.length(); i++) {
+            if (dp[i] == null)
+                continue;
+            for (String word : words) {
+                int wordLength = word.length();
+                int end = i + wordLength;
+                if (end > s.length())
+                    continue;
+                String stringPart = s.substring(i, end);
+                if (stringPart.equals(word)){
+                    if (dp[end] == null)
+                        dp[end] = new ArrayList<>();
+                    dp[end].add(word);
+                }
+            }
+        }
+        //here we construct at least one possible sentence (using element from index 0). Because we are going from the
+        //end we need to reverse the list or insert elements to the head (using double-ended queue and addFirst method)
+        LinkedList<String> result = new LinkedList<>();
+        if (dp[s.length()] != null) {
+            int pointer = s.length();
+            while(pointer > 0) {
+                String nextWord = dp[pointer].get(0);
+                result.addFirst(nextWord);
+                pointer -= nextWord.length();
+            }
+        }
+        return result;
+    }
+
+    List<String> getSentenseFromStringBackTracking(String s, String[] words) {
+        ReturnObj returnObj = checkStringInternal(s, words);
+        if (returnObj.isValid)
+            return returnObj.result;
+        else
+            return new LinkedList<>();
+    }
+
+
+    ReturnObj checkStringInternal(String s, String[] words) {
+        if (s.length() == 0)
+            return new ReturnObj(true, new LinkedList<>());
+
+        for (int i = 0; i < s.length(); i++) {
+            String suffix = s.substring(0, i);
+            String prefix = s.substring(i);
+            if (checkIfWordValid(words, prefix)) {
+                ReturnObj suffixResult = checkStringInternal(suffix, words);
+                if (suffixResult.isValid) {
+                    suffixResult.result.add(prefix);
+                    return suffixResult;
+                }
+            }
+        }
+        return new ReturnObj(false, new LinkedList<>());
+    }
+
+    boolean checkIfWordValid(String[] words, String word) {
+        boolean res = false;
+        for(String oneWord : words) {
+            if (oneWord.equals(word)) {
+                res = true;
+                break;
+            }
+        }
+        return res;
+    }
+
+    class ReturnObj {
+
+        ReturnObj (boolean isValid, List<String> res) {
+            this.isValid = isValid;
+            this.result = res;
+        }
+
+        boolean isValid = false;
+        List<String> result;
+    }
+
+    /**
+     * This problem was asked by Google.
+     *
+     * You are given an M by N matrix consisting of booleans that represents a board. Each True boolean represents a wall. Each False boolean represents a tile you can walk on.
+     *
+     * Given this matrix, a start coordinate, and an end coordinate, return the minimum number of steps required to reach the end coordinate from the start. If there is no possible path, then return null. You can move up, left, down, and right. You cannot move through walls. You cannot wrap around the edges of the board.
+     *
+     * For example, given the following board:
+     *
+     * [[f, f, f, f],
+     * [t, t, f, t],
+     * [f, f, f, f],
+     * [f, f, f, f]]
+     * and start = (3, 0) (bottom left) and end = (0, 0) (top left), the minimum number of steps required to reach the end is 7, since we would need to go through (1, 2) because there is a wall everywhere else on the second row.
+     *
+     * @param board
+     * @param start
+     * @param end
+     * @return
+     */
+    int getMinimumPath(boolean[][] board, int[] start, int[] end) {
+        //doing BFS for the graph of board. keep tracking of what we seen in the separate matrix
+        //get next possible pathes by getting valid neighbours.
+        int N = board.length;
+        int M = board[0].length;
+
+        boolean[][] seen = new boolean[N][M];
+
+        Stack<int[]> queuePoints = new Stack();
+        Stack<Integer> queuePath = new Stack();
+        queuePoints.push(start);
+        queuePath.push(0);
+        while(!queuePoints.empty()) {
+            int[] point = queuePoints.pop();
+            int pathL = queuePath.pop();
+            if (point[0] == end[0] && point[1] == end[1]) {
+                return pathL;
+            }
+            seen[point[0]][point[1]] = true;
+            List<int[]> neighbours = validNeighbours(point[0], point[1], board);
+            for (int[] nextPoint : neighbours) {
+                if (!seen[nextPoint[0]] [nextPoint[1]]) {
+                    seen[nextPoint[0]] [nextPoint[1]] = true;
+                    queuePoints.push(nextPoint);
+                    queuePath.push(pathL+1);
+                }
+            }
+        }
+        return 0;
+    }
+
+
+    List<int[]> validNeighbours(int x, int y, boolean[][] board) {
+        List<int[]> result = new LinkedList();
+        if (isValidStep(x + 1, y , board))
+            result.add(new int[]{x + 1, y});
+        if (isValidStep(x - 1, y , board))
+            result.add(new int[]{x - 1, y});
+        if (isValidStep(x , y + 1, board))
+            result.add(new int[]{x, y + 1});
+        if (isValidStep(x, y - 1, board))
+            result.add(new int[]{x, y - 1});
+        return result;
+    }
+
+    boolean isValidStep(int x, int y, boolean[][] board) {
+        int N = board.length;
+        int M = board[0].length;
+        if (x >= 0 && x < N && y >=0 && y < M)
+            return !board[x][y];
+        else
+            return false;
+    }
+
+
     public static void main(String[] args) {
         Solution obj = new Solution();
         //[3,5,1,6,2,9,8,null,null,7,4]
@@ -689,6 +1032,67 @@ public class Solution {
         pathString = "dir\n\tsubdir1\n\t\tfile1.ext\n\t\tsubsubdir1\n\tsubdir2\n\t\tsubsubdir2\n\t\t\tfile2.ext";
         System.out.println(pathString +"\n longest path is : " + obj.findLongestPath(pathString));
 */
-        obj.getMaxValues(new int[] {10, 5, 2, 7, 8, 7}, 3);
+        //obj.getMaxValues(new int[] {10, 5, 2, 7, 8, 7}, 3);
+
+        //int[][] paitingCost = new int[][] {{6, 5, 2}, { 1, 7, 2}, {20, 30, 40}, {100, 100, 100}};
+        //System.out.println("Min cost is : " + obj.getMinimumCost(paitingCost));
+
+        Node zero = new Node(0);
+        Node one = new Node(1);
+        Node two = new Node(2);
+        Node three = new Node(3);
+        Node four = new Node(4);
+        Node five = new Node(5);
+        Node six = new Node(6);
+        Node seven = new Node(7);
+        Node nine = new Node(9);
+        Node ten = new Node(10);
+
+        zero.next = one;
+        one.next = two;
+        two.next = three;
+        three.next = four;
+        four.next = five;
+
+        six.next = seven;
+        seven.next = nine;
+        nine.next = ten;
+        ten.next = two;
+
+        //System.out.println(obj.findTreeIntersection(one, six));
+
+        List<int[]> intervals = new ArrayList<>();
+        intervals.add(new int[]{ 30, 75 });
+        intervals.add(new int[]{  0, 50 });
+        intervals.add(new int[]{ 60, 150});
+        intervals.add(new int[]{200, 250});
+        intervals.add(new int[]{140, 210});
+        intervals.add(new int[]{135, 215});
+        //System.out.println(obj.getMinRooms(intervals));
+
+        /*String[] words = new String[] { "quick", "brown", "fox", "the"};
+        List<String> sentence = obj.getSentenseFromString("thequickbrownfox", words);
+        System.out.println(StringUtils.listStringsToString(sentence));
+
+        words = new String[] { "bed", "bath", "bedbath", "and", "beyond"};
+        sentence = obj.getSentenseFromString("bedbathandbeyond", words);
+        System.out.println(StringUtils.listStringsToString(sentence));
+
+        words = new String[] { "bed", "bath", "bedbath", "and", "beyond"};
+        sentence = obj.getSentenseFromString("123dfw45sdf", words);
+        System.out.println(StringUtils.listStringsToString(sentence));
+
+        words = new String[] { "the", "theremin"};
+        sentence = obj.getSentenseFromString("theremin", words);
+        System.out.println(StringUtils.listStringsToString(sentence));*/
+
+        boolean[][] board = new boolean[][] {
+                {false, false,  false,  false},
+                {true,  true, false,   true},
+                {false,  false, false,   false},
+                {false,  false, false,   false}
+        };
+
+        System.out.println(obj.getMinimumPath(board, new int[]{3, 0}, new int[]{0, 0}));
     }
 }
