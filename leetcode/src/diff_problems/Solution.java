@@ -1,5 +1,6 @@
 package diff_problems;
 
+import linked_list.ListNode;
 import linked_list.StringUtils;
 
 import java.io.FileInputStream;
@@ -968,6 +969,39 @@ public class Solution {
             return false;
     }
 
+    /**
+     * This problem was asked by Google.
+     *
+     * Given a singly linked list and an integer k, remove the kth last element from the list. k is guaranteed to be smaller than the length of the list.
+     *
+     * The list is very long, so making more than one pass is prohibitively expensive.
+     *
+     * Do this in constant space and in one pass.
+     *
+     * @param root
+     * @param k
+     * @return
+     */
+    ListNode removeElementFromEnd(ListNode root, int k) {
+        //two pointers, fist move forward fast one on i steps. Then start moving both pointers simultaneously
+        //when fast pointer reaches the end, slow pointer points on the element we need to remove
+        ListNode fast = root;
+        for (int i = 0; i < k; i++) {
+            fast = fast.next;
+        }
+
+        ListNode prev = null;
+        ListNode slow = root;
+        while(fast != null) {
+            fast = fast.next;
+            prev = slow;
+            slow = slow.next;
+        }
+
+        prev.next = slow.next;
+        return root;
+    }
+
 
     public static void main(String[] args) {
         Solution obj = new Solution();
@@ -1002,7 +1036,7 @@ public class Solution {
         //System.out.println(obj.getNumberOfEncodings("111".toCharArray()));
         //System.out.println(obj.getNumberOfEncodings("2712211".toCharArray()));
 
-        //System.out.println(obj.getNumWays(4));
+        System.out.println(obj.getNumWays(15));
 
         //System.out.println(obj.longestSubstringLength("abbgbbcba", 2));
 
@@ -1094,5 +1128,20 @@ public class Solution {
         };
 
         System.out.println(obj.getMinimumPath(board, new int[]{3, 0}, new int[]{0, 0}));
+
+        ListNode oneLN = new ListNode(1);
+        ListNode twoLN = new ListNode(2);
+        ListNode threeLN = new ListNode(3);
+        ListNode fourLN = new ListNode(4);
+        ListNode fiveLN = new ListNode(5);
+        ListNode sixLN = new ListNode(6);
+        oneLN.next = twoLN;
+        twoLN.next = threeLN;
+        threeLN.next = fourLN;
+        fourLN.next = fiveLN;
+        fiveLN.next = sixLN;
+
+        System.out.println(StringUtils.singlyListNodeToString(oneLN));
+        System.out.println(StringUtils.singlyListNodeToString(obj.removeElementFromEnd(oneLN, 4)));
     }
 }
