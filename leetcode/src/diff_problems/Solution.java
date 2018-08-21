@@ -1003,6 +1003,136 @@ public class Solution {
     }
 
     /**
+     * This problem was asked by Facebook.
+     *
+     * Implement regular expression matching with the following special characters:
+     *
+     * . (period) which matches any single character
+     * * (asterisk) which matches zero or more of the preceding element
+     * That is, implement a function that takes in a string and a valid regular expression and returns whether or not the string matches the regular expression.
+     *
+     * For example, given the regular expression "ra." and the string "ray", your function should return true. The same regular expression on the string "raymond" should return false.
+     *
+     * Given the regular expression ".*at" and the string "chat", your function should return true. The same regular expression on the string "chats" should return false.
+     *
+     * @param s
+     * @param r
+     * @return
+     */
+    public boolean isMatch(String s, String r) {
+        //return isMatchRec(s, r);
+        //return isMatchDP(s, r);
+        return isMatchRecMy(s, r);
+    }
+
+    boolean isFirstMatch(String s, String r) {
+        return (!s.isEmpty() &&
+                (r.charAt(0) == s.charAt(0) || r.charAt(0) == '.'));
+    }
+
+    public boolean isMatchRecMy(String s, String r) {
+        if (r.isEmpty())
+            return s.isEmpty();
+
+        boolean firstMatch = isFirstMatch(s, r);
+        if (r.length() == 1 || r.charAt(1) != '*') {
+            if( firstMatch)
+                return isMatchRecMy(s.substring(1), r.substring(1));
+            else
+                return false;
+        }
+        else {
+            if (isMatchRecMy(s, r.substring(2)))
+                return true;
+            int i = 0;
+            while (isFirstMatch(s.substring(i), r)) {
+                if (isMatchRecMy(s.substring(i+ 1), r.substring(2)))
+                    return  true;
+                i++;
+            }
+        }
+        return false;
+    }
+
+    public boolean isMatchRec(String s, String r) {
+        if (r.isEmpty())
+            return s.isEmpty();
+        boolean isFirstMatch = isFirstMatch(s, r);
+        //try 2 symbols forward in regexp if r[1] is '*'
+        if (r.length() >= 2 && r.charAt(1) == '*') {
+            if (isMatch(s, r.substring(2)))
+                return true;
+            else {
+                return isFirstMatch && isMatch(s.substring(1), r);
+            }
+        }
+        else {
+            //else trying next symbols in string and regexp
+            if (!isFirstMatch)
+                return false;
+            else {
+                boolean nextSymbolMatch = isMatch(s.substring(1), r.substring(1));
+                return  nextSymbolMatch;
+            }
+        }
+    }
+
+    public boolean isMatchDP(String text, String pattern) {
+        boolean[][] dp = new boolean[text.length() + 1][pattern.length() + 1];
+        dp[text.length()][pattern.length()] = true;
+
+        for (int i = text.length(); i >= 0; i--){
+            for (int j = pattern.length() - 1; j >= 0; j--){
+                boolean first_match = (i < text.length() &&
+                        (pattern.charAt(j) == text.charAt(i) ||
+                                pattern.charAt(j) == '.'));
+                if (j + 1 < pattern.length() && pattern.charAt(j+1) == '*'){
+                    dp[i][j] = dp[i][j+2] || first_match && dp[i+1][j];
+                } else {
+                    dp[i][j] = first_match && dp[i+1][j+1];
+                }
+            }
+        }
+        return dp[0][0];
+    }
+
+    boolean isBalanced(String s) {
+        Stack<Integer> stack = new Stack();
+
+        for (int i = 0; i < s.length(); i++) {
+            int nextNum = 0;
+            char nextChar = s.charAt(i);
+            switch(nextChar) {
+                case '[' : nextNum = 1; break;
+                case '{' : nextNum = 2; break;
+                case '(' : nextNum = 3; break;
+                case ')' : nextNum = -3; break;
+                case '}' : nextNum = -2; break;
+                case ']' : nextNum = -1; break;
+                default	 : nextNum = 0;
+            }
+            if (stack.isEmpty()) {
+                if (nextNum < 0)
+                    return false;
+                else
+                    stack.push(nextNum);
+            }
+            else {
+                int prevNum = stack.peek();
+                if (nextNum > 0)
+                    stack.push(nextNum);
+                else if (nextNum < 0) {
+                    if (prevNum + nextNum != 0)
+                        return false;
+                    else
+                        stack.pop();
+                }
+            }
+        }
+        return stack.size() == 0;
+    }
+
+    /**
      * This problem was asked by Palantir.
      *
      * Write an algorithm to justify text. Given a sequence of words and an integer line length k, return a list of strings which represents each line, fully justified.
@@ -1273,6 +1403,21 @@ public class Solution {
         fourLN.next = fiveLN;
         fiveLN.next = sixLN;
 
+        //System.out.println(StringUtils.singlyListNodeToString(oneLN));
+        //System.out.println(StringUtils.singlyListNodeToString(obj.removeElementFromEnd(oneLN, 4)));
+
+        /*
+        System.out.println(obj.isMatch("ray", "ra."));
+        System.out.println(obj.isMatch("raymond", "ra."));
+        System.out.println(obj.isMatch("chat", ".*at"));
+        System.out.println(obj.isMatch("chats", ".*at"));
+        System.out.println(obj.isMatch("this is very expensive algorithm to check matches in a strange useless string", ".*this is very expensive."));
+        */
+
+        System.out.println(obj.isBalanced("([])[]({})"));
+        System.out.println(obj.isBalanced("([)]"));
+        System.out.println(obj.isBalanced("([{[]}])[]({{}})"));
+        System.out.println(obj.isBalanced("((()"));
         //System.out.println(StringUtils.singlyListNodeToString(oneLN));
         //System.out.println(StringUtils.singlyListNodeToString(obj.removeElementFromEnd(oneLN, 4)));
 
