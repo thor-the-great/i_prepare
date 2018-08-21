@@ -1002,6 +1002,84 @@ public class Solution {
         return root;
     }
 
+    /**
+     * This problem was asked by Palantir.
+     *
+     * Write an algorithm to justify text. Given a sequence of words and an integer line length k, return a list of strings which represents each line, fully justified.
+     *
+     * More specifically, you should have as many words as possible in each line. There should be at least one space between each word. Pad extra spaces when necessary so that each line has exactly length k. Spaces should be distributed as equally as possible, with the extra spaces, if any, distributed starting from the left.
+     *
+     * If you can only fit one word on a line, then you should pad the right-hand side with spaces.
+     *
+     * Each word is guaranteed not to be longer than k.
+     *
+     * For example, given the list of words ["the", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog"] and k = 16, you should return the following:
+     *
+     * ["the  quick brown", # 1 extra space on the left
+     * "fox  jumps  over", # 2 extra spaces distributed evenly
+     * "the   lazy   dog"] # 4 extra spaces distributed evenly
+     *
+     * @param words
+     * @param k
+     * @return
+     */
+    List<String> justify(String[] words, int k) {
+        List<String> result = new ArrayList();
+        //we keep words that we processed in the queue FIFO, so we keep initial order in final line
+        Queue<String> q = new LinkedList();
+        //this is counter of chars in each line, this includes length of word plus one space between words (don't
+        //include spaces before first and after last words)
+        int c = 0;
+        for (int i = 0; i < words.length; i++) {
+            //calculate current length of each line
+            int nextL = c + words[i].length() + (q.isEmpty() ? 0 : 1);
+            if (nextL < k) {
+                //if we didn't reach the limit - add word to queue and increment counter
+                c = nextL;
+            } else {
+                //flush line into output and reset all counters
+                addOneLine(result, k, c, q);
+                c = words[i].length();
+            }
+            q.add(words[i]);
+        }
+        //after loop is over with still need to handle last line
+        if (!q.isEmpty()) {
+            addOneLine(result, k, c, q);
+        }
+        return result;
+    }
+
+    void addOneLine(List<String> res, int k, int c, Queue<String> q) {
+        //count spaces that we have, do't forget to rollback spaces added between words
+        int extraSpaces = k - c + (q.size() - 1);
+        StringBuilder sb = new StringBuilder();
+        //special case - pad string for the left
+        if (q.size() == 1) {
+            for (int j = 0; j < extraSpaces; j++) sb.append(" ");
+            sb.append(q.poll());
+        } else {
+            //how many spaces between each word
+            int spaceEachWord = extraSpaces / (q.size() - 1);
+            //how many extra, only one max per word
+            int spaceExtra = extraSpaces % (q.size() - 1);
+            //go over queue and add each word with spaces after
+            while (!q.isEmpty()) {
+                sb.append(q.poll());
+                //if it's not the last word - add spaces
+                if (q.size() > 0) {
+                    //between every word
+                    for (int j = 0; j < spaceEachWord; j++) sb.append(" ");
+                    //and extra if we have one
+                    if (spaceExtra > 0) {
+                        sb.append(" ");
+                        spaceExtra--;
+                    }
+                }
+            }
+        }
+        res.add(sb.toString());
+    }
 
     public static void main(String[] args) {
         Solution obj = new Solution();
@@ -1141,7 +1219,10 @@ public class Solution {
         fourLN.next = fiveLN;
         fiveLN.next = sixLN;
 
-        System.out.println(StringUtils.singlyListNodeToString(oneLN));
-        System.out.println(StringUtils.singlyListNodeToString(obj.removeElementFromEnd(oneLN, 4)));
+        //System.out.println(StringUtils.singlyListNodeToString(oneLN));
+        //System.out.println(StringUtils.singlyListNodeToString(obj.removeElementFromEnd(oneLN, 4)));
+
+        List<String> lines = obj.justify(new String[] {"the", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog"}, 10);
+        System.out.print(StringUtils.listStringsToString(lines));
     }
 }
