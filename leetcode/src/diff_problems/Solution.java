@@ -1081,6 +1081,60 @@ public class Solution {
         res.add(sb.toString());
     }
 
+    /**
+     * This problem was asked by Amazon.
+     *
+     * Run-length encoding is a fast and simple method of encoding strings. The basic idea is to represent repeated successive
+     * characters as a single count and character. For example, the string "AAAABBBCCDAA" would be encoded as "4A3B2C1D2A".
+     *
+     * Implement run-length encoding and decoding. You can assume the string to be encoded have no digits and consists
+     * solely of alphabetic characters. You can assume the string to be decoded is valid.
+     *
+     * @param s
+     * @return
+     */
+    String encode(String s) {
+        int c = 0;
+        char ch = '0';
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            char nextCh = s.charAt(i);
+            if (nextCh != ch) {
+                if (c == 0) {
+                    ch = nextCh;
+                    c++;
+                } else {
+                    sb.append(c).append(ch);
+                    c = 1;
+                    ch = nextCh;
+                }
+            }
+            else
+                c++;
+        }
+        if (c > 0)
+            sb.append(c).append(ch);
+        return sb.toString();
+    }
+
+    String decode(String s) {
+        StringBuilder sb = new StringBuilder();
+        String counterString = "";
+        for (int i = 0; i < s.length(); i++) {
+            char nextCh = s.charAt(i);
+            //this is a number
+            if (Character.isDigit(nextCh)) {
+                counterString = counterString + nextCh;
+            } else {
+                int count = Integer.parseInt(counterString);
+                for (int j = 0; j < count; j++)
+                    sb.append(nextCh);
+                counterString = "";
+            }
+        }
+        return sb.toString();
+    }
+
     public static void main(String[] args) {
         Solution obj = new Solution();
         //[3,5,1,6,2,9,8,null,null,7,4]
@@ -1223,6 +1277,14 @@ public class Solution {
         //System.out.println(StringUtils.singlyListNodeToString(obj.removeElementFromEnd(oneLN, 4)));
 
         List<String> lines = obj.justify(new String[] {"the", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog"}, 10);
-        System.out.print(StringUtils.listStringsToString(lines));
+        //System.out.print(StringUtils.listStringsToString(lines));
+
+        String s = "AAABBBDDDFFFGGGSSSSAAAAAAAAAAAAAAAAAABD";
+        String encoded = obj.encode(s);
+        System.out.println(s);
+        System.out.println("encoded: " + encoded);
+        String decoded = obj.decode(encoded);
+        System.out.println("decoded: " + decoded);
+        System.out.print("result : " + s.equals(decoded));
     }
 }
