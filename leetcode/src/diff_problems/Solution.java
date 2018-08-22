@@ -1265,6 +1265,53 @@ public class Solution {
         return sb.toString();
     }
 
+    int getWaterTrapped(int[] arr) {
+        return getCapacityWithExtraArray(arr);
+    }
+
+    /**
+     * This problem was asked by Facebook.
+     *
+     * You are given an array of non-negative integers that represents a two-dimensional elevation map where each
+     * element is unit-width wall and the integer is the height. Suppose it will rain and all spots between two walls
+     * get filled up.
+     *
+     * Compute how many units of water remain trapped on the map in O(N) time and O(1) space.
+     *
+     * For example, given the input [2, 1, 2], we can hold 1 unit of water in the middle.
+     *
+     * Given the input [3, 0, 1, 3, 0, 5], we can hold 3 units in the first index, 2 in the second, and 3 in the fourth
+     * index (we cannot hold 5 since it would run off to the left), so we can trap 8 units of water.
+     *
+     * @param arr
+     * @return
+     */
+    private int getCapacityWithExtraArray(int[] arr) {
+        if (arr == null || arr.length < 3)
+            return 0;
+        //fill columns of max capacity first from left and from right. Before the next max
+        //all previous elements are filled with previous max
+        //then iterate over both arrays and check for the min between max. Then subtract form it current array element
+        //and this will be the capacity
+        int[] lMaxArr = new int[arr.length];
+        int lMax = arr[0];
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] > lMax) lMax = arr[i];
+            lMaxArr[i] = lMax;
+        }
+        int[] rMaxArr = new int[arr.length];
+        int rMax = arr[0];
+        for (int i = arr.length - 1; i >= 0; i--) {
+            if (arr[i] > rMax) rMax = arr[i];
+            rMaxArr[i] = rMax;
+        }
+        int c = 0;
+        for (int i = 0; i < arr.length; i++) {
+            c+= Math.min(rMaxArr[i], lMaxArr[i]) - arr[i];
+        }
+        return c;
+    }
+
     public static void main(String[] args) {
         Solution obj = new Solution();
         //[3,5,1,6,2,9,8,null,null,7,4]
@@ -1424,12 +1471,16 @@ public class Solution {
         List<String> lines = obj.justify(new String[] {"the", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog"}, 10);
         //System.out.print(StringUtils.listStringsToString(lines));
 
-        String s = "AAABBBDDDFFFGGGSSSSAAAAAAAAAAAAAAAAAABD";
+        /*String s = "AAABBBDDDFFFGGGSSSSAAAAAAAAAAAAAAAAAABD";
         String encoded = obj.encode(s);
         System.out.println(s);
         System.out.println("encoded: " + encoded);
         String decoded = obj.decode(encoded);
         System.out.println("decoded: " + decoded);
-        System.out.print("result : " + s.equals(decoded));
+        System.out.print("result : " + s.equals(decoded));*/
+
+        System.out.println(obj.getWaterTrapped(new int[]{2, 1, 2}));
+        System.out.println(obj.getWaterTrapped(new int[]{1, 2, 4, 2}));
+        System.out.println(obj.getWaterTrapped(new int[]{3, 0, 1, 3, 0, 5}));
     }
 }
