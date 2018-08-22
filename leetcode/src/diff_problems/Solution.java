@@ -1299,14 +1299,16 @@ public class Solution {
                 maxIndex = i;
             }
         }
-        //now iterate from the 0 to max
+        //now iterate from the 0 to max. we know that for sure capacity is no less than the
+        //maximum element from 0 to max index (exclusive). So it's sufficient to find only running
+        //maximum
         int c = 0;
         int maxL = arr[0];
         for (int i =1; i < maxIndex; i++) {
             maxL = Math.max(maxL, arr[i]);
             c += maxL - arr[i];
         }
-        //end from max to last
+        //and from max to last - similar idea, just iterate from end to max index
         int maxR = arr[arr.length - 1];
         for (int i = arr.length - 2; i > maxIndex; i--) {
             maxR = Math.max(maxR, arr[i]);
@@ -1315,6 +1317,11 @@ public class Solution {
         return c;
     }
 
+    /**
+     * this is non optimal implementation in terms of space - we need two extra arrays
+     * @param arr
+     * @return
+     */
     private int getCapacityWithExtraArray(int[] arr) {
         if (arr == null || arr.length < 3)
             return 0;
