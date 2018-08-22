@@ -1265,10 +1265,6 @@ public class Solution {
         return sb.toString();
     }
 
-    int getWaterTrapped(int[] arr) {
-        return getCapacityWithExtraArray(arr);
-    }
-
     /**
      * This problem was asked by Facebook.
      *
@@ -1286,6 +1282,39 @@ public class Solution {
      * @param arr
      * @return
      */
+    int getWaterTrapped(int[] arr) {
+        //return getCapacityWithExtraArray(arr);
+        return capacity(arr);
+    }
+
+    int capacity(int[] arr) {
+        if (arr == null || arr.length < 3)
+            return 0;
+        int maxVal = -1;
+        int maxIndex = -1;
+        //first find max element
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] > maxVal) {
+                maxVal = arr[i];
+                maxIndex = i;
+            }
+        }
+        //now iterate from the 0 to max
+        int c = 0;
+        int maxL = arr[0];
+        for (int i =1; i < maxIndex; i++) {
+            maxL = Math.max(maxL, arr[i]);
+            c += maxL - arr[i];
+        }
+        //end from max to last
+        int maxR = arr[arr.length - 1];
+        for (int i = arr.length - 2; i > maxIndex; i--) {
+            maxR = Math.max(maxR, arr[i]);
+            c += maxR - arr[i];
+        }
+        return c;
+    }
+
     private int getCapacityWithExtraArray(int[] arr) {
         if (arr == null || arr.length < 3)
             return 0;
