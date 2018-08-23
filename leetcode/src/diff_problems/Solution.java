@@ -1348,6 +1348,68 @@ public class Solution {
         return c;
     }
 
+    /**
+     * This problem was asked by Google.
+     *
+     * The edit distance between two strings refers to the minimum number of character insertions, deletions,
+     * and substitutions required to change one string to the other. For example, the edit distance between “kitten” and
+     * “sitting” is three: substitute the “k” for “s”, substitute the “e” for “i”, and append a “g”.
+     *
+     * Given two strings, compute the edit distance between them.
+     * @param s1
+     * @param s2
+     * @return
+     */
+    int editDistance(String s1, String s2) {
+        //return recursiveSlow(s1, s2);
+        return getDistanceDynProg(s1, s2);
+    }
+
+    private int getDistanceDynProg(String s1, String s2) {
+        //do dp approach - create matrix sol where [i][j] is edit distance between s1[i:] and s2[j:]
+        //we need one extra col and row to store initial values
+        int l1 = s1.length() + 1;
+        int l2 = s2.length() + 1;
+
+        int[][] sol = new int[l1][l2];
+        //init matrix. for every first letter the distance will be the running +1 number due to difference in length
+        for(int i = 0; i < l1; i++)
+            sol[i][0] = i;
+        for(int i = 0; i < l2; i++)
+            sol[0][i] = i;
+
+        //main cycle
+        for (int i = 1; i < l1; i++) {
+            for (int j = 1; j < l2; j++) {
+                //if symbols are identical in both strings - carry over value from previous cell
+                if (s1.charAt(i - 1) == s2.charAt(j - 1))
+                    sol[i][j] = sol[i - 1][j - 1];
+                else {
+                    //if symbols are not equal - calculate minimum (we need min distance) between following:
+                    //- previous in both strings
+                    //- current with s2 string and previous with s1
+                    //- current with s1 string and previous with s2
+                    //need to add 1 because we need to change current symbol
+                    sol[i][j] = 1 + Math.min(sol[i - 1][j - 1],
+                            Math.min(sol[i - 1][j], sol[i][j - 1] ));
+                }
+            }
+        }
+        return sol[l1 - 1][l2 - 1];
+    }
+
+    private int recursiveSlow(String s1, String s2) {
+        if (s1.length() == 0 || s2.length() == 0)
+            return Math.max(s1.length(), s2.length());
+
+        int len1 = recursiveSlow(s1.substring(1), s2.substring(1));
+        if (s1.charAt(0) != s2.charAt(0))
+            len1++;
+        int len2 = recursiveSlow(s1.substring(1), s2) + 1;
+        int len3 = recursiveSlow(s1, s2.substring(1)) + 1;
+        return Math.min(len1, Math.min(len2, len3));
+    }
+
     public static void main(String[] args) {
         Solution obj = new Solution();
         //[3,5,1,6,2,9,8,null,null,7,4]
@@ -1515,8 +1577,15 @@ public class Solution {
         System.out.println("decoded: " + decoded);
         System.out.print("result : " + s.equals(decoded));*/
 
-        System.out.println(obj.getWaterTrapped(new int[]{2, 1, 2}));
+        /*System.out.println(obj.getWaterTrapped(new int[]{2, 1, 2}));
         System.out.println(obj.getWaterTrapped(new int[]{1, 2, 4, 2}));
-        System.out.println(obj.getWaterTrapped(new int[]{3, 0, 1, 3, 0, 5}));
+        System.out.println(obj.getWaterTrapped(new int[]{3, 0, 1, 3, 0, 5}));*/
+
+        System.out.println(obj.editDistance("kitten", "sitting")); //3
+        System.out.println(obj.editDistance("table", "tablet")); //1
+        System.out.println(obj.editDistance("ruler", "person")); //6
+        System.out.println(obj.editDistance("edit distance", "we define")); //6
+        System.out.println(obj.editDistance("The edit distance between two strings refers to the minimum number of character insertions, deletions, and substitutions ",
+                "First, notice that we can probably define this problem recursively. How can we notice this? If we look at the example (kitten ")); //101, first solution goes to infinity loop
     }
 }
