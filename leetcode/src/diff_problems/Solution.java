@@ -1410,6 +1410,187 @@ public class Solution {
         return Math.min(len1, Math.min(len2, len3));
     }
 
+    /**
+     * This problem was asked by Jane Street.
+     *
+     * Suppose you are given a table of currency exchange rates, represented as a 2D array. Determine whether there
+     * is a possible arbitrage: that is, whether there is some sequence of trades you can make, starting with some
+     * amount A of any currency, so that you can end up with some amount greater than A of that currency.
+     *
+     * There are no transaction costs and you can trade fractional quantities.
+     *
+     * @param rates
+     * @return
+     */
+    boolean isProfit(float[][] rates) {
+        int n = rates.length;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                rates[i][j] = -(float) Math.log(rates[i][j]);
+            }
+        }
+        float[] minDinstances = new float[n];
+        Arrays.fill(minDinstances, Float.POSITIVE_INFINITY);
+        minDinstances[0] = 0;
+
+        List<String> profitPath = new LinkedList<>();
+
+        for (int c = 0; c < n - 1; c++) {
+            for (int i = 0; i < n; i++) {
+                String point = "";
+                for (int j = 0; j < n; j++) {
+                    if (minDinstances[j] > minDinstances[i] + rates[i][j]) {
+                        minDinstances[j] = minDinstances[i] + rates[i][j];
+                        point = "" + i + "," + j;
+                    }
+                }
+                profitPath.add(point);
+            }
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (minDinstances[j] > minDinstances[i] + rates[i][j]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * This problem was asked by Microsoft.
+     *
+     * Compute the running median of a sequence of numbers. That is, given a stream of numbers, print out the median
+     * of the list so far on each new element.
+     *
+     * Recall that the median of an even-numbered list is the average of the two middle numbers.
+     *
+     * For example, given the sequence [2, 1, 5, 7, 2, 0, 5], your algorithm should print out:
+     *
+     * 2
+     * 1.5
+     * 2
+     * 3.5
+     * 2
+     * 2
+     * 2
+     * @param arr
+     * @return
+     */
+    List<String> runningMedian(int[] arr) {
+        //two heaps - min-heap and max-heap, that keep between then median. Trick is to keep it balanced
+        List<String> med = new LinkedList();
+        PriorityQueue<Integer> minQ = new PriorityQueue();
+        //this is max heap, java has only min-heap by default
+        PriorityQueue<Integer> maxQ = new PriorityQueue<>((x, y) -> y - x);
+        for (int i = 0; i < arr.length; i++) {
+            //special case - both heaps are empty
+            if (minQ.size() == 0 && maxQ.size() == 0) {
+                maxQ.add(arr[i]);
+                med.add(String.valueOf(arr[i]));
+                continue;
+            }
+            //decide to which heap we put element. min-heap is out default for equals
+            float maxMed = maxQ.peek();
+            if (arr[i] < maxMed) {
+                maxQ.add(arr[i]);
+            } else {
+                minQ.add(arr[i]);
+            }
+            //now balance queues as per size and get our median
+            if (maxQ.size() == minQ.size())
+                med.add(String.valueOf(getMedainFromHeaps(minQ, maxQ)));
+            else if (maxQ.size() == minQ.size() + 1)
+                med.add(String.valueOf(maxQ.peek()));
+            else if (maxQ.size() > minQ.size() + 1) {
+                minQ.add(maxQ.poll());
+                med.add(String.valueOf(getMedainFromHeaps(minQ, maxQ)));
+            } else if (minQ.size() == maxQ.size() + 1)
+                med.add(String.valueOf((float)minQ.peek()));
+            else if (minQ.size() > maxQ.size() + 1) {
+                maxQ.add(minQ.poll());
+                med.add(String.valueOf(getMedainFromHeaps(minQ, maxQ)));
+            }
+        }
+        return med;
+    }
+
+    private float getMedainFromHeaps(PriorityQueue<Integer> minQ, PriorityQueue<Integer> maxQ) {
+        return (float) (maxQ.peek() + minQ.peek()) / 2;
+    }
+
+    /**
+     * This problem was asked by Quora.
+     *
+     * Given a string, find the palindrome that can be made by inserting the fewest number of characters as
+     * possible anywhere in the word. If there is more than one palindrome of minimum length that can be made,
+     * return the lexicographically earliest one (the first one alphabetically).
+     *
+     * For example, given the string "race", you should return "ecarace", since we can add three letters to it
+     * (which is the smallest amount to make a palindrome). There are seven other palindromes that can be made from
+     * "race" by adding three letters, but "ecarace" comes first alphabetically.
+     *
+     * As another example, given the string "google", you should return "elgoogle".
+     * @param s
+     * @return
+     */
+    String makePalindrome(String s) {
+        //check palindrome
+        int centerPointer = (s.length() / 2) - 1;
+        boolean isCheckFailed = false;
+        for (int i = 0; i <= centerPointer; i++) {
+            if (s.charAt(i) != s.charAt(s.length() - i - 1)) {
+                isCheckFailed = true;
+                break;
+            }
+        }
+        if (!isCheckFailed)
+            return s;
+        //chacking for palindrome, need to check 2 cases because we can either append from the begging or to the end
+        //for appending to an end: need two pointers, first at 0, second at last char. Then checking for equal chars,
+        //if they are equals - move both pointers to the center. If not - insert to the end char from the left pointer
+        //do this till pointers will met
+        //then do the same but inserting missing symbols to the beginning
+        //then with two palindroms pick the shortest one, one in case of draw - one lexicographically smaller
+        StringBuilder sb = new StringBuilder(s);
+        int l = 0;
+        int r = sb.length() - 1;
+        while (l < r) {
+            if (sb.charAt(l) == sb.charAt(r)) {
+                l++;
+                r--;
+            } else {
+                sb.insert(r + 1, sb.charAt(l));
+                l++;
+            }
+        }
+        String pali1 = sb.toString();
+        sb = new StringBuilder(s);
+        l = 0;
+        r = sb.length() - 1;
+        while (l < r) {
+            if (sb.charAt(l) == sb.charAt(r)) {
+                l++;
+                r--;
+            } else {
+                sb.insert(l, sb.charAt(r));
+                l++;
+            }
+        }
+        String pali2 = sb.toString();
+        if (pali1.length() < pali2.length())
+            return pali1;
+        else if (pali1.length() > pali2.length())
+            return pali2;
+        else {
+            if (pali1.charAt(0) < pali2.charAt(0))
+                return pali1;
+            else
+                return pali2;
+        }
+    }
+
     public static void main(String[] args) {
         Solution obj = new Solution();
         //[3,5,1,6,2,9,8,null,null,7,4]
@@ -1559,10 +1740,10 @@ public class Solution {
         System.out.println(obj.isMatch("this is very expensive algorithm to check matches in a strange useless string", ".*this is very expensive."));
         */
 
-        System.out.println(obj.isBalanced("([])[]({})"));
+        /*System.out.println(obj.isBalanced("([])[]({})"));
         System.out.println(obj.isBalanced("([)]"));
         System.out.println(obj.isBalanced("([{[]}])[]({{}})"));
-        System.out.println(obj.isBalanced("((()"));
+        System.out.println(obj.isBalanced("((()"));*/
         //System.out.println(StringUtils.singlyListNodeToString(oneLN));
         //System.out.println(StringUtils.singlyListNodeToString(obj.removeElementFromEnd(oneLN, 4)));
 
@@ -1581,11 +1762,41 @@ public class Solution {
         System.out.println(obj.getWaterTrapped(new int[]{1, 2, 4, 2}));
         System.out.println(obj.getWaterTrapped(new int[]{3, 0, 1, 3, 0, 5}));*/
 
-        System.out.println(obj.editDistance("kitten", "sitting")); //3
+        /*System.out.println(obj.editDistance("kitten", "sitting")); //3
         System.out.println(obj.editDistance("table", "tablet")); //1
         System.out.println(obj.editDistance("ruler", "person")); //6
         System.out.println(obj.editDistance("edit distance", "we define")); //6
         System.out.println(obj.editDistance("The edit distance between two strings refers to the minimum number of character insertions, deletions, and substitutions ",
                 "First, notice that we can probably define this problem recursively. How can we notice this? If we look at the example (kitten ")); //101, first solution goes to infinity loop
+        */
+        /*System.out.println(obj.isProfit(new float[][] {
+                {1.0f, 6.8890f, 7.7666f},
+                {0.1452f, 1.0f, 1.2740f},
+                {0.1288f, 0.8870f, 1.0f}
+        }));
+
+        System.out.println(obj.isProfit(new float[][] {
+                {1.0f, 1.2f, 1.0f},
+                {.9f, 1.0f, 1.0f},
+                {1.0f, 1.0f, 1.0f}
+        }));
+
+        System.out.println(obj.isProfit(new float[][] {
+                {1.0f, 2.0f},
+                {.45f, 1.0f}
+        }));*/
+        /*
+        List<String> runningMeds = obj.runningMedian(new int[]{2, 1, 5, 7, 2, 0, 5});
+        System.out.println(StringUtils.listStringsToString(runningMeds));
+
+        runningMeds = obj.runningMedian(new int[]{5, 1, 2, 7, 2, 10, 5});
+        System.out.println(StringUtils.listStringsToString(runningMeds));
+        */
+
+        System.out.println(obj.makePalindrome("abcba"));
+        System.out.println(obj.makePalindrome("abc"));
+        System.out.println(obj.makePalindrome("google"));
+        System.out.println(obj.makePalindrome("elboogle"));
+        System.out.println(obj.makePalindrome("race"));
     }
 }
