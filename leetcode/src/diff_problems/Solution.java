@@ -1536,60 +1536,94 @@ public class Solution {
      * @return
      */
     String makePalindrome(String s) {
-        //check palindrome
-        int centerPointer = (s.length() / 2) - 1;
-        boolean isCheckFailed = false;
-        for (int i = 0; i <= centerPointer; i++) {
-            if (s.charAt(i) != s.charAt(s.length() - i - 1)) {
-                isCheckFailed = true;
-                break;
-            }
-        }
-        if (!isCheckFailed)
-            return s;
-        //chacking for palindrome, need to check 2 cases because we can either append from the begging or to the end
+        //checking for palindrome, need to check 2 cases because we can either append from the begging or to the end
         //for appending to an end: need two pointers, first at 0, second at last char. Then checking for equal chars,
         //if they are equals - move both pointers to the center. If not - insert to the end char from the left pointer
         //do this till pointers will met
         //then do the same but inserting missing symbols to the beginning
         //then with two palindroms pick the shortest one, one in case of draw - one lexicographically smaller
+        String palindrome1 = createPalindrome(s, true);
+        String palindrome2 = createPalindrome(s, false);
+        if (palindrome1.length() < palindrome2.length())
+            return palindrome1;
+        else if (palindrome1.length() > palindrome2.length())
+            return palindrome2;
+        else if (palindrome1.charAt(0) < palindrome2.charAt(0))
+            return palindrome1;
+        else
+            return palindrome2;
+    }
+
+    String createPalindrome(String s, boolean isAppendToEnd) {
+        //flag isAppendToEnd indicates whether we append letters to the tail or to the head of initial string
         StringBuilder sb = new StringBuilder(s);
-        int l = 0;
-        int r = sb.length() - 1;
+        //two pointers technique - one points to 1-st, second - to the last char of string
+        int l = 0, r = sb.length() - 1;
         while (l < r) {
+            //if symbols of both edges are equal - palindrome invariant kept so just move both pointers
             if (sb.charAt(l) == sb.charAt(r)) {
                 l++;
                 r--;
             } else {
-                sb.insert(r + 1, sb.charAt(l));
+                //if invariant not kept - insert letter to make string 1 symbol more palindromic. We don't need
+                //to increment right pointer because letter has been inserted so all chars shifted
+                if (isAppendToEnd)
+                    sb.insert(r + 1, sb.charAt(l));
+                else
+                    sb.insert(l, sb.charAt(r));
                 l++;
             }
         }
-        String pali1 = sb.toString();
-        sb = new StringBuilder(s);
-        l = 0;
-        r = sb.length() - 1;
-        while (l < r) {
-            if (sb.charAt(l) == sb.charAt(r)) {
-                l++;
-                r--;
-            } else {
-                sb.insert(l, sb.charAt(r));
-                l++;
+        return sb.toString();
+    }
+
+    /**
+     * This problem was asked by Google.
+     *
+     * Given an array of strictly the characters 'R', 'G', and 'B', segregate the values of the array so that all the
+     * Rs come first, the Gs come second, and the Bs come last. You can only swap elements of the array.
+     *
+     * Do this in linear time and in-place.
+     *
+     * For example, given the array ['G', 'B', 'R', 'R', 'B', 'R', 'G'], it should become ['R', 'R', 'R', 'G', 'G', 'B', 'B'].
+     * @param arr
+     */
+    void sortArray(char[] arr) {
+        //do just counting, B counter start from the end, R starts from the beginning. Pointer for G sarts from the
+        //beginning as well, but it's a running pointer. Note how we skip m++ for 'B'
+        // We also check in swap method that elements are the same - in
+        //this case we skip the swap.
+
+        // l - 'R', m - 'G', r - 'B'
+        int l = 0, m = 0, r = arr.length - 1;
+        while (m <= r) {
+            switch (arr[m]) {
+                case 'R':
+                    swap(arr, l, m);
+                    l++;
+                    m++;
+                    break;
+                case 'G':
+                    m++;
+                    break;
+                case 'B':
+                    swap(arr, r, m);
+                    r--;
+                    break;
+                default:
+                    break;
             }
-        }
-        String pali2 = sb.toString();
-        if (pali1.length() < pali2.length())
-            return pali1;
-        else if (pali1.length() > pali2.length())
-            return pali2;
-        else {
-            if (pali1.charAt(0) < pali2.charAt(0))
-                return pali1;
-            else
-                return pali2;
         }
     }
+
+    void swap(char[] arr, int i, int j) {
+        if (arr[i] != arr[j]) {
+            char temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+
 
     public static void main(String[] args) {
         Solution obj = new Solution();
@@ -1793,10 +1827,14 @@ public class Solution {
         System.out.println(StringUtils.listStringsToString(runningMeds));
         */
 
-        System.out.println(obj.makePalindrome("abcba"));
+        /*System.out.println(obj.makePalindrome("abcba"));
         System.out.println(obj.makePalindrome("abc"));
         System.out.println(obj.makePalindrome("google"));
         System.out.println(obj.makePalindrome("elboogle"));
-        System.out.println(obj.makePalindrome("race"));
+        System.out.println(obj.makePalindrome("race"));*/
+        char[] arr = new char[] {'G', 'B', 'R', 'R', 'G', 'G', 'G', 'B', 'R', 'R', 'R', 'G', 'B', 'G', 'B', 'R', 'R', 'G',
+                'G', 'G', 'B', 'R', 'R', 'R', 'G', 'B', 'G', 'B', 'R', 'R', 'G', 'G', 'G', 'B', 'R', 'R', 'R', 'G', 'B'};
+        obj.sortArray(arr);
+        System.out.println(new String(arr));
     }
 }
