@@ -1412,6 +1412,221 @@ public class Solution {
         return Math.min(len1, Math.min(len2, len3));
     }
 
+    /**
+     * This problem was asked by Jane Street.
+     *
+     * Suppose you are given a table of currency exchange rates, represented as a 2D array. Determine whether there
+     * is a possible arbitrage: that is, whether there is some sequence of trades you can make, starting with some
+     * amount A of any currency, so that you can end up with some amount greater than A of that currency.
+     *
+     * There are no transaction costs and you can trade fractional quantities.
+     *
+     * @param rates
+     * @return
+     */
+    boolean isProfit(float[][] rates) {
+        int n = rates.length;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                rates[i][j] = -(float) Math.log(rates[i][j]);
+            }
+        }
+        float[] minDinstances = new float[n];
+        Arrays.fill(minDinstances, Float.POSITIVE_INFINITY);
+        minDinstances[0] = 0;
+
+        List<String> profitPath = new LinkedList<>();
+
+        for (int c = 0; c < n - 1; c++) {
+            for (int i = 0; i < n; i++) {
+                String point = "";
+                for (int j = 0; j < n; j++) {
+                    if (minDinstances[j] > minDinstances[i] + rates[i][j]) {
+                        minDinstances[j] = minDinstances[i] + rates[i][j];
+                        point = "" + i + "," + j;
+                    }
+                }
+                profitPath.add(point);
+            }
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (minDinstances[j] > minDinstances[i] + rates[i][j]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * This problem was asked by Microsoft.
+     *
+     * Compute the running median of a sequence of numbers. That is, given a stream of numbers, print out the median
+     * of the list so far on each new element.
+     *
+     * Recall that the median of an even-numbered list is the average of the two middle numbers.
+     *
+     * For example, given the sequence [2, 1, 5, 7, 2, 0, 5], your algorithm should print out:
+     *
+     * 2
+     * 1.5
+     * 2
+     * 3.5
+     * 2
+     * 2
+     * 2
+     * @param arr
+     * @return
+     */
+    List<String> runningMedian(int[] arr) {
+        //two heaps - min-heap and max-heap, that keep between then median. Trick is to keep it balanced
+        List<String> med = new LinkedList();
+        PriorityQueue<Integer> minQ = new PriorityQueue();
+        //this is max heap, java has only min-heap by default
+        PriorityQueue<Integer> maxQ = new PriorityQueue<>((x, y) -> y - x);
+        for (int i = 0; i < arr.length; i++) {
+            //special case - both heaps are empty
+            if (minQ.size() == 0 && maxQ.size() == 0) {
+                maxQ.add(arr[i]);
+                med.add(String.valueOf(arr[i]));
+                continue;
+            }
+            //decide to which heap we put element. min-heap is out default for equals
+            float maxMed = maxQ.peek();
+            if (arr[i] < maxMed) {
+                maxQ.add(arr[i]);
+            } else {
+                minQ.add(arr[i]);
+            }
+            //now balance queues as per size and get our median
+            if (maxQ.size() == minQ.size())
+                med.add(String.valueOf(getMedainFromHeaps(minQ, maxQ)));
+            else if (maxQ.size() == minQ.size() + 1)
+                med.add(String.valueOf(maxQ.peek()));
+            else if (maxQ.size() > minQ.size() + 1) {
+                minQ.add(maxQ.poll());
+                med.add(String.valueOf(getMedainFromHeaps(minQ, maxQ)));
+            } else if (minQ.size() == maxQ.size() + 1)
+                med.add(String.valueOf((float)minQ.peek()));
+            else if (minQ.size() > maxQ.size() + 1) {
+                maxQ.add(minQ.poll());
+                med.add(String.valueOf(getMedainFromHeaps(minQ, maxQ)));
+            }
+        }
+        return med;
+    }
+
+    private float getMedainFromHeaps(PriorityQueue<Integer> minQ, PriorityQueue<Integer> maxQ) {
+        return (float) (maxQ.peek() + minQ.peek()) / 2;
+    }
+
+    /**
+     * This problem was asked by Quora.
+     *
+     * Given a string, find the palindrome that can be made by inserting the fewest number of characters as
+     * possible anywhere in the word. If there is more than one palindrome of minimum length that can be made,
+     * return the lexicographically earliest one (the first one alphabetically).
+     *
+     * For example, given the string "race", you should return "ecarace", since we can add three letters to it
+     * (which is the smallest amount to make a palindrome). There are seven other palindromes that can be made from
+     * "race" by adding three letters, but "ecarace" comes first alphabetically.
+     *
+     * As another example, given the string "google", you should return "elgoogle".
+     * @param s
+     * @return
+     */
+    String makePalindrome(String s) {
+        //checking for palindrome, need to check 2 cases because we can either append from the begging or to the end
+        //for appending to an end: need two pointers, first at 0, second at last char. Then checking for equal chars,
+        //if they are equals - move both pointers to the center. If not - insert to the end char from the left pointer
+        //do this till pointers will met
+        //then do the same but inserting missing symbols to the beginning
+        //then with two palindroms pick the shortest one, one in case of draw - one lexicographically smaller
+        String palindrome1 = createPalindrome(s, true);
+        String palindrome2 = createPalindrome(s, false);
+        if (palindrome1.length() < palindrome2.length())
+            return palindrome1;
+        else if (palindrome1.length() > palindrome2.length())
+            return palindrome2;
+        else if (palindrome1.charAt(0) < palindrome2.charAt(0))
+            return palindrome1;
+        else
+            return palindrome2;
+    }
+
+    String createPalindrome(String s, boolean isAppendToEnd) {
+        //flag isAppendToEnd indicates whether we append letters to the tail or to the head of initial string
+        StringBuilder sb = new StringBuilder(s);
+        //two pointers technique - one points to 1-st, second - to the last char of string
+        int l = 0, r = sb.length() - 1;
+        while (l < r) {
+            //if symbols of both edges are equal - palindrome invariant kept so just move both pointers
+            if (sb.charAt(l) == sb.charAt(r)) {
+                l++;
+                r--;
+            } else {
+                //if invariant not kept - insert letter to make string 1 symbol more palindromic. We don't need
+                //to increment right pointer because letter has been inserted so all chars shifted
+                if (isAppendToEnd)
+                    sb.insert(r + 1, sb.charAt(l));
+                else
+                    sb.insert(l, sb.charAt(r));
+                l++;
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * This problem was asked by Google.
+     *
+     * Given an array of strictly the characters 'R', 'G', and 'B', segregate the values of the array so that all the
+     * Rs come first, the Gs come second, and the Bs come last. You can only swap elements of the array.
+     *
+     * Do this in linear time and in-place.
+     *
+     * For example, given the array ['G', 'B', 'R', 'R', 'B', 'R', 'G'], it should become ['R', 'R', 'R', 'G', 'G', 'B', 'B'].
+     * @param arr
+     */
+    void sortArray(char[] arr) {
+        //do just counting, B counter start from the end, R starts from the beginning. Pointer for G sarts from the
+        //beginning as well, but it's a running pointer. Note how we skip m++ for 'B'
+        // We also check in swap method that elements are the same - in
+        //this case we skip the swap.
+
+        // l - 'R', m - 'G', r - 'B'
+        int l = 0, m = 0, r = arr.length - 1;
+        while (m <= r) {
+            switch (arr[m]) {
+                case 'R':
+                    swap(arr, l, m);
+                    l++;
+                    m++;
+                    break;
+                case 'G':
+                    m++;
+                    break;
+                case 'B':
+                    swap(arr, r, m);
+                    r--;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    void swap(char[] arr, int i, int j) {
+        if (arr[i] != arr[j]) {
+            char temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+
+
     boolean isArbitragePossible(float[][] rates) {
         float[][] logRates = new float[rates.length][rates[0].length];
 
@@ -1699,5 +1914,39 @@ public class Solution {
 
         System.out.println(obj.getSecondMax(bst.getRoot()));
         System.out.println("recursive : " + obj.getSecondMaxRecursive(bst.getRoot()));
+        */
+        /*System.out.println(obj.isProfit(new float[][] {
+                {1.0f, 6.8890f, 7.7666f},
+                {0.1452f, 1.0f, 1.2740f},
+                {0.1288f, 0.8870f, 1.0f}
+        }));
+
+        System.out.println(obj.isProfit(new float[][] {
+                {1.0f, 1.2f, 1.0f},
+                {.9f, 1.0f, 1.0f},
+                {1.0f, 1.0f, 1.0f}
+        }));
+
+        System.out.println(obj.isProfit(new float[][] {
+                {1.0f, 2.0f},
+                {.45f, 1.0f}
+        }));*/
+        /*
+        List<String> runningMeds = obj.runningMedian(new int[]{2, 1, 5, 7, 2, 0, 5});
+        System.out.println(StringUtils.listStringsToString(runningMeds));
+
+        runningMeds = obj.runningMedian(new int[]{5, 1, 2, 7, 2, 10, 5});
+        System.out.println(StringUtils.listStringsToString(runningMeds));
+        */
+
+        /*System.out.println(obj.makePalindrome("abcba"));
+        System.out.println(obj.makePalindrome("abc"));
+        System.out.println(obj.makePalindrome("google"));
+        System.out.println(obj.makePalindrome("elboogle"));
+        System.out.println(obj.makePalindrome("race"));*/
+        char[] arr = new char[] {'G', 'B', 'R', 'R', 'G', 'G', 'G', 'B', 'R', 'R', 'R', 'G', 'B', 'G', 'B', 'R', 'R', 'G',
+                'G', 'G', 'B', 'R', 'R', 'R', 'G', 'B', 'G', 'B', 'R', 'R', 'G', 'G', 'G', 'B', 'R', 'R', 'R', 'G', 'B'};
+        obj.sortArray(arr);
+        System.out.println(new String(arr));
     }
 }
