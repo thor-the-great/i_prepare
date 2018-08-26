@@ -2,6 +2,8 @@ package diff_problems;
 
 import linked_list.ListNode;
 import linked_list.StringUtils;
+import trees.BST;
+import trees.BSTNode;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -1410,6 +1412,92 @@ public class Solution {
         return Math.min(len1, Math.min(len2, len3));
     }
 
+    boolean isArbitragePossible(float[][] rates) {
+        float[][] logRates = new float[rates.length][rates[0].length];
+
+        for (int i = 0; i < rates.length; i++) {
+            for (int j = 0; j < rates[0].length; j++) {
+                logRates[i][j] = (float) - Math.log(rates[i][j]);
+            }
+        }
+        int n = rates.length;
+        float[] minDist = new float[n];
+        Arrays.fill(minDist, Float.MAX_VALUE);
+        minDist[0] = 0;
+        //doing bellman-ford v - 1 times
+        for (int i = 0; i < n - 1; i++) {
+            for (int k = 0; k < n; k++) {
+                for (int m = 0; m < n; m++) {
+                    if (minDist[m] > minDist[k] + logRates[k][m]) {
+                        minDist[m] = minDist[k] + logRates[k][m];
+                    }
+                }
+            }
+        }
+
+        for (int k = 0; k < n; k++) {
+            for (int m = 0; m < n; m++) {
+                if (minDist[m] > minDist[k] + logRates[k][m]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * This problem was asked by Dropbox.
+     *
+     * Given the root to a binary search tree, find the second largest node in the tree.
+     *
+     * @param root
+     * @return
+     */
+    int getSecondMax(BSTNode root) {
+        //idea is to use inorder traversal. This order gives us sorted order of elements, where we need to pick one
+        //as per condition - second in our case
+        //there are two ways to do the traversal - iterative and recursive
+        //return getSecondMaxRecursive(root);
+        return getSecondMaxIterative(root);
+    }
+
+    int getSecondMaxIterative(BSTNode root) {
+        int count = 0;
+        int maxElement = -1;
+        Stack<BSTNode> stack = new Stack<>();
+        BSTNode current = root.right;
+        while ((!stack.isEmpty() || current != null) && count < 2) {
+            while (current != null) {
+                stack.push(current);
+                current = current.right;
+            }
+
+            current = stack.pop();
+            maxElement = current.val;
+            count++;
+            current = current.left;
+        }
+        return maxElement;
+    }
+
+    int getSecondMaxRecursive(BSTNode root) {
+        List<Integer> inOrderValues = new LinkedList();
+        inOrder(root, inOrderValues);
+        if (inOrderValues.size() >= 2)
+            return inOrderValues.get(1);
+        else
+            return -1;
+    }
+
+    void inOrder(BSTNode node, List<Integer> inOrderValues) {
+        if (node == null || inOrderValues.size() >= 2)
+            return;
+        inOrder(node.right, inOrderValues);
+        inOrderValues.add(node.val);
+        inOrder(node.left, inOrderValues);
+    }
+
+
     public static void main(String[] args) {
         Solution obj = new Solution();
         //[3,5,1,6,2,9,8,null,null,7,4]
@@ -1559,10 +1647,10 @@ public class Solution {
         System.out.println(obj.isMatch("this is very expensive algorithm to check matches in a strange useless string", ".*this is very expensive."));
         */
 
-        System.out.println(obj.isBalanced("([])[]({})"));
+        /*System.out.println(obj.isBalanced("([])[]({})"));
         System.out.println(obj.isBalanced("([)]"));
         System.out.println(obj.isBalanced("([{[]}])[]({{}})"));
-        System.out.println(obj.isBalanced("((()"));
+        System.out.println(obj.isBalanced("((()"));*/
         //System.out.println(StringUtils.singlyListNodeToString(oneLN));
         //System.out.println(StringUtils.singlyListNodeToString(obj.removeElementFromEnd(oneLN, 4)));
 
@@ -1581,11 +1669,35 @@ public class Solution {
         System.out.println(obj.getWaterTrapped(new int[]{1, 2, 4, 2}));
         System.out.println(obj.getWaterTrapped(new int[]{3, 0, 1, 3, 0, 5}));*/
 
-        System.out.println(obj.editDistance("kitten", "sitting")); //3
+        /*System.out.println(obj.editDistance("kitten", "sitting")); //3
         System.out.println(obj.editDistance("table", "tablet")); //1
         System.out.println(obj.editDistance("ruler", "person")); //6
         System.out.println(obj.editDistance("edit distance", "we define")); //6
+        System.out.println(obj.editDistance("edit distance haha", "we define huhu"));
         System.out.println(obj.editDistance("The edit distance between two strings refers to the minimum number of character insertions, deletions, and substitutions ",
                 "First, notice that we can probably define this problem recursively. How can we notice this? If we look at the example (kitten ")); //101, first solution goes to infinity loop
+                */
+
+        System.out.println(obj.isArbitragePossible(new float[][] {
+                        {1.0f, 1.1086f, 1.2826f, 142.5609f},
+                        {0.902f, 1.0f, 1.1569f, 128.5942f},
+                        {0.7797f, 0.8644f, 1.0f, 111.1525f},
+                        {0.007f, 0.0078f, 0.009f, 1.0f}
+                }));
+
+        System.out.println(obj.isArbitragePossible(new float[][] {
+                {1.0f, 0.5f},
+                {1.5f, 1.0f}
+        }));
+
+        BST bst = new BST();
+        Random rand = new Random();
+        for (int i = 0; i < 20; i++) {
+            bst.add(rand.nextInt(100));
+        }
+        System.out.println(bst.toString());
+
+        System.out.println(obj.getSecondMax(bst.getRoot()));
+        System.out.println("recursive : " + obj.getSecondMaxRecursive(bst.getRoot()));
     }
 }
