@@ -83,18 +83,42 @@ public class BinarySearchTree <Key extends Comparable, Value> {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("BST in level order traversal : ");
-        Queue<Node> queue = new LinkedList<>();
-        queue.add(root);
-        while(!queue.isEmpty()) {
-            Node nextNode = queue.poll();
-            sb.append(nextNode.value  + ", ");
-            if (nextNode.left != null)
-                queue.add(nextNode.left);
-            if (nextNode.right != null)
-                queue.add(nextNode.right);
+        sb.append("BST in level order traversal : \n");
+
+        int bstH = getHeight(root);
+        for (int i = 1; i <= bstH; i++) {
+            sb.append(i).append(" : ");
+            printOneLevel(root, i, sb);
+            sb.append("\n");
         }
         return sb.toString();
+    }
+
+    private void printOneLevel(Node n, int i, StringBuilder sb) {
+        if (n == null) {
+            sb.append("null ");
+            return;
+        }
+        if (i == 1)
+            sb.append(n.value).append(" ");
+        else {
+            printOneLevel(n.left, i - 1, sb);
+            printOneLevel(n.right, i - 1, sb);
+        }
+    }
+
+    public int getBSTHeight() {
+        return getHeight(root);
+    }
+
+    private int getHeight(Node n) {
+        if (n == null)
+            return 0;
+        int lH = getHeight(n.left);
+        int lR = getHeight(n.right);
+
+        if (lH > lR) return lH + 1;
+        else         return lR + 1;
     }
 
     class Node {

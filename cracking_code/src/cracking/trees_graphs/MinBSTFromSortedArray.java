@@ -24,7 +24,7 @@ public class MinBSTFromSortedArray {
     }
 
     public static void main(String[] args) {
-        int[] arr = new int[] {2, 4, 60, 32, 1, 6, 78, 45, 31, 8, 10};
+        int[] arr = new int[] {2, 4, 60, 32, 1, 6, 78, 45, 31, 8, 10, 25, 7, 87, 86};
         Arrays.sort(arr);
         MinBSTFromSortedArray obj = new MinBSTFromSortedArray();
         BinarySearchTree.Node bstRoot = obj.getBST(arr);
