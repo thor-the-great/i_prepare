@@ -1712,6 +1712,73 @@ public class Solution {
         inOrder(node.left, inOrderValues);
     }
 
+    /**
+     * This problem was asked by Google.
+     *
+     * The power set of a set is the set of all its subsets. Write a function that, given a set, generates its power set.
+     *
+     * For example, given the set {1, 2, 3}, it should return {{}, {1}, {2}, {3}, {1, 2}, {1, 3}, {2, 3}, {1, 2, 3}}.
+     *
+     * You may also use a list or array to represent a set.
+     *
+     * @param array
+     * @return
+     */
+    List<List<Integer>> getPowerSet(int[] array) {
+        //return getPowerSetExtraMemmory(array);
+        return getPowerSetLongVector(array);
+    }
+
+    List<List<Integer>> getPowerSetLongVector(int[] array) {
+        List<List<Integer>> result = new LinkedList<>();
+        //this is how many elements will be in the power set
+        long powerSetSize = (long) Math.pow(2, array.length);
+        for (int c = 0; c < powerSetSize; c++) {
+            List<Integer> l = new ArrayList<>();
+            for (int i = 0; i < array.length; i++) {
+                //check the i-th bit in the counter is set, if so - print i-th element from the array to this set
+                //example - set {1, 2, 3}, counter = 000
+                //000 -> {}
+                //001 -> {a}
+                //010 -> {b}
+                //100 -> {c}
+                //101 -> {a, c}
+                //110 -> {c, b}
+                //111 -> {c, b, a}
+                if ((c & (1 << i)) > 0) {
+                    l.add(array[i]);
+                    //System.out.println("bngo " + c + ", " + i+ ", " + (c & (1 << i)));
+                }
+                else {
+                    //System.out.println("hm " + c + ", " + i + ", " + (c & (1 << i)));
+                }
+            }
+            result.add(l);
+        }
+        return result;
+    }
+
+    List<List<Integer>> getPowerSetExtraMemmory(int[] array) {
+        List<List<Integer>> result = new LinkedList<>();
+
+        for (int i = 0; i < array.length; i++) {
+            List<List<Integer>> temp = new LinkedList<>();
+            for (List<Integer> a : result) {
+                ArrayList<Integer> b = new ArrayList<>(a);
+                b.add(array[i]);
+                temp.add(b);
+            }
+            for(List<Integer> t : temp) {
+                result.add(t);
+            }
+            ArrayList<Integer> singleElement = new ArrayList<>();
+            singleElement.add(array[i]);
+            result.add(singleElement);
+        }
+        result.add(new ArrayList());
+
+        return result;
+    }
 
     public static void main(String[] args) {
         Solution obj = new Solution();
@@ -1893,7 +1960,7 @@ public class Solution {
                 "First, notice that we can probably define this problem recursively. How can we notice this? If we look at the example (kitten ")); //101, first solution goes to infinity loop
                 */
 
-        System.out.println(obj.isArbitragePossible(new float[][] {
+        /*System.out.println(obj.isArbitragePossible(new float[][] {
                         {1.0f, 1.1086f, 1.2826f, 142.5609f},
                         {0.902f, 1.0f, 1.1569f, 128.5942f},
                         {0.7797f, 0.8644f, 1.0f, 111.1525f},
@@ -1903,7 +1970,7 @@ public class Solution {
         System.out.println(obj.isArbitragePossible(new float[][] {
                 {1.0f, 0.5f},
                 {1.5f, 1.0f}
-        }));
+        }));*/
 
         BST bst = new BST();
         Random rand = new Random();
@@ -1914,7 +1981,7 @@ public class Solution {
 
         System.out.println(obj.getSecondMax(bst.getRoot()));
         System.out.println("recursive : " + obj.getSecondMaxRecursive(bst.getRoot()));
-        */
+
         /*System.out.println(obj.isProfit(new float[][] {
                 {1.0f, 6.8890f, 7.7666f},
                 {0.1452f, 1.0f, 1.2740f},
@@ -1944,9 +2011,20 @@ public class Solution {
         System.out.println(obj.makePalindrome("google"));
         System.out.println(obj.makePalindrome("elboogle"));
         System.out.println(obj.makePalindrome("race"));*/
-        char[] arr = new char[] {'G', 'B', 'R', 'R', 'G', 'G', 'G', 'B', 'R', 'R', 'R', 'G', 'B', 'G', 'B', 'R', 'R', 'G',
+
+        /*char[] arr = new char[] {'G', 'B', 'R', 'R', 'G', 'G', 'G', 'B', 'R', 'R', 'R', 'G', 'B', 'G', 'B', 'R', 'R', 'G',
                 'G', 'G', 'B', 'R', 'R', 'R', 'G', 'B', 'G', 'B', 'R', 'R', 'G', 'G', 'G', 'B', 'R', 'R', 'R', 'G', 'B'};
         obj.sortArray(arr);
         System.out.println(new String(arr));
+        */
+
+        List<List<Integer>> powerSet = obj.getPowerSet(new int[]{1, 2, 3});
+        for (List<Integer> l1: powerSet ) {
+            System.out.print("{ ");
+            for (Integer i: l1) {
+                System.out.print(i + ",");
+            }
+            System.out.println(" }");
+        }
     }
 }
