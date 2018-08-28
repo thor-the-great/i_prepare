@@ -1591,7 +1591,7 @@ public class Solution {
      * @param arr
      */
     void sortArray(char[] arr) {
-        //do just counting, B counter start from the end, R starts from the beginning. Pointer for G sarts from the
+        //do just counting, R counter l starts from the beginning, B counter r start from the end. Pointer m for G starts from the
         //beginning as well, but it's a running pointer. Note how we skip m++ for 'B'
         // We also check in swap method that elements are the same - in
         //this case we skip the swap.
@@ -1778,6 +1778,49 @@ public class Solution {
         result.add(new ArrayList());
 
         return result;
+    }
+
+    /**
+     * This problem was asked by Microsoft.
+     *
+     * You have an N by N board. Write a function that, given N, returns the number of possible arrangements of the
+     * board where N queens can be placed on the board without threatening each other, i.e. no two queens share the
+     * same row, column, or diagonal.
+     *
+     * @param n
+     * @return
+     */
+    int queenPositions(int n) {
+        return checkBoard2(n, new ArrayList<>());
+    }
+
+    int checkBoard2(int n, List<Integer> board) {
+        if (n == board.size())
+            return 1;
+
+        int count = 0;
+        board.add(0);
+        for(int i=0; i < n; i++) {
+            int lastIndex = board.size()-1;
+            board.set(lastIndex, i);
+            if (validateBoard2(board))
+                count += checkBoard2(n, board);
+        }
+        board.remove(board.size()-1);
+        return count;
+    }
+
+    boolean validateBoard2(List<Integer> board) {
+        int col = board.size() - 1;
+        int row = board.get(col);
+
+        for (int i = 0; i < col; i++) {
+            int curCol = i;
+            int curRow = board.get(i);
+            if (curCol - col == 0 || curRow - row == 0 || (Math.abs(curCol - col) == Math.abs(curRow - row)))
+                return false;
+        }
+        return true;
     }
 
     public static void main(String[] args) {
@@ -2025,6 +2068,11 @@ public class Solution {
                 System.out.print(i + ",");
             }
             System.out.println(" }");
+        }
+
+        System.out.println("Queens puzzle");
+        for (int i = 0; i< 14; i++) {
+            System.out.println(obj.queenPositions(i));
         }
     }
 }
