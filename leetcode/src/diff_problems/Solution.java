@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -1823,6 +1824,163 @@ public class Solution {
         return true;
     }
 
+    /**
+     * This problem was asked by Dropbox.
+     *
+     * Conway's Game of Life takes place on an infinite two-dimensional board of square cells. Each cell is either
+     * dead or alive, and at each tick, the following rules apply:
+     *
+     * Any live cell with less than two live neighbours dies.
+     * Any live cell with two or three live neighbours remains living.
+     * Any live cell with more than three live neighbours dies.
+     * Any dead cell with exactly three live neighbours becomes a live cell.
+     * A cell neighbours another cell if it is horizontally, vertically, or diagonally adjacent.
+     *
+     * Implement Conway's Game of Life. It should be able to be initialized with a starting list of live cell
+     * coordinates and the number of steps it should run for. Once initialized, it should print out the board state
+     * at each step. Since it's an infinite board, print out only the relevant coordinates, i.e. from the top-leftmost
+     * live cell to bottom-rightmost live cell.
+     *
+     * You can represent a live cell with an asterisk (*) and a dead cell with a dot (.).
+     * @param initLiveCells
+     * @param numOfSteps
+     */
+    void gameOfLife(List<int[]> initLiveCells, int numOfSteps) {
+        int minX = 0, minY = 0, maxX = 0, maxY = 0;
+        for(int i =0; i < initLiveCells.size(); i++) {
+            int[] nextCell = initLiveCells.get(i);
+            if (nextCell[0] > maxX) maxX = nextCell[0];
+            if (nextCell[0] < minX) minX = nextCell[0];
+            if (nextCell[1] > maxY) maxY = nextCell[1];
+            if (nextCell[1] < minX) minY = nextCell[1];
+        }
+        //int N = maxX - minX + 1;
+        //int M = maxY - minY + 1;
+        int N = maxX - minX + 1;
+        int M = maxY - minY + 1;
+
+        //init our board
+        //int[][] board = new int[N + 2][M + 2];
+        int[][] board = new int[N][M];
+        for (int[] cell: initLiveCells)
+            //board[cell[0] + 1][cell[1] + 1] = 1;
+            board[cell[0]][cell[1]] = 1;
+        printBoard(board);
+
+        int[] xSteps = new int[]{-1, -1, 0, 1, 1, 1, 0, -1};
+        int[] ySteps = new int[]{0, -1, -1, -1, 0, 1, 1, 1};
+        for (int step = 0; step < numOfSteps; step++) {
+            //for (int x = 1; x < board.length - 1; x++) {
+            for (int x = 0; x < board.length; x++) {
+                //for (int y = 1; y < board[0].length - 1; y++) {
+                for (int y = 0; y < board[0].length; y++) {
+                    //calculate next neighbors
+                    int liveAroundCount = 0;
+                    for (int i = 0; i < xSteps.length; i++) {
+                        int nx = x + xSteps[i];
+                        int ny = y + ySteps[i];
+                        if (nx < 0 || nx >= board.length || ny < 0 || ny >= board[0].length )
+                            //this condition is for out of the board cells, assume they are dead
+                            continue;
+                        if (board[nx][ny] == 1)
+                            liveAroundCount++;
+                    }
+
+                    int newState = board[x][y];
+                    if (board[x][y] == 1) {
+                        if (liveAroundCount < 2 || liveAroundCount > 3) //dies, loneliness
+                            newState = 0;
+                        else
+                            newState = 1;	//dies, overpopulation
+                    } else {
+                        if (liveAroundCount >= 3)
+                            newState = 1;   //alives
+                    }
+
+                    board[x][y] = board[x][y] + (newState << 1);
+                }
+            }
+
+            //for (int x = 1; x < board.length - 1; x++) {
+                //for (int y = 1; y < board[0].length - 1; y++) {
+            for (int x = 0; x < board.length; x++) {
+                for (int y = 0; y < board[0].length ; y++) {
+                    board[x][y] = board[x][y]>>1;
+                }
+            }
+            System.out.println("next step \n");
+            printBoard(board);
+        }
+    }
+
+    void printBoard(int[][] board) {
+        //for (int i = 1; i < board.length - 1; i++) {
+        for (int j = 0; j < board[0].length; j++) {
+            System.out.print("{ ");
+            //for (int j = 1; j < board[0].length - 1; j++) {
+            for (int i = 0; i < board.length; i++) {
+                System.out.print((board[i][j] == 0 ? " " : "*") + " ");
+            }
+            System.out.println(" }");
+        }
+    }
+
+    /**
+     * This problem was asked by Google.
+     *
+     * Given an array of integers where every integer occurs three times except for one integer, which only occurs once,
+     * find and return the non-duplicated integer.
+     *
+     * For example, given [6, 1, 3, 3, 3, 6, 6], return 1. Given [13, 19, 13, 13], return 19.
+     *
+     * Do this in O(N) time and O(1) space.
+     *
+     * @param arr
+     * @return
+     */
+    int getSingle(int arr[]) {
+        return findNonDuplicateNum(arr);
+    }
+
+    int findNonDuplicateNum(int[] arr) {
+        //this is one possible approach based on bit operations
+        //first find max number of bits (find max and get it bit count + 1)
+        //then iterate over each element of array checking each bit (up to that max bit count). on each steps create a
+        //mask by shifting one bit to that bit count position (1 << bitCount) and then check if this bit is present in
+        //array element, accumulating number of bits present. Then check number of those bits, find modulo of 3
+        //and shift this modulo on number of bitCount positions.
+        //example: (4, 7, 4, 4) = (100, 111, 100, 100)
+        //1) - mask     1, iterations 0 + 1 + 0 + 0 = 1 % 3 = 1. Shift 1 on 0 positions = 1
+        //2) - mask     10, iterations 0 + 1 + 0 + 0 = 1 % 3 = 1. Shift 1 on 1 positions = 11 (bitwise)
+        //3) - mask     100, iterations 1 + 1 + 1 + 1 = 4 % 3 = 1. Shift 1 on 2 positions = 111 (bitwise)
+        //result 111 = 7
+        int result = 0;
+        //find max element
+        int max = 0;
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] > max)
+                max = arr[i];
+        }
+        //iterate over possible bits
+        for (int bitCount = 0; bitCount < Integer.bitCount(max) + 1; bitCount++) {
+            //create mask on each step by shifting 1 on bitCount positions
+            int mask = (1 << bitCount);
+            int numOfBit = 0;
+            //iterate over each element of array
+            for (int i = 0; i < arr.length; i++) {
+                //check our mask, it's there there is a bit there then & will return 0, then increment numOfBit
+                if ((arr[i] & mask) != 0)
+                    numOfBit++;
+            }
+            //here we analyse number of times we met bit. If it's 0 or modulo 3 = 0 means those are only in duplicate
+            //numbers, thus numOfBit % 3 will be 0. Otherwise (if it's 1 or 4 or 7) this is our non-duplicate number
+            //and shift (<<) will give us some value in result. Accumulate shifted bits in result
+            result = result + ((numOfBit % 3) << bitCount);
+        }
+        return result;
+    }
+
+
     public static void main(String[] args) {
         Solution obj = new Solution();
         //[3,5,1,6,2,9,8,null,null,7,4]
@@ -2071,8 +2229,41 @@ public class Solution {
         }
 
         System.out.println("Queens puzzle");
-        for (int i = 0; i< 14; i++) {
+        for (int i = 0; i< 10; i++) {
             System.out.println(obj.queenPositions(i));
         }
+
+        System.out.print("--- game of life ------\n");
+        ArrayList<int[]> liveCells = new ArrayList<>();
+        /*liveCells.add(new int[]{1,4});
+        liveCells.add(new int[]{2,5});
+        liveCells.add(new int[]{2,6});
+        liveCells.add(new int[]{3,5});
+        liveCells.add(new int[]{3,2});
+        liveCells.add(new int[]{1,6});
+        liveCells.add(new int[]{3,6});
+        liveCells.add(new int[]{4,6});
+        liveCells.add(new int[]{6,6});
+        liveCells.add(new int[]{1,1});
+        liveCells.add(new int[]{1,2});
+        liveCells.add(new int[]{1,3});
+        liveCells.add(new int[]{0,0});*/
+
+        liveCells.add(new int[]{1,1});
+        liveCells.add(new int[]{1,2});
+        liveCells.add(new int[]{2,1});
+
+        liveCells.add(new int[]{5,3});
+        liveCells.add(new int[]{4,2});
+        liveCells.add(new int[]{5,2});
+        liveCells.add(new int[]{4,3});
+
+        liveCells.add(new int[]{6,4});
+        liveCells.add(new int[]{7,4});
+        liveCells.add(new int[]{5,4});
+
+        //obj.gameOfLife(liveCells, 10);
+        System.out.println(obj.getSingle(new int[] {4, 7, 4, 4}));
+        System.out.println(obj.getSingle(new int[] {13, 5, 4, 5, 5, 13, 13, 7,7,7}));
     }
 }
