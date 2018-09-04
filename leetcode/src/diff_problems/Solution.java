@@ -1980,6 +1980,35 @@ public class Solution {
         return result;
     }
 
+    public List<Integer> getSubset(int[] arr, int k) {
+
+        List<Integer>[][] res = new ArrayList[ arr.length + 1][k + 1];
+        for (int i = 0; i < arr.length + 1; i++) {
+            res[i][0] = new ArrayList<>();
+        }
+
+        for (int i = 1; i < arr.length + 1; i++) {
+            for (int j = 1; j < k + 1; j++) {
+                int last = arr[i - 1];
+                if (last > j) {
+                    res[i][j] = res[i - 1][j];
+                } else {
+                    if (res[i - 1][j] != null)
+                        res[i][j] = res[i - 1][j];
+                    else if (res[i - 1][j - last] != null){
+                        res[i][j] = new ArrayList<>();
+                        res[i][j].addAll(res[i - 1][j - last]);
+                        res[i][j].add(last);
+                    }
+                    else {
+                        res[i][j] = null;
+                    }
+                }
+            }
+        }
+        return res[res.length - 1] [res[0].length - 1];
+    }
+
 
     public static void main(String[] args) {
         Solution obj = new Solution();
@@ -2265,5 +2294,13 @@ public class Solution {
         //obj.gameOfLife(liveCells, 10);
         System.out.println(obj.getSingle(new int[] {4, 7, 4, 4}));
         System.out.println(obj.getSingle(new int[] {13, 5, 4, 5, 5, 13, 13, 7,7,7}));
+
+        System.out.println("");
+        List<Integer> sumList = obj.getSubset(new int[]{1, 3, 5, 2, 6, 8}, 35);
+        if (sumList != null) {
+            for (int num : sumList) {
+                System.out.print(num + ", ");
+            }
+        }
     }
 }
