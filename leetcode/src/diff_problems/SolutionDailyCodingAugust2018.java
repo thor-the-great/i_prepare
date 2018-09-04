@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingDeque;
 
-public class Solution {
+public class SolutionDailyCodingAugust2018 {
 
     /**
      * https://leetcode.com/contest/weekly-contest-94/problems/leaf-similar-trees/
@@ -2042,7 +2042,7 @@ public class Solution {
     }
 
     public static void main(String[] args) {
-        Solution obj = new Solution();
+        SolutionDailyCodingAugust2018 obj = new SolutionDailyCodingAugust2018();
         //[3,5,1,6,2,9,8,null,null,7,4]
         /*TreeNode three = new TreeNode(3);
         TreeNode five = new TreeNode(5);
@@ -2347,13 +2347,16 @@ public class Solution {
         route = obj.getRoute(flights, "A");
         System.out.println(StringUtils.listStringsToString(route));
 
-        System.out.println("");
-        List<Integer> sumList = obj.getSubset(new int[]{1, 3, 5, 2, 6, 8}, 35);
+        System.out.println("check if sum is possible");
+        List<Integer> sumList = obj.getSubset(new int[]{1, 3, 5, 2, 6, 8}, 15);
         if (sumList != null) {
             StringBuilder sb = new StringBuilder();
             sb.append("[ ");
-            for (int num : sumList) {
-                sb.append(num).append(", ");
+            for (int i = 0; i < sumList.size(); i ++) {
+                int num = sumList.get(i);
+                sb.append(num);
+                if ( i != sumList.size() - 1)
+                    sb.append(", ");
             }
             sb.append(" ]");
             System.out.println(sb.toString());
