@@ -9,7 +9,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -455,7 +454,7 @@ public class Solution {
      */
     List<String> getItinerary(List<String[]> flights, String startPoint) {
         List<String> itinerary = new ArrayList<>();
-        itinerary.add("YUL");
+        itinerary.add(startPoint);
         return getItineraryInternal(flights, itinerary);
     }
 
@@ -2009,6 +2008,38 @@ public class Solution {
         return res[res.length - 1] [res[0].length - 1];
     }
 
+    List<String> getRoute(List<String[]> legs, String start) {
+        List<String> route = new LinkedList();
+        route.add(start);
+        return check(route, legs);
+    }
+
+    List<String> check(List<String> route, List<String[]> legs) {
+        if (legs == null || legs.size() == 0)
+            return route;
+
+        //get last stop
+        String lastStop = route.get(route.size() - 1);
+        for (int i =0; i < legs.size(); i++) {
+            List<String[]> adjLegs = getLegsSubset(legs, i);
+            String origin = legs.get(i)[0];
+            String dest = legs.get(i)[1];
+            route.add(dest);
+            if (lastStop.equals(origin)) {
+                return check(route, adjLegs);
+            }
+            route.remove(route.size() - 1);
+        }
+
+        return null;
+    }
+
+    List<String[]> getLegsSubset(List<String[]> legs, int index) {
+        List<String[]> newList = new ArrayList();
+        newList.addAll(legs);
+        newList.remove(index);
+        return newList;
+    }
 
     public static void main(String[] args) {
         Solution obj = new Solution();
@@ -2056,7 +2087,7 @@ public class Solution {
         }*/
 
         //flights
-        /*List<String[]> flights = new ArrayList<>();
+        List<String[]> flights = new ArrayList<>();
         flights.add(new String[] {"HNL", "AKL"});
         flights.add(new String[] {"YUL", "ORD"});
         flights.add(new String[] {"ORD", "SFO"});
@@ -2064,8 +2095,8 @@ public class Solution {
 
 
 
-        List<String> itinerary = obj.getItinerary(flights, "YUL");
-        System.out.println(StringUtils.listStringsToString(itinerary));*/
+        //List<String> itinerary = obj.getItinerary(flights, "YUL");
+        //System.out.println(StringUtils.listStringsToString(itinerary));
 
         /*String pathString = "dir\n\tsubdir1\n\tsubdir2\n\t\tfile.ext";
         System.out.println(pathString +"\n longest path is : " + obj.findLongestPath(pathString));
@@ -2295,12 +2326,37 @@ public class Solution {
         System.out.println(obj.getSingle(new int[] {4, 7, 4, 4}));
         System.out.println(obj.getSingle(new int[] {13, 5, 4, 5, 5, 13, 13, 7,7,7}));
 
+        List<String[]> flights2 = new ArrayList<>();
+        flights2.add(new String[] {"HNL", "AKL"});
+        flights2.add(new String[] {"YUL", "ORD"});
+        flights2.add(new String[] {"ORD", "SFO"});
+        flights2.add(new String[] {"SFO", "HNL"});
+
+        List<String> route = obj.getRoute(flights2, "YUL");
+        System.out.println(StringUtils.listStringsToString(route));
+
+        List<String> route2 = obj.getRoute(flights2, "HNL");
+        System.out.println(StringUtils.listStringsToString(route2));
+
+        flights = new ArrayList<>();
+        flights.add(new String[] { "A", "B"});
+        flights.add(new String[] { "A", "C"});
+        flights.add(new String[] { "B", "C"});
+        flights.add(new String[] { "C", "A"});
+
+        route = obj.getRoute(flights, "A");
+        System.out.println(StringUtils.listStringsToString(route));
+
         System.out.println("");
         List<Integer> sumList = obj.getSubset(new int[]{1, 3, 5, 2, 6, 8}, 35);
         if (sumList != null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("[ ");
             for (int num : sumList) {
-                System.out.print(num + ", ");
+                sb.append(num).append(", ");
             }
+            sb.append(" ]");
+            System.out.println(sb.toString());
         }
     }
 }

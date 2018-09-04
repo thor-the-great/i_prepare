@@ -31,10 +31,12 @@ public class StringUtils {
     public static String listStringsToString(List<String> a) {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
-        for(int i =0;i < a.size(); i++) {
-            sb.append(a.get(i));
-            if (i < a.size() - 1)
-                sb.append(", ");
+        if (a != null) {
+            for (int i = 0; i < a.size(); i++) {
+                sb.append(a.get(i));
+                if (i < a.size() - 1)
+                    sb.append(", ");
+            }
         }
         sb.append("]");
         return sb.toString();
