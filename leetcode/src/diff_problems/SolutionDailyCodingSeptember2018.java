@@ -146,6 +146,58 @@ public class SolutionDailyCodingSeptember2018 {
         return (1 + rand.nextInt(5));
     }
 
+    /**
+     * This problem was asked by Amazon.
+     *
+     * Given a string, find the longest palindromic contiguous substring. If there are more than one with the maximum
+     * length, return any one.
+     *
+     * For example, the longest palindromic substring of "aabcdcb" is "bcdcb". The longest palindromic substring of
+     * "bananas" is "anana".
+     *
+     * @param s
+     * @return
+     */
+    String getLongestPalindrome(String s) {
+        //idea is to check for palindrome from the center. Check helper function uses two iterators technique.
+        //there are 2n - 1 possible centers for the palindrome, odd (when there is a letter in the center) and even
+        //(when two letters in center are the same).
+        //we just scan all string (O(n) time) and on each iteration checking for 2 possible palindromes (O(2*n) = O(n))
+        //then we compare and choose the longest string. For our task we keep running longest palindrome.
+        //Overall it runs in O(n^2) time and O(1) space
+        if (s.isEmpty() || s.length() == 0)
+            return s;
+
+        String result = "";
+        for (int i = 0; i < s.length(); i++) {
+            //check for 2 centers, palindrome can be with odd or even number of letters
+            String s1 = checkFromCenter(s, i, i);
+            //for this one we need to be extra careful, i+1 can go over the string length
+            String s2 = i + 1 >= s.length() ? "" : checkFromCenter(s, i, i  + 1);
+            String s12 = s1.length() > s2.length() ? s1 : s2;
+            if (s12.length() > result.length())
+                result = s12;
+        }
+        return result;
+    }
+
+    String checkFromCenter(String s, int start, int end) {
+        //checking for the palindrome, going from center. In case of odd case it can be the same position for start and end.
+        //In case of even - different letter that are next to each other
+        int L = start, R = start;
+        while (start >= 0 && end < s.length()) {
+            if (s.charAt(start) == s.charAt(end)) {
+                L = start;
+                R = end;
+                start--;
+                end++;
+            }
+            else
+                break;
+        }
+        return s.substring(L, R + 1);
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingSeptember2018 obj = new SolutionDailyCodingSeptember2018();
 
@@ -163,7 +215,7 @@ public class SolutionDailyCodingSeptember2018 {
         System.out.println(inversions);
 
         System.out.println("--------- random_7 from random_5 ---------");
-        List<Integer> randNums = new ArrayList<>();
+        /*List<Integer> randNums = new ArrayList<>();
         Map<Integer, Integer> numCount = new HashMap();
         int _NUM_OF_TRIES = 1 << 24;
         for (int i = 0; i < _NUM_OF_TRIES; i++) {
@@ -177,6 +229,53 @@ public class SolutionDailyCodingSeptember2018 {
         }
         for (int num: numCount.keySet()) {
             System.out.println(num + " = " + (float)numCount.get(num)/ _NUM_OF_TRIES );
-        }
+        }*/
+
+        System.out.println("---- longest palindrome in string -----------------");
+        String s = "";
+        s = "abcdefed1234567890";
+        System.out.println(obj.getLongestPalindrome(s));
+
+        s = "abcdefgh";
+        System.out.println(obj.getLongestPalindrome(s));
+
+        s = "a1234554wertasdf1234564321as";
+        System.out.println(obj.getLongestPalindrome(s));
+
+        s = "abcdef_12321";
+        System.out.println(obj.getLongestPalindrome(s));
+
+        s = "ALICE was beginning to get very tired of\n" +
+                "sitting by her sister on the bank, and of having\n" +
+                "nothing to do: once or twice she had peeped into\n" +
+                "the book her sister was reading, but it had no\n" +
+                "pictures or conversations in it, “ and what is\n" +
+                "B\n" +
+                "Navigate Control Internet Digital Interface by BookVirtual Corp. U.S. Patent Pending. © 2000 All Rights Reserved.\n" +
+                "Fit Page Full Screen On/Off Close Book\n" +
+                "Navigate Control Internet\n" +
+                "burning with curiosity, she ran across the field\n" +
+                "after it, and was just in time to see it pop\n" +
+                "down a large rabbit-hole under the hedge.\n" +
+                "In another moment down went Alice after\n" +
+                "it, never once considering how in the world\n" +
+                "she was to get out again.\n" +
+                "The rabbit-hole went straight on like a\n" +
+                "tunnel for some way, and then dipped suddenly\n" +
+                "down, so suddenly that Alice had not a moment\n" +
+                "to think about stopping herself before she found\n" +
+                "herself falling down what seemed to be a very\n" +
+                "deep well.\n" +
+                "Either the well was very deep, or she fell\n" +
+                "very slowly, for she had plenty of time as she\n" +
+                "went down to look about her, and to wonder\n" +
+                "what was going to happen next. First, she tried\n" +
+                "to look down and make out what she was\n" +
+                "coming to, but it was too dark to see anything :\n" +
+                "then she looked at the sides of the well, and\n" +
+                "noticed that they were filled with cupboards\n" +
+                "and bookshelves: here and there she saw maps\n" +
+                "and pictures hung upon pegs. She took down\n";
+        System.out.println(obj.getLongestPalindrome(s));
     }
 }
