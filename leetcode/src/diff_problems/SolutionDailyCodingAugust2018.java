@@ -1098,6 +1098,19 @@ public class SolutionDailyCodingAugust2018 {
         return dp[0][0];
     }
 
+    /**
+     * This problem was asked by Facebook.
+     *
+     * Given a string of round, curly, and square open and closing brackets, return whether the brackets are balanced
+     * (well-formed).
+     *
+     * For example, given the string "([])[]({})", you should return true.
+     *
+     * Given the string "([)]" or "((()", you should return false.
+     *
+     * @param s
+     * @return
+     */
     boolean isBalanced(String s) {
         Stack<Integer> stack = new Stack();
 
@@ -1111,7 +1124,7 @@ public class SolutionDailyCodingAugust2018 {
                 case ')' : nextNum = -3; break;
                 case '}' : nextNum = -2; break;
                 case ']' : nextNum = -1; break;
-                default	 : nextNum = 0;
+                default	 : return false;
             }
             if (stack.isEmpty()) {
                 if (nextNum < 0)
@@ -1123,7 +1136,7 @@ public class SolutionDailyCodingAugust2018 {
                 int prevNum = stack.peek();
                 if (nextNum > 0)
                     stack.push(nextNum);
-                else if (nextNum < 0) {
+                else { //if (nextNum < 0)
                     if (prevNum + nextNum != 0)
                         return false;
                     else
@@ -2189,15 +2202,16 @@ public class SolutionDailyCodingAugust2018 {
         System.out.println(obj.isMatch("chats", ".*at"));
         System.out.println(obj.isMatch("this is very expensive algorithm to check matches in a strange useless string", ".*this is very expensive."));
         */
-
-        /*System.out.println(obj.isBalanced("([])[]({})"));
+        System.out.println("----- is string with braces balanced ----");
+        System.out.println(obj.isBalanced("[)(]"));
+        System.out.println(obj.isBalanced("([])[]({})"));
         System.out.println(obj.isBalanced("([)]"));
         System.out.println(obj.isBalanced("([{[]}])[]({{}})"));
-        System.out.println(obj.isBalanced("((()"));*/
+        System.out.println(obj.isBalanced("((()"));
         //System.out.println(StringUtils.singlyListNodeToString(oneLN));
         //System.out.println(StringUtils.singlyListNodeToString(obj.removeElementFromEnd(oneLN, 4)));
 
-        List<String> lines = obj.justify(new String[] {"the", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog"}, 10);
+        /*List<String> lines = obj.justify(new String[] {"the", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog"}, 10);
         //System.out.print(StringUtils.listStringsToString(lines));
 
         /*String s = "AAABBBDDDFFFGGGSSSSAAAAAAAAAAAAAAAAAABD";
