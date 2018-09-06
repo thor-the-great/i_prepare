@@ -198,10 +198,34 @@ public class SolutionDailyCodingSeptember2018 {
         return s.substring(L, R + 1);
     }
 
+    /**
+     * This problem was asked by Facebook.
+     *
+     * Given a array of numbers representing the stock prices of a company in chronological order, write a function that
+     * calculates the maximum profit you could have made from buying and selling that stock once. You must buy before
+     * you can sell it.
+     *
+     * For example, given [9, 11, 8, 5, 7, 10], you should return 5, since you could buy the stock at 5 dollars and
+     * sell it at 10 dollars.
+     *
+     * @param prices
+     * @return
+     */
+    int maxProfit(int[] prices) {
+        //running max of profit - need to keep track of best profit and min element so far
+        int min = prices[0];
+        int profit = 0;
+        for (int i = 1; i < prices.length; i++) {
+            profit = Math.max(profit, prices[i] - min);
+            min = Math.min(prices[i], min);
+        }
+        return profit;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingSeptember2018 obj = new SolutionDailyCodingSeptember2018();
 
-        int inversions =0;
+        int inversions;
         inversions = obj.countInversions(new int[]{1, 3, 2});
         System.out.println(inversions);
 
@@ -229,9 +253,9 @@ public class SolutionDailyCodingSeptember2018 {
         }
         for (int num: numCount.keySet()) {
             System.out.println(num + " = " + (float)numCount.get(num)/ _NUM_OF_TRIES );
-        }*/
+        }
 
-        System.out.println("---- longest palindrome in string -----------------");
+        /*System.out.println("---- longest palindrome in string -----------------");
         String s = "";
         s = "abcdefed1234567890";
         System.out.println(obj.getLongestPalindrome(s));
@@ -276,6 +300,12 @@ public class SolutionDailyCodingSeptember2018 {
                 "noticed that they were filled with cupboards\n" +
                 "and bookshelves: here and there she saw maps\n" +
                 "and pictures hung upon pegs. She took down\n";
-        System.out.println(obj.getLongestPalindrome(s));
+        System.out.println(obj.getLongestPalindrome(s)); */
+
+        System.out.println("---- max profit of selling stocks ones -----");
+
+        System.out.println(obj.maxProfit(new int[] {9, 11, 8, 5, 7, 10 ,9 }));//5
+        System.out.println(obj.maxProfit(new int[] {8, 4, 1, 3, 1, 10, 5, 6, 9, 1 }));//9
+        System.out.println(obj.maxProfit(new int[] {8, 4, 3, 8, 5, 1, 2, 1, 7, 1 }));//6
     }
 }
