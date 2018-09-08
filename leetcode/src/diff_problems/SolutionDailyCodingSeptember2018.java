@@ -222,6 +222,36 @@ public class SolutionDailyCodingSeptember2018 {
         return profit;
     }
 
+    /**
+     * This problem was asked by Amazon.
+     *
+     * Given an array of numbers, find the maximum sum of any contiguous subarray of the array.
+     *
+     * For example, given the array [34, -50, 42, 14, -5, 86], the maximum sum would be 137, since we would take
+     * elements 42, 14, -5, and 86.
+     *
+     * Given the array [-5, -1, -8, -9], the maximum sum would be 0, since we would not take any elements.
+     *
+     * Do this in O(N) time.
+     *
+     * @param arr
+     * @return
+     */
+    int maxContiguousSubArraySum(int[] arr) {
+        if (arr.length == 0)
+            return 0;
+        //idea is following on every next step if we know max sum of previous sub-arrays the next max sum can be
+        //either max + a[i] or a[i]. So keep tracking of running sum and global max sum
+        int maxRunning = arr[0] > 0 ? arr[0] : 0;
+        int maxGlobal = maxRunning;
+        for (int i = 1; i < arr.length; i++) {
+            maxRunning = Math.max(arr[i], maxRunning + arr[i]);
+            if (maxRunning > maxGlobal)
+                maxGlobal = maxRunning;
+        }
+        return maxGlobal;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingSeptember2018 obj = new SolutionDailyCodingSeptember2018();
 
@@ -302,10 +332,15 @@ public class SolutionDailyCodingSeptember2018 {
                 "and pictures hung upon pegs. She took down\n";
         System.out.println(obj.getLongestPalindrome(s)); */
 
-        System.out.println("---- max profit of selling stocks ones -----");
-
+        /*System.out.println("---- max profit of selling stocks ones -----");
         System.out.println(obj.maxProfit(new int[] {9, 11, 8, 5, 7, 10 ,9 }));//5
         System.out.println(obj.maxProfit(new int[] {8, 4, 1, 3, 1, 10, 5, 6, 9, 1 }));//9
         System.out.println(obj.maxProfit(new int[] {8, 4, 3, 8, 5, 1, 2, 1, 7, 1 }));//6
+        */
+
+        System.out.println("----- max sum of contiguous subarray");
+        System.out.println(obj.maxContiguousSubArraySum(new int[] {1, -3, 2, 1, -1 }));//3
+        System.out.println(obj.maxContiguousSubArraySum(new int[] {34, -50, 42, 14, -5, 86}));//137
+        System.out.println(obj.maxContiguousSubArraySum(new int[] {-5, -1, -8, -9}));//0
     }
 }
