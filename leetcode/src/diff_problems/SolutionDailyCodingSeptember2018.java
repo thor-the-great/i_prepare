@@ -1,5 +1,8 @@
 package diff_problems;
 
+import trees.BSTNode;
+import trees.BSTNodeChar;
+
 import java.util.*;
 
 public class SolutionDailyCodingSeptember2018 {
@@ -252,6 +255,71 @@ public class SolutionDailyCodingSeptember2018 {
         return maxGlobal;
     }
 
+    /**
+     * This problem was asked by Microsoft.
+     *
+     * Suppose an arithmetic expression is given as a binary tree. Each leaf is an integer and each internal node
+     * is one of '+', '−', '∗', or '/'.
+     *
+     * Given the root to such a tree, write a function to evaluate it.
+     *
+     * For example, given the following tree:
+     *
+     *     *
+     *    / \
+     *   +    +
+     *  / \  / \
+     * 3  2  4  5
+     * You should return 45, as it is (3 + 2) * (4 + 5).
+     *
+     * @param n
+     * @return
+     */
+    public float compute(BSTNodeChar n) {
+        if (n.right == null && n.left == null) {
+            return n.val - '0';
+        }
+        float left = compute(n.left);
+        float right = compute(n.right);
+        switch (n.val) {
+            case '+': return left + right;
+            case '-': return left - right;
+            case '*': return left * right;
+            case '/': return left / right;
+            default: return .0f;
+        }
+    }
+
+    /**
+     * This problem was asked by Facebook.
+     *
+     * Given a function that generates perfectly random numbers between 1 and k (inclusive), where k is an input,
+     * write a function that shuffles a deck of cards represented as an array using only swaps.
+     *
+     * It should run in O(N) time.
+     *
+     * Hint: Make sure each one of the 52! permutations of the deck is equally likely.
+     *
+     * @param deck
+     * @return
+     */
+    public int[] shuffle(int[] deck) {
+        if (deck.length < 2)
+            return deck;
+        for (int i = 1; i < deck.length; i++) {
+            int randIndex = getRandom(i) - 1;
+            int tmp = deck[randIndex];
+            deck[randIndex] = deck[i];
+            deck[i] = tmp;
+        }
+        return deck;
+    }
+
+    int getRandom(int k) {
+        Random rand = new Random();
+        return 1 + rand.nextInt(k);
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingSeptember2018 obj = new SolutionDailyCodingSeptember2018();
 
@@ -342,5 +410,45 @@ public class SolutionDailyCodingSeptember2018 {
         System.out.println(obj.maxContiguousSubArraySum(new int[] {1, -3, 2, 1, -1 }));//3
         System.out.println(obj.maxContiguousSubArraySum(new int[] {34, -50, 42, 14, -5, 86}));//137
         System.out.println(obj.maxContiguousSubArraySum(new int[] {-5, -1, -8, -9}));//0
+
+        System.out.println(" ----- compute result from tree -----------");
+        BSTNodeChar tree = new BSTNodeChar('*', new BSTNodeChar('2'), new BSTNodeChar('4'));
+        System.out.println(obj.compute(tree));
+
+        tree = new BSTNodeChar('*', new BSTNodeChar('+', new BSTNodeChar('3'), new BSTNodeChar('5')), new BSTNodeChar('4'));
+        System.out.println(obj.compute(tree));
+
+        tree = new BSTNodeChar('*',
+                new BSTNodeChar('+',
+                        new BSTNodeChar('3'), new BSTNodeChar('5')),
+                new BSTNodeChar('-',
+                        new BSTNodeChar('9'), new BSTNodeChar('7')));
+        System.out.println(obj.compute(tree));
+
+        System.out.println("----- card deck shuffling -----");
+        int[] deck = new int[52];
+        for (int i = 0; i < deck.length; i++)
+            deck[i] = i;
+
+        deck = obj.shuffle(deck);
+        long counter = 0;
+        for(int card : deck) {
+            System.out.print(card + ", " );
+            if ((counter & (1l << card)) > 0 )
+                System.out.println("Duplicate found " + card);
+            counter |= (1l << card);
+        }
+        System.out.println("\n -- next deck ----- ");
+        for (int i = 0; i < deck.length; i++)
+            deck[i] = i;
+        deck = obj.shuffle(deck);
+        counter = 0;
+        for(int card : deck) {
+            System.out.print(card + ", ");
+            if ((counter & (1l << card)) > 0 )
+                System.out.println("Duplicate found " + card);
+            counter |= (1l << card);
+        }
+
     }
 }
