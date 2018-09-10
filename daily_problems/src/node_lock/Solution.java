@@ -1,4 +1,4 @@
-package diff_problems.node_lock;
+package node_lock;
 
 /**
  * This problem was asked by Google.

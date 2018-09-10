@@ -1,4 +1,4 @@
-package diff_problems.log_append;
+package log_append;
 
 import java.util.Random;
 

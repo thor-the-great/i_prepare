@@ -1,4 +1,4 @@
-package diff_problems.stacks;
+package stacks;
 
 import java.util.LinkedList;
 import java.util.List;

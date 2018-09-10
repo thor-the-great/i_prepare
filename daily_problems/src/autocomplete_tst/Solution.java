@@ -1,4 +1,4 @@
-package diff_problems.autocomplete_tst;
+package autocomplete_tst;
 
 import java.util.ArrayList;
 import java.util.Collection;

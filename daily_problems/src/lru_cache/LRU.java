@@ -1,4 +1,4 @@
-package diff_problems.lru_cache;
+package lru_cache;
 
 import java.util.HashMap;
 import java.util.Map;

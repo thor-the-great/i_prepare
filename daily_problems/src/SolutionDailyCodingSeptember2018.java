@@ -1,5 +1,3 @@
-package diff_problems;
-
 import trees.BSTNodeChar;
 
 import java.util.*;

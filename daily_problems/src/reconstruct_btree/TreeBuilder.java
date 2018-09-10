@@ -1,4 +1,4 @@
-package diff_problems.reconstruct_btree;
+package reconstruct_btree;
 
 /**
  * This problem was asked by Google.

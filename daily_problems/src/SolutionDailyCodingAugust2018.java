@@ -1,5 +1,4 @@
-package diff_problems;
-
+import diff_problems.TreeNode;
 import linked_list.ListNode;
 import linked_list.StringUtils;
 import trees.BST;
@@ -13,184 +12,6 @@ import java.util.*;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class SolutionDailyCodingAugust2018 {
-
-    /**
-     * https://leetcode.com/contest/weekly-contest-94/problems/leaf-similar-trees/
-     * @param root1
-     * @param root2
-     * @return
-     */
-    public boolean leafSimilar(TreeNode root1, TreeNode root2) {
-        Stack<TreeNode> firstT = new Stack();
-        firstT.add(root1);
-        Stack<TreeNode> secondT = new Stack();
-        secondT.add(root2);
-        boolean isCheckReady1 = false;
-        boolean isCheckReady2 = false;
-        int val1 = -1, val2 = -1;
-        while (!firstT.isEmpty() || !secondT.isEmpty()) {
-            if (!isCheckReady1) {
-                TreeNode n1 = firstT.pop();
-                if (n1.left == null && n1.right == null) {
-                    val1 = n1.val;
-                    isCheckReady1 = true;
-                } else {
-                    addNode(n1.left, firstT);
-                    addNode(n1.right, firstT);
-                }
-            }
-            if (!isCheckReady2) {
-                TreeNode n2 = secondT.pop();
-                if (n2.left == null && n2.right == null) {
-                    val2 = n2.val;
-                    isCheckReady2 = true;
-                } else {
-                    addNode(n2.left, secondT);
-                    addNode(n2.right, secondT);
-                }
-            }
-
-            if (isCheckReady1 && isCheckReady2) {
-                if (val1 != val2)
-                    return false;
-                isCheckReady1 = false;
-                isCheckReady2 = false;
-            }
-        }
-        return true;
-    }
-
-    private void addNode(TreeNode node, Stack stack) {
-        if (node != null)
-            stack.push(node);
-    }
-
-    /**
-     * https://leetcode.com/contest/weekly-contest-94/problems/walking-robot-simulation/
-      * @param commands
-     * @param obstacles
-     * @return
-     */
-    public int robotSim(int[] commands, int[][] obstacles) {
-        //map of dirrections
-        // 0 ^, 1 >, 2 down, 3 <
-        int currentDirection = 0;
-        int[] dirX = new int[] {0, 1, 0, -1};
-        int[] dirY = new int[] {1, 0, -1, 0};
-        int x = 0, y = 0;
-        Set<Long> obstacleSet = new HashSet<>();
-        for (int j=0; j<obstacles.length; j++) {
-            int[] nextObst = obstacles[j];
-            long obstacleCoded = encode(nextObst[0], nextObst[1]);
-            obstacleSet.add(obstacleCoded);
-        }
-        int maxDistance = 0;
-        for (int i=0; i < commands.length; i++) {
-            int command = commands[i];
-            if (command == -2) {
-                currentDirection = currentDirection == 0 ? 3 : currentDirection-1;
-                continue;
-            }
-            if (command == -1) {
-                currentDirection = currentDirection == 3 ? 0 : currentDirection+1;
-                continue;
-            }
-
-            //now go step by step
-            int dx = dirX[currentDirection];
-            int dy = dirY[currentDirection];
-            for (int s = 1; s <= command; s++) {
-                int newX = x + dx;
-                int newY = y + dy;
-                long newCoordinatesCoded = encode(newX, newY);
-                if (!obstacleSet.contains(newCoordinatesCoded)) {
-                    x = newX;
-                    y = newY;
-                }
-                else
-                    break;
-            }
-            int newPossibleDistance = ((x*x) + (y*y));
-            if (maxDistance < newPossibleDistance) {
-                maxDistance = newPossibleDistance;
-            }
-        }
-        return maxDistance;
-    }
-
-    private long encode(int x, int y) {
-        return (((long) x + 30000) << 16) + ((long) y + 30000);
-    }
-
-    /**
-     * https://leetcode.com/contest/weekly-contest-94/problems/koko-eating-bananas/
-     * @param H
-     * @param piles
-     * @return
-     */
-    public int minEatingSpeed(int[] piles, int H) {
-        //max should not be higher than greatest element in array
-        int max = 0;
-        for (int i = 0; i < piles.length; i++) {
-            if(piles[i] > max)
-                max = piles[i];
-        }
-        //now do the binary search on possible solutions. there is a linear dependency - the lower is k the longer (higher H)
-        //it will take
-        int min = 1;
-        while (max > min) {
-            int med = (max + min) /2;
-            if (isBelowH(H, med, piles)) {
-                max = med;
-            } else {
-                min = med + 1;
-            }
-        }
-        return min;
-    }
-
-    boolean isBelowH(int H, int k, int[] piles) {
-        int counter = 0;
-        for(int i = 0; i < piles.length; i++) {
-            counter = counter + (piles[i]-1)/k+1;
-        }
-        return (counter <= H);
-    }
-
-    /**
-     * https://leetcode.com/contest/weekly-contest-94/problems/length-of-longest-fibonacci-subsequence/
-     * @param A
-     * @return
-     */
-    public int lenLongestFibSubseq(int[] A) {
-        //create set of numbers so we can lookup efficiently
-        Set<Integer> set = new HashSet();
-        for (int i = 0; i < A.length; i++) {
-            set.add(A[i]);
-        }
-        //iterate over numbers in array, i represents first and j - second number to add for Fibo check
-        int result = 0;
-        for (int i =0 ; i < A.length; i++) {
-            for (int j = i + 1 ; j < A.length; j++) {
-                int cur = A[j];
-                int next = A[i] + A[j];
-                int len = 2;
-                //go over values in array, if the number is in array - increment len
-                while(set.contains(next)) {
-                    //do the shift of numbers for next possible Fibo number
-                    //cur,next -> next, next+cur
-                    int tmp = next;
-                    next = next + cur;
-                    cur = tmp;
-                    len++;
-                }
-                //save the len if it's higher than already saved result
-                if (len > result)
-                    result = len;
-            }
-        }
-        return result >= 3 ? result : 0;
-    }
 
     /**
      * This problem was asked by Facebook.
@@ -241,7 +62,8 @@ public class SolutionDailyCodingAugust2018 {
     /**
      * This problem was asked by Amazon.
      *
-     * There exists a staircase with N steps, and you can climb up either 1 or 2 steps at a time. Given N, write a function that returns the number of unique ways you can climb the staircase. The order of the steps matters.
+     * There exists a staircase with N steps, and you can climb up either 1 or 2 steps at a time. Given N, write a
+     * function that returns the number of unique ways you can climb the staircase. The order of the steps matters.
      *
      * For example, if N is 4, then there are 5 unique ways:
      *
@@ -250,7 +72,8 @@ public class SolutionDailyCodingAugust2018 {
      * 1, 2, 1
      * 1, 1, 2
      * 2, 2
-     * What if, instead of being able to climb 1 or 2 steps at a time, you could climb any number from a set of positive integers X? For example, if X = {1, 3, 5}, you could climb 1, 3, or 5 steps at a time.
+     * What if, instead of being able to climb 1 or 2 steps at a time, you could climb any number from a set of positive
+     * integers X? For example, if X = {1, 3, 5}, you could climb 1, 3, or 5 steps at a time.
      *
      * @param N
      * @return
