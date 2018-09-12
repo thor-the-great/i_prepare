@@ -1,4 +1,6 @@
+import sun.swing.StringUIClientPropertyKey;
 import trees.BSTNodeChar;
+import utils.StringUtils;
 
 import java.util.*;
 
@@ -317,6 +319,84 @@ public class SolutionDailyCodingSeptember2018 {
         return 1 + rand.nextInt(k);
     }
 
+    /**
+     * This problem was asked by Dropbox.
+     *
+     * Sudoku is a puzzle where you're given a partially-filled 9 by 9 grid with digits. The objective is to fill the
+     * grid with the constraint that every row, column, and box (3 by 3 subgrid) must contain all of the digits from 1 to 9.
+     *
+     * Implement an efficient sudoku solver.
+     *
+     * @param board
+     * @return
+     */
+    public boolean solveSudoku(int[][] board) {
+        //- check if board is filled - it's solved
+        //- find unfilled cell (count 0 as unfilled)
+        //- try numbers from 1 to 9, check if num is allowed
+        //- fill it with next num
+        //- call solve recursively
+        //- if not valid - erase and backtrack
+        //Time complexity is O(n^m), where n is possible options for nums (1..9) and m is number of unfilled cells
+        boolean hasUnfilled = false;
+        for (int row = 0; row < board.length; row++ ) {
+            for (int col = 0; col < board[0].length; col++) {
+                if (board[row][col] == 0)
+                    hasUnfilled = true;
+            }
+        }
+        if (!hasUnfilled)
+            return true;
+
+        for (int row = 0; row < board.length; row++ ){
+            for (int col = 0; col < board[0].length; col++ ){
+                //if cell is unfilled - start our magic
+                if (board[row][col] == 0) {
+                    //check every possible number
+                    for (int num = 1; num <=9; num++) {
+                        //check if it's valid - no matches in column, row and 3x3 box
+                        if (checkNum(board, num, row, col)) {
+                            //try to set num and go to next cell
+                            board[row][col] = num;
+                            if (solveSudoku(board)) {
+                                return true;
+                            }
+                            //no bueno - unset and continue
+                            board[row][col] = 0;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    boolean checkNum(int[][] board, int num, int row, int col) {
+        //check row
+        for (int rowCount = 0; rowCount < board.length; rowCount++ ) {
+            if (board[rowCount][col] == num) {
+                return false;
+            }
+        }
+        //check col
+        for (int colCount = 0; colCount < board.length; colCount++ ) {
+            if (board[row][colCount] == num) {
+                return false;
+            }
+        }
+        //check box
+        int boxRow = row / 3;
+        int boxCol = col / 3;
+        for (int rowCount = boxRow * 3; rowCount < (boxRow +1)* 3; rowCount++ ) {
+            for (int colCount = boxCol * 3; colCount < (boxCol + 1) * 3; colCount++ ) {
+                if (board[rowCount][colCount] == num) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingSeptember2018 obj = new SolutionDailyCodingSeptember2018();
 
@@ -447,5 +527,65 @@ public class SolutionDailyCodingSeptember2018 {
             counter |= (1l << card);
         }
 
+        System.out.println("----- solve sudoku -------");
+        int[][] sudoku = {
+                {2, 3, 0, 4, 1, 5, 0, 6, 8},
+                {0, 8, 0, 2, 3, 6, 5, 1, 9},
+                {1, 6, 0, 9, 8, 7, 2, 3, 4,},
+                {3, 1, 7, 0, 9, 4, 0, 2, 5},
+                {4, 5, 8, 1, 2, 0, 6, 9, 7},
+                {9, 2, 6, 0, 5, 8, 3, 0, 1},
+                {0, 0, 0, 5, 0, 0, 1, 0, 2},
+                {0, 0, 0, 8, 4, 2, 9, 0, 3},
+                {5, 9, 2, 3, 7, 1, 4, 8, 6}
+        };
+        System.out.print("initial board \n" + StringUtils.int2DArrayToString(sudoku));
+        boolean isSudoku = obj.solveSudoku(sudoku);
+        if (isSudoku){
+            System.out.println("solution:\n");
+            System.out.println(StringUtils.int2DArrayToString(sudoku));
+        }
+        else
+            System.out.println("Board is not solvable");
+
+        //---modif #1
+        sudoku = new int[][] {
+                {2, 3, 0, 4, 1, 5, 0, 6, 8},
+                {0, 8, 0, 2, 3, 6, 5, 1, 9},
+                {1, 6, 0, 9, 8, 7, 2, 3, 4,},
+                {3, 1, 7, 0, 9, 4, 0, 2, 5},
+                {4, 5, 8, 1, 2, 0, 6, 9, 7},
+                {9, 2, 6, 0, 5, 8, 3, 0, 1},
+                {0, 0, 0, 5, 0, 0, 1, 0, 2},
+                {0, 0, 0, 8, 4, 0, 9, 0, 3},
+                {0, 9, 0, 3, 7, 1, 4, 8, 6}
+        };
+        System.out.print("initial board \n" + StringUtils.int2DArrayToString(sudoku));
+        isSudoku = obj.solveSudoku(sudoku);
+        if (isSudoku){
+            System.out.println("solution:\n");
+            System.out.println(StringUtils.int2DArrayToString(sudoku));
+        }
+        else
+            System.out.println("Board is not solvable");
+
+        /*sudoku = new int[][]{
+                {3, 0, 7, 0, 2, 5, 6, 4, 9},
+                {2, 4, 0, 3, 0, 0, 1, 0, 8},
+                {0, 1, 0, 0, 8, 6, 2, 3, 7},
+                {1, 2, 0, 7, 5, 4, 3, 0, 6},
+                {0, 0, 3, 2, 0, 0, 7, 0, 4},
+                {4, 0, 9, 0, 3, 0, 5, 2, 1},
+                {0, 3, 1, 9, 4, 0, 8, 6, 5},
+                {6, 5, 0, 8, 7, 3, 9, 1, 2},
+                {0, 9, 0, 5, 0, 1, 4, 7, 3}};
+        System.out.print("initial board \n" + StringUtils.int2DArrayToString(sudoku));
+        isSudoku = obj.solveSudoku(sudoku);
+        if (isSudoku){
+            System.out.println("solution:\n");
+            System.out.println(StringUtils.int2DArrayToString(sudoku));
+        }
+        else
+            System.out.println("Board is not solvable");*/
     }
 }
