@@ -15,6 +15,23 @@ public class StringUtils {
         return sb.toString();
     }
 
+    public static String int2DArrayToString(int[][] arr) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[\n");
+        for(int row =0;row < arr.length; row++) {
+            sb.append("{ ");
+            for (int col = 0; col < arr[0].length; col++) {
+                sb.append(arr[row][col]);
+                if (col < arr[0].length - 1)
+                    sb.append(", ");
+            }
+            sb.append(" }, \n");
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+
     public static String listToString(List<Integer> a) {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
