@@ -1918,9 +1918,9 @@ public class SolutionDailyCodingAugust2018 {
 
         //System.out.println(obj.pickRandom());
 
-        /*for (int i =0; i < 100; i++) {
+        for (int i =8; i < 9; i++) {
             System.out.println("Checking n = " + i + " " + obj.nQueensPuzzle(i));
-        }*/
+        }
 
         //flights
         List<String[]> flights = new ArrayList<>();
