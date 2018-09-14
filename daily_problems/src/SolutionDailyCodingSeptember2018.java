@@ -397,6 +397,62 @@ public class SolutionDailyCodingSeptember2018 {
         return true;
     }
 
+    /**
+     * This problem was asked by Google.
+     *
+     * Given an undirected graph represented as an adjacency matrix and an integer k, write a function to determine
+     * whether each vertex in the graph can be colored such that no two adjacent vertices share the same color using
+     * at most k colors.
+     *
+     * @param g
+     * @param k
+     * @return
+     */
+    boolean checkColor(int[][] g, int k) {
+        //idea is to use recursion + backtracking
+        //solution has - vertex as index, color as value
+        int[] solution = new int[g.length];
+        boolean res = color(g, 0, solution, k);
+        System.out.print("Solution : [ ");
+        for (int i = 0; i < solution.length; i++) {
+            System.out.print(i + "=" + solution[i]+", ");
+        }
+        System.out.println(" ]");
+        return res;
+    }
+
+    boolean color(int[][] g, int v, int[] sol, int m) {
+        //if we checked all vertexes means we good with solution
+        if (v >= sol.length)
+            return true;
+        //check every color in sequence
+        for(int c = 1; c <= m; c++) {
+            //check if vertex can be colored (but don't color it actually). check is following -
+            //if any adjacent vertex to this vertex is of the same color
+            if (isSave(sol, v, c, g, v)) {
+                //if it's ok - then color the vertex and go on next level of recursion
+                sol[v] = c;
+                if (color(g, v + 1, sol, m))
+                    return true;
+            }
+            //if no bueno - uncolor the vertex
+            sol[v] = 0;
+        }
+
+        return false;
+    }
+
+    boolean isSave(int[] sol, int v, int c, int[][] graph, int m) {
+        for (int adjC = 0; adjC < graph.length; adjC++) {
+            if (adjC == v)
+                continue;
+            if (graph[adjC][v] == 1 && sol[adjC] == c)
+                return false;
+        }
+
+        return true;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingSeptember2018 obj = new SolutionDailyCodingSeptember2018();
 
@@ -560,7 +616,7 @@ public class SolutionDailyCodingSeptember2018 {
                 {0, 0, 0, 8, 4, 0, 9, 0, 3},
                 {0, 9, 0, 3, 7, 1, 4, 8, 6}
         };
-        System.out.print("initial board \n" + StringUtils.int2DArrayToString(sudoku));
+        /*System.out.print("initial board \n" + StringUtils.int2DArrayToString(sudoku));
         isSudoku = obj.solveSudoku(sudoku);
         if (isSudoku){
             System.out.println("solution:\n");
@@ -568,7 +624,7 @@ public class SolutionDailyCodingSeptember2018 {
         }
         else
             System.out.println("Board is not solvable");
-
+*/
         /*sudoku = new int[][]{
                 {3, 0, 7, 0, 2, 5, 6, 4, 9},
                 {2, 4, 0, 3, 0, 0, 1, 0, 8},
@@ -587,5 +643,70 @@ public class SolutionDailyCodingSeptember2018 {
         }
         else
             System.out.println("Board is not solvable");*/
+
+        int[][] graph = new int[][] {
+                {1, 1, 0, 1},
+                {1, 1, 1, 1},
+                {0, 1, 1, 1},
+                {1, 1, 1, 1}
+        };
+        System.out.println("---- graph coloring -----");
+        System.out.println(obj.checkColor(graph, 3));
+        System.out.println(obj.checkColor(graph, 2));
+        System.out.println(obj.checkColor(graph, 1));
+
+        graph = new int[][] {
+                {1, 1, 0, 1, 0},
+                {1, 1, 0, 0, 0},
+                {0, 0, 1, 1, 1},
+                {1, 0, 1, 1, 0},
+                {0, 0, 1, 0, 1}
+        };
+        System.out.println("---- graph coloring -----");
+        System.out.println(obj.checkColor(graph, 3));
+        System.out.println(obj.checkColor(graph, 2));
+        System.out.println(obj.checkColor(graph, 1));
+
+        graph = new int[][] {
+                {1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0},
+                {1, 0, 1, 1, 1},
+                {1, 0, 1, 1, 0},
+                {0, 0, 1, 0, 1}
+        };
+        System.out.println("---- graph coloring -----");
+        System.out.println(obj.checkColor(graph, 3));
+        System.out.println(obj.checkColor(graph, 2));
+
+        graph = new int[][] {
+                {1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 1},
+                {1, 0, 1, 1, 1},
+                {1, 0, 1, 1, 0},
+                {0, 1, 1, 0, 1}
+        };
+        System.out.println("---- graph coloring -----");
+        System.out.println(obj.checkColor(graph, 3));
+        System.out.println(obj.checkColor(graph, 2));
+
+        graph = new int[][] {
+                {1, 1, 1, 1, 1},
+                {1, 1, 0, 1, 1},
+                {1, 0, 1, 1, 1},
+                {1, 1, 1, 1, 0},
+                {1, 1, 1, 0, 1}
+        };
+        System.out.println("---- graph coloring -----");
+        System.out.println(obj.checkColor(graph, 4));
+
+        graph = new int[][] {
+                {1, 1, 1, 1, 1},
+                {1, 1, 1, 1, 1},
+                {1, 1, 1, 1, 1},
+                {1, 1, 1, 1, 1},
+                {1, 1, 1, 1, 1}
+        };
+        System.out.println("---- graph coloring -----");
+        System.out.println(obj.checkColor(graph, 5));
     }
 }
