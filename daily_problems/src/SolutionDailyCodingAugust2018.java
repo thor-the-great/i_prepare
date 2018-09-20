@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -1877,6 +1878,108 @@ public class SolutionDailyCodingAugust2018 {
         return newList;
     }
 
+    /**
+     * This problem was asked by Google.
+     *
+     * Given a list of integers S and a target number k, write a function that returns a subset of S that adds up to k.
+     * If such a subset cannot be made, then return null.
+     *
+     * Integers can appear more than once in the list. You may assume all numbers in the list are positive.
+     *
+     * For example, given S = [12, 1, 61, 5, 9, 2] and k = 24, return [12, 9, 2, 1] since it sums up to 24.
+     *
+     * @param arr
+     * @param sum
+     * @return
+     */
+    List<Integer> subsetSum(int[] arr, int sum) {
+        List<Integer>[][] memo = new List[arr.length + 1][sum + 1];
+        //init cache for DP structure. For sum 0 we can pick any of empty sets
+        for (int i = 0; i <= arr.length; i++) {
+            memo[i][0] = new ArrayList<>();
+        }
+        for (int i = 1; i <= arr.length; i++) {
+            for (int j = 1; j <= sum; j++) {
+                int prev = arr[i - 1];
+                //if number from array greater than sum (j) we can't create such a list
+                //definitely - even one element will be greater than a sum overall. So skip it and copy
+                //result from previous step (number from array)
+                if (prev > j)
+                    memo[i][j] = memo[i - 1][j];
+                else {
+                    //if prev is potentially fit - do checks
+                    //if we can do sum without prev - re-use that
+                    if (memo[i - 1][j] != null) {
+                        memo[i][j] = memo[i - 1][j];
+                    } else if (memo[i - 1][j - prev] != null) {
+                        //if not (previous set is empty - check elements without prev, and if possible
+                        // - re-use it as base and add prev to it
+                        List<Integer> newSet = new ArrayList<>();
+                        newSet.addAll(memo[i - 1][j - prev]);
+                        newSet.add(prev);
+                        memo[i][j] = newSet;
+                    } else {
+                        //default fallback
+                        memo[i][j] = null;
+                    }
+                }
+            }
+        }
+        List<Integer> subset = memo[arr.length][sum];
+        return subset;
+    }
+
+    /**
+     * This problem was asked by Facebook.
+     *
+     * There is an N by M matrix of zeroes. Given N and M, write a function to count the number of ways of starting at
+     * the top-left corner and getting to the bottom-right corner. You can only move right or down.
+     *
+     * For example, given a 2 by 2 matrix, you should return 2, since there are two ways to get to the bottom-right:
+     *
+     * Right, then down
+     * Down, then right
+     * Given a 5 by 5 matrix, there are 70 ways to get to the bottom-right.
+     *
+     * @param matrix
+     * @return
+     */
+    int paths(int[][] matrix) {
+        //return dfs(matrix.length, matrix[0].length, 1, 1);
+        return pathsDp(matrix);
+    }
+
+    int dfs(int row, int col, int rowRun, int colRun) {
+        if (rowRun == row && colRun == col)
+            return 1;
+
+        if (rowRun > row || colRun > col)
+            return 0;
+
+        return dfs(row, col, rowRun + 1, colRun)
+                + dfs(row, col, rowRun, colRun + 1);
+    }
+
+    int pathsDp(int[][] matrix) {
+        int m = matrix.length;
+        int n = matrix[0].length;
+        int[][] dp = new int[m][n];
+        //initilize dp memo with edge path
+        for (int i = 0; i < m; i++) {
+            dp[i][0] = 1;
+        }
+        for (int i = 0; i < n; i++) {
+            dp[0][i] = 1;
+        }
+
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+            }
+        }
+        return dp[m - 1][n - 1];
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingAugust2018 obj = new SolutionDailyCodingAugust2018();
         //[3,5,1,6,2,9,8,null,null,7,4]
@@ -2198,5 +2301,44 @@ public class SolutionDailyCodingAugust2018 {
             sb.append(" ]");
             System.out.println(sb.toString());
         }
+
+        System.out.println("----- find subset of arr that sums to k -----");
+        List<Integer> res = obj.subsetSum(new int[] {2, 5, 8, 10, 34, 3, 6, 30}, 16);
+        if (res != null) {
+            System.out.print("[");
+            for (int i : res) {
+                System.out.print(i + ", ");
+            }
+            System.out.println("]");
+        } else
+            System.out.println("Not possible");
+
+        res = obj.subsetSum(new int[] {2, 5, 8, 10, 34, 3, 6, 30}, 41);
+        if (res != null) {
+            System.out.print("[");
+            for (int i : res) {
+                System.out.print(i + ", ");
+            }
+            System.out.println("]");
+        } else
+            System.out.println("Not possible");
+
+        res = obj.subsetSum(new int[] {2, 5, 8, 10}, 9);
+        if (res != null) {
+            System.out.print("[");
+            for (int i : res) {
+                System.out.print(i + ", ");
+            }
+            System.out.println("]");
+        } else
+            System.out.println("Not possible");
+
+        System.out.println("----- number of unique paths ------");
+        int[][] matrix = new int[2][2];
+        System.out.println(obj.paths(matrix));
+        matrix = new int[5][5];
+        System.out.println(obj.paths(matrix));
+        matrix = new int[1000][1000];
+        System.out.println(obj.paths(matrix));
     }
 }
