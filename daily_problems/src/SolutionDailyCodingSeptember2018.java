@@ -1,4 +1,3 @@
-import sun.swing.StringUIClientPropertyKey;
 import trees.BSTNodeChar;
 import utils.StringUtils;
 
@@ -453,6 +452,219 @@ public class SolutionDailyCodingSeptember2018 {
         return true;
     }
 
+    /**
+     * This problem was asked by Amazon.
+     *
+     * Given a string s and an integer k, break up the string into multiple texts such that each text has a length of k
+     * or less. You must break it up so that words don't break across lines. If there's no way to break the text up,
+     * then return null.
+     *
+     * You can assume that there are no spaces at the ends of the string and that there is exactly one space between
+     * each word.
+     *
+     * For example, given the string "the quick brown fox jumps over the lazy dog" and k = 10, you should return:
+     * ["the quick", "brown fox", "jumps over", "the lazy", "dog"]. No string in the list has a length of more than 10.
+     *
+     * @param s
+     * @param k
+     * @return
+     */
+    public List<String> lines(String s, int k) {
+        List<String> res = new ArrayList();
+        String[] words = s.split(" ");
+        if (fillLines(res, k, 0, words))
+            return res;
+        else
+            return null;
+    }
+
+    boolean fillLines(List<String> res, int k, int index, String[] words) {
+        if (index >= words.length) {
+            return true;
+        }
+        int accuLength = 0;
+        int wordCount = 0;
+        while(index < words.length) {
+            int newLength = accuLength == 0 ? 0 : 1;
+            newLength += accuLength + words[index].length();
+            if (newLength <= k) {
+                wordCount++;
+                accuLength = newLength;
+                index++;
+            } else {
+                break;
+            }
+        }
+        if (wordCount == 0)
+            return false;
+        StringBuilder sb = new StringBuilder();
+        for (int i = index - wordCount; i < index; i++) {
+            sb.append(words[i]);
+            if ( i < index - 1)
+                sb.append(" ");
+        }
+        res.add(sb.toString());
+        return fillLines(res, k, index, words);
+    }
+
+    /**
+     * This problem was asked by Amazon.
+     *
+     * An sorted array of integers was rotated an unknown number of times.
+     *
+     * Given such an array, find the index of the element in the array in faster than linear time.
+     * If the element doesn't exist in the array, return null.
+     *
+     * For example, given the array [13, 18, 25, 2, 8, 10] and the element 8, return 4 (the index of 8 in the array).
+     *
+     * You can assume all the integers in the array are unique.
+     *
+     */
+    int getIndex(int[] arr, int k) {
+        //idea is to use double binary searches. First we find the index of initial array start using first binary search
+        //then run second binary search for the half of the array that probably has our element
+        int l = 0, r = arr.length - 1;
+        int s = -1;
+        while (l < r) {
+            int m = l + (r-l)/2;
+            if (arr[m] > arr[m+1]) {
+                s = m + 1;
+                break;
+            }
+            else if (arr[l] > arr[m])
+                r = m;
+            else
+                l = m;
+        }
+        //in case we missed our element in loop - it must be in r
+        if (s == -1)
+            s = r;
+
+        //choose between array halves
+        if (arr[arr.length - 1] >= k) {
+            r = arr.length - 1;
+            l = s;
+        }
+        else {
+            l = 0;
+            r = s;
+        }
+        //start second binary search for the element itself
+        while (l <= r) {
+            int m = (r + l)/2;
+            if (arr[m] == k)
+                return m;
+            else if (arr[m] < k)
+                l = m + 1;
+            else
+                r = m - 1;
+        }
+        return -1;
+    }
+
+    /**
+     * This problem was asked by Facebook.
+     *
+     * Given a multiset of integers, return whether it can be partitioned into two subsets whose sums are the same.
+     *
+     * For example, given the multiset {15, 5, 20, 10, 35, 15, 10}, it would return true, since we can split it up into
+     * {15, 5, 10, 15, 10} and {20, 35}, which both add up to 55.
+     *
+     * Given the multiset {15, 5, 20, 10, 35}, it would return false, since we can't split it up into two subsets that
+     * add up to the same sum.
+     *
+     * @param arr
+     * @return
+     */
+    boolean isEqualSums(int[] arr) {
+        /*int sum = 0;
+        for(int i : arr)
+            sum += i;
+
+        if (sum % 2 == 1)
+            return false;
+        boolean check = check(arr, arr.length, sum/2);
+        return check;*/
+        return isEqualSumsDP(arr);
+    }
+
+    boolean check(int[] arr, int n, int sum) {
+        if (sum == 0)
+            return true;
+        if (n == 0 && sum != 0) {
+            return false;
+        }
+
+        if (arr[n - 1] > sum)
+            return check(arr, n - 1, sum);
+
+        return check(arr, n - 1, sum) || check(arr, n - 1, sum - arr[n - 1]);
+    }
+
+    boolean isEqualSumsDP(int[] arr) {
+        int sum = 0;
+        for(int i : arr)
+            sum += i;
+
+        if (sum % 2 == 1)
+            return false;
+        boolean[][] memo = new boolean[arr.length + 1][sum/2 + 1];
+        for (int i = 0; i <= arr.length; i++)
+            memo[i][0] = true;
+
+        for (int j = 1; j <= sum / 2; j++) {
+            for (int i = 1; i <= arr.length; i++) {
+                memo[i][j] = memo[i - 1][ j];
+                if (j >= arr[i - 1]) {
+                    memo[i][j] = memo[i][j] || memo[i-1][j - arr[i - 1]];
+                }
+            }
+        }
+
+        for (int j = 0; j <= sum / 2; j++) {
+            for (int i = 0; i <= arr.length; i++) {
+                System.out.print(memo[i][j] +",");
+            }
+            System.out.println("");
+        }
+        return memo[arr.length][sum/2];
+    }
+
+    /**
+     * This problem was asked by Google.
+     *
+     * Implement integer exponentiation. That is, implement the pow(x, y) function, where x and y are integers
+     * and returns x^y.
+     *
+     * Do this faster than the naive method of repeated multiplication.
+     *
+     * @param x
+     * @param y
+     * @return
+     */
+    float myPow(int x, int y) {
+        return helper(x, y);
+    }
+
+    float helper(float x, int y) {
+        //idea is to use divide n conquer approach: to calculate x^y we do x^(y/2) * x^(y/2). We build
+        //recursion tree down to 0 and 1 base cases, then join results.
+        //In case if y is odd to add additional x*
+        //if y < 0 we change *x to /x
+        if (y == 0) return 1;
+        if (y == 1) return x;
+        int yhalf = y / 2;
+        float halfRes = helper(x, yhalf);
+        if (y % 2 == 0)
+            return halfRes * halfRes;
+        else {
+            if (y > 0)
+                return halfRes * halfRes * x;
+            else
+                return halfRes * halfRes / x;
+        }
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingSeptember2018 obj = new SolutionDailyCodingSeptember2018();
 
@@ -708,5 +920,49 @@ public class SolutionDailyCodingSeptember2018 {
         };
         System.out.println("---- graph coloring -----");
         System.out.println(obj.checkColor(graph, 5));
+
+        System.out.println("-------- form lines of length k from string array ----------");
+        String words = "the quick brown fox jumps over the lazy dog";
+        List<String> lines = obj.lines(words, 10);
+        if (lines == null)
+            System.out.println("Lines are not possible");
+        else {
+            for (String line : lines) {
+                System.out.println("[ " + line + " ]");
+            }
+        }
+
+        System.out.println(" ---- find index of lement in rotated array -------");
+        int[] arr = new int[] {13, 18, 25, 2, 8, 10};
+        System.out.println(obj.getIndex(arr, 8));
+        System.out.println(obj.getIndex(arr, 18));
+        System.out.println(obj.getIndex(arr, 5));
+
+        arr = new int[] {16, 18, 25, 26, 1, 2, 8, 10, 12, 14};
+        System.out.println(obj.getIndex(arr, 8));
+        System.out.println(obj.getIndex(arr, 18));
+        System.out.println(obj.getIndex(arr, 5));
+        System.out.println(obj.getIndex(arr, 14));
+        System.out.println(obj.getIndex(arr, 16));
+        System.out.println(obj.getIndex(arr, 15));
+
+        arr = new int[] {15, 20, 2, 3, 5, 7, 11, 13};
+        System.out.println(obj.getIndex(arr, 15));
+
+        System.out.println("----- sub-arrays of array that form equal sums -------");
+        /*System.out.println(obj.isEqualSums(new int[] {10, 1, 5, 1, 7}));
+
+        System.out.println(obj.isEqualSums(new int[] {10, 1, 5, 1, 7, 6}));
+
+        System.out.println(obj.isEqualSums(new int[] {1, 10, 1}));
+        */
+        System.out.println(obj.isEqualSums(new int[] {1, 3, 4, 6}));
+
+        System.out.println("------- custom pow(x, y) function -------");
+        System.out.println(obj.myPow(4, 3));
+        System.out.println(obj.myPow(4, -3));
+        System.out.println(obj.myPow(9, 16));
+        System.out.println(obj.myPow(10, 12));
+        System.out.println(obj.myPow(81, -2));
     }
 }
