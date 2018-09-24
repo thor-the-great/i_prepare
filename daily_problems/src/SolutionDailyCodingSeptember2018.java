@@ -867,6 +867,42 @@ public class SolutionDailyCodingSeptember2018 {
         }
     }
 
+    /**
+     * This problem was asked by Square.
+     *
+     * Assume you have access to a function toss_biased() which returns 0 or 1 with a probability that's not 50-50
+     * (but also not 0-100 or 100-0). You do not know the bias of the coin.
+     *
+     * Write a function to simulate an unbiased coin toss.
+     *
+     * @return
+     */
+    public int nonbiasedToBiased() {
+        //idea is following toss coin twice, searching for certain pattern. If pattern is different - re-run.
+        //let's say toss 0 is x probability, then 1 is (1 - x) probability.
+        //toss 1 and then 0 is (1, 0) = (1 - x)*x
+        //toss 0 and then 0 is (0, 1) = x*(1 - x)
+        //those probabilities are equal. we are not interested in other evens (0,0) and (1,1).
+        int try1 = toss_biased();
+        int try2 = toss_biased();
+        if (try1 == 0 && try2 == 1) {
+            return 0;
+        }
+        else if (try1 == 1 && try2 == 0) {
+            return 1;
+        }
+        //we reach here with 1 - ((1-x)*x + x*(1-x)) probability
+        return nonbiasedToBiased();
+    }
+
+    int toss_biased() {
+        float randNum = rand.nextFloat();
+        if (randNum >= 0.75)
+            return 0;
+        else
+            return 1;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingSeptember2018 obj = new SolutionDailyCodingSeptember2018();
 
@@ -1190,8 +1226,8 @@ public class SolutionDailyCodingSeptember2018 {
         System.out.println(obj.exist(charMatrix, "FACT"));
         System.out.println(obj.exist(charMatrix, "ACI"));
 
-        System.out.println("------- number of knight tours --------");
-        System.out.println(obj.tour(5));
+        //System.out.println("------- number of knight tours --------");
+        //System.out.println(obj.tour(5));
 
         System.out.println("----- print arry in clockwise spiral order ------");
         int[][] a = new int[][] {
@@ -1208,5 +1244,18 @@ public class SolutionDailyCodingSeptember2018 {
                 {11, 12, 13, 14, 15}
         };
         obj.printCW(a);
+
+        System.out.println("---------- turn biased to unbiased --------");
+        int numOfTries = 100000;
+        int numOfZeroes = 0;
+        int numOfZeroesFixed = 0;
+        for (int i = 0; i < numOfTries; i++) {
+            if (obj.toss_biased() == 0)
+                numOfZeroes++;
+            if (obj.nonbiasedToBiased() == 0)
+                numOfZeroesFixed++;
+        }
+        System.out.println("testing toss_biased : percent of '0' = " + ((float)numOfZeroes/numOfTries));
+        System.out.println("now fixed version - should be normal : percent of '0' = " + ((float)numOfZeroesFixed/numOfTries));
     }
 }
