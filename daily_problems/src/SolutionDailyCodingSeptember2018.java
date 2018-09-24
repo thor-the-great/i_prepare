@@ -665,6 +665,208 @@ public class SolutionDailyCodingSeptember2018 {
         }
     }
 
+    /**
+     * This problem was asked by Facebook.
+     *
+     * There is an N by M matrix of zeroes. Given N and M, write a function to count the number of ways of starting at
+     * the top-left corner and getting to the bottom-right corner. You can only move right or down.
+     *
+     * For example, given a 2 by 2 matrix, you should return 2, since there are two ways to get to the bottom-right:
+     *
+     * Right, then down
+     * Down, then right
+     * Given a 5 by 5 matrix, there are 70 ways to get to the bottom-right.
+     *
+     * @param matrix
+     * @return
+     */
+    int paths(int[][] matrix) {
+        //return dfs(matrix.length, matrix[0].length, 1, 1);
+        return pathsDp(matrix);
+    }
+
+    int dfs(int row, int col, int rowRun, int colRun) {
+        if (rowRun == row && colRun == col)
+            return 1;
+
+        if (rowRun > row || colRun > col)
+            return 0;
+
+        return dfs(row, col, rowRun + 1, colRun)
+                + dfs(row, col, rowRun, colRun + 1);
+    }
+
+    int pathsDp(int[][] matrix) {
+        int m = matrix.length;
+        int n = matrix[0].length;
+        int[][] dp = new int[m][n];
+        //initilize dp memo with edge path
+        for (int i = 0; i < m; i++) {
+            dp[i][0] = 1;
+        }
+        for (int i = 0; i < n; i++) {
+            dp[0][i] = 1;
+        }
+
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+            }
+        }
+        return dp[m - 1][n - 1];
+    }
+
+    /**
+     * This problem was asked by Microsoft.
+     *
+     * Given a 2D matrix of characters and a target word, write a function that returns whether the word can be found
+     * in the matrix by going left-to-right, or up-to-down.
+     *
+     * For example, given the following matrix:
+     *
+     * [['F', 'A', 'C', 'I'],
+     *  ['O', 'B', 'Q', 'P'],
+     *  ['A', 'N', 'O', 'B'],
+     *  ['M', 'A', 'S', 'S']]
+     * and the target word 'FOAM', you should return true, since it's the leftmost column. Similarly, given the target
+     * word 'MASS', you should return true, since it's the last row.
+     *
+     * @param board
+     * @param word
+     * @return
+     */
+    boolean exist(char[][] board, String word) {
+        int l = word.length();
+        int m = board.length, n = board[0].length;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (word.charAt(0) != board[i][j])
+                    continue;
+                if ((l + i) <= m && doCheck(word, board, i, j, true)) return true;
+                if ((l + j) <= n && doCheck(word, board, i, j, false)) return true;
+            }
+        }
+        return false;
+    }
+
+    boolean doCheck(String word, char[][] matrix, int i, int j, boolean checkRow) {
+        for (int c = 1; c < word.length(); c++) {
+            char nextChar = ' ';
+            if (checkRow) {
+                nextChar = matrix[c + i][j];
+            }
+            else {
+                nextChar = matrix[i][j + c];
+            }
+            if (word.charAt(c) != nextChar)
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * This problem was asked by Google.
+     *
+     * A knight's tour is a sequence of moves by a knight on a chessboard such that all squares are visited once.
+     *
+     * Given N, write a function to return the number of knight's tours on an N by N chessboard.
+     *
+     * @param n
+     * @return
+     */
+    long tour(int n) {
+        if (n == 0)
+            return 0;
+        int[][] board = new int[n][n];
+        long counter = 0 ;
+        int maxMoves = board.length * board.length;
+        for (int r = 0; r < board.length; r++) {
+            for (int c = 0; c < board.length; c++) {
+                board[r][c] = 1;
+                counter += move(board, 1 , r, c, maxMoves);
+                board[r][c] = 0;
+            }
+        }
+        return counter;
+    }
+
+    int[] movesRow = new int[] {-2, -2, -1, -1, 1, 1, 2, 2};
+    int[] movesCol = new int[] {-1, 1, -2, 2, -2, 2, -1, 1};
+
+    long move(int[][] board, int moves, int row, int col, int maxMoves) {
+        if (moves == maxMoves) {
+            return 1;
+        }
+
+        long c = 0;
+        for (int m = 0; m < movesRow.length; m++) {
+            int newRow = row + movesRow[m];
+            int newCol = col + movesCol[m];
+
+            if (isValid(board, newRow, newCol)) {
+                board[newRow][newCol] = 1;
+                c += move(board, moves + 1, newRow, newCol, maxMoves);
+                board[newRow][newCol] = 0;
+            }
+        }
+        return c;
+    }
+
+    boolean isValid(int[][] board, int row, int col) {
+        if ( row < 0 || row >= board.length || col < 0 || col >= board.length)
+            return false;
+        if (board[row][col] == 1)
+            return false;
+        return true;
+    }
+
+    /**
+     * This problem was asked by Amazon.
+     *
+     * Given a N by M matrix of numbers, print out the matrix in a clockwise spiral.
+     *
+     * For example, given the following matrix:
+     *
+     * [[1,  2,  3,  4,  5],
+     *  [6,  7,  8,  9,  10],
+     *  [11, 12, 13, 14, 15],
+     *  [16, 17, 18, 19, 20]]
+     * You should print out the following:
+     *
+     * 1 2 3 4 5 10 15 20 19 18 17 16 11 6 7 8 9 14 13 12
+     *
+     * @param arr
+     */
+    void printCW(int[][] arr) {
+        int rowT = 0, rowB = arr.length - 1;
+        int colL = 0, colR = arr[0].length - 1;
+        int c = (rowB + 1) * (colR + 1);
+        while ( c > 0) {
+            for (int i = colL; i <= colR; i++) {
+                System.out.print(arr[rowT][i] + " ");
+                c--;
+            }
+            rowT++;
+            for (int i = rowT; i <= rowB; i++) {
+                System.out.print(arr[i][colR] + " ");
+                c--;
+            }
+            colR--;
+            if ( c <= 0 )
+                break;
+            for (int i = colR; i >= colL; i--) {
+                System.out.print(arr[rowB][i] + " ");
+                c--;
+            }
+            rowB--;
+            for (int i = rowB; i >= rowT; i--) {
+                System.out.print(arr[i][colL] + " ");
+                c--;
+            }
+            colL++;
+        }
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingSeptember2018 obj = new SolutionDailyCodingSeptember2018();
 
@@ -964,5 +1166,47 @@ public class SolutionDailyCodingSeptember2018 {
         System.out.println(obj.myPow(9, 16));
         System.out.println(obj.myPow(10, 12));
         System.out.println(obj.myPow(81, -2));
+
+
+        System.out.println("----- number of unique paths ------");
+        int[][] matrix = new int[2][2];
+        System.out.println(obj.paths(matrix));
+        matrix = new int[5][5];
+        System.out.println(obj.paths(matrix));
+        matrix = new int[1000][1000];
+        System.out.println(obj.paths(matrix));
+
+        System.out.println("------ check if word is in matrix of chars ------");
+        char[][] charMatrix = new char[][] {
+                {'F', 'A', 'C', 'I'},
+                {'O', 'B', 'Q', 'P'},
+                {'A', 'N', 'O', 'B'},
+                {'M', 'A', 'S', 'S'}
+        };
+        System.out.println(obj.exist(charMatrix, "FOAM"));
+        System.out.println(obj.exist(charMatrix, "MASS"));
+        System.out.println(obj.exist(charMatrix, "BOWL"));
+        System.out.println(obj.exist(charMatrix, "IPB"));
+        System.out.println(obj.exist(charMatrix, "FACT"));
+        System.out.println(obj.exist(charMatrix, "ACI"));
+
+        System.out.println("------- number of knight tours --------");
+        System.out.println(obj.tour(5));
+
+        System.out.println("----- print arry in clockwise spiral order ------");
+        int[][] a = new int[][] {
+                { 1,  2,  3,  4,  5},
+                { 6,  7,  8,  9, 10},
+                {11, 12, 13, 14, 15},
+                {16, 17, 18, 19, 20},
+        };
+        obj.printCW(a);
+
+        a = new int[][] {
+                { 1,  2,  3,  4,  5},
+                { 6,  7,  8,  9, 10},
+                {11, 12, 13, 14, 15}
+        };
+        obj.printCW(a);
     }
 }
