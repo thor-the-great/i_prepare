@@ -903,6 +903,58 @@ public class SolutionDailyCodingSeptember2018 {
             return 1;
     }
 
+    /**
+     * This problem was asked by Google.
+     *
+     * On our special chessboard, two bishops attack each other if they share the same diagonal. This includes bishops
+     * that have another bishop located between them, i.e. bishops can attack through pieces.
+     *
+     * You are given N bishops, represented as (row, column) tuples on a M by M chessboard. Write a function to count
+     * the number of pairs of bishops that attack each other. The ordering of the pair doesn't matter: (1, 2) is
+     * considered the same as (2, 1).
+     *
+     * For example, given M = 5 and the list of bishops:
+     *
+     * (0, 0)
+     * (1, 2)
+     * (2, 2)
+     * (4, 0)
+     * The board would look like this:
+     *
+     * [b 0 0 0 0]
+     * [0 0 b 0 0]
+     * [0 0 b 0 0]
+     * [0 0 0 0 0]
+     * [b 0 0 0 0]
+     * You should return 2, since bishops 1 and 3 attack each other, as well as bishops 3 and 4.
+     *
+     * @param bishops
+     * @param M
+     * @return
+     */
+    long bishopPairs(int[][] bishops, int M) {
+        //idea is simple - took one bishop and check it with other bishops in sequence. we don't care about board
+        //if bishops are on the same diagonal - they in attack position so increment counter.
+        //two catches:
+        // - don't forget to exclude current bishop
+        // - don't forget to divide counter by 2 because it counts unique pairs, while we don't differentiate between
+        //   (1->2) and (2->1)
+        long count = 0;
+        for (int i =0; i < bishops.length; i++) {
+            int[] b = bishops[i];
+            int rowB = b[0];
+            int colB = b[1];
+            for (int j =0; j < bishops.length; j++) {
+                if (i == j)
+                    continue;
+                if (Math.abs(rowB - bishops[j][0]) == Math.abs(colB - bishops[j][1])) {
+                    count++;
+                }
+            }
+        }
+        return count/2;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingSeptember2018 obj = new SolutionDailyCodingSeptember2018();
 
@@ -1257,5 +1309,39 @@ public class SolutionDailyCodingSeptember2018 {
         }
         System.out.println("testing toss_biased : percent of '0' = " + ((float)numOfZeroes/numOfTries));
         System.out.println("now fixed version - should be normal : percent of '0' = " + ((float)numOfZeroesFixed/numOfTries));
+
+        System.out.println("----- num of bishops attacking -------");
+        int[][] bishops;
+        bishops = new int[][] {
+                {0, 0},
+                {1, 2},
+                {2, 2},
+                {4, 0}
+        };
+        System.out.println(obj.bishopPairs(bishops, 5));
+
+        bishops = new int[][] {
+                {2, 0},
+                {3, 3},
+                {1, 1}
+        };
+        System.out.println(obj.bishopPairs(bishops, 4));
+
+        bishops = new int[][] {
+                {2, 0},
+                {3, 3},
+                {1, 1},
+                {0, 2}
+        };
+        System.out.println(obj.bishopPairs(bishops, 4));
+
+        bishops = new int[][] {
+                {0, 0},
+                {0, 4},
+                {4, 0},
+                {4, 4},
+                {2, 2}
+        };
+        System.out.println(obj.bishopPairs(bishops, 5));
     }
 }
