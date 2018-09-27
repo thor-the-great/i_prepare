@@ -1,6 +1,7 @@
 import trees.BSTNodeChar;
 import utils.StringUtils;
 
+import java.nio.charset.MalformedInputException;
 import java.util.*;
 
 public class SolutionDailyCodingSeptember2018 {
@@ -929,17 +930,72 @@ public class SolutionDailyCodingSeptember2018 {
      * You should return 2, since bishops 1 and 3 attack each other, as well as bishops 3 and 4.
      *
      * @param bishops
-     * @param M
+     * @param m
      * @return
      */
-    long bishopPairs(int[][] bishops, int M) {
+    int bishopPairs(int[][] bishops, int m) {
+        //return bishopPairsNPow2(bishops, m);
+        return bishopPairsLinear(bishops, m);
+    }
+
+    int bishopPairsLinear(int[][] bishops, int m) {
+        //idea is following - instead of checking every pair of bishops (which is O(n^2)) we can scan diagonals
+        //and count how many bishops are there - it will take O(n) because we only check diagonals where bishop
+        //positioned. Two directions of scan is possible - from top left to bottom right and top right to bottom left
+        //then we do bucketing on number of bishops.
+        //Then number of attacking pairs will be choose 2 of (num_of_bishops) = n!/2*(n-2)! = n*(n-1)/2. Do this for every
+        //bucket and accumulate sum
+        int TOP_LEFT_BOT_RIGTH = 0;
+        int TOP_RIGHT_BOT_LEFT = 1;
+        Map<String, Integer> diagBuckets = new HashMap();
+
+        for (int[] bishop : bishops) {
+            int bRow = bishop[0];
+            int bCol = bishop[1];
+
+            int minRowCol = Math.min(bRow, bCol);
+            int topLeftRow = bRow - minRowCol;
+            int topLeftCol = bCol - minRowCol;
+
+            int minRowMMinCol = Math.min(bRow, m - bCol);
+            int topRightRow = bRow - minRowMMinCol;
+            int topRightCol = bCol + minRowMMinCol;
+
+            addValueToMap(diagBuckets, topLeftRow, topLeftCol, TOP_LEFT_BOT_RIGTH);
+            addValueToMap(diagBuckets, topRightRow, topRightCol, TOP_RIGHT_BOT_LEFT);
+        }
+
+        int count = 0;
+        for (String key : diagBuckets.keySet()) {
+            int numOfBishops = diagBuckets.get(key);
+            if (numOfBishops > 1)
+                count += (numOfBishops - 1) * numOfBishops / 2;
+        }
+        return count;
+    }
+
+    void addValueToMap(Map<String, Integer> diagBuckets, int row, int col, int directionIndex) {
+        StringBuilder keySB = new StringBuilder();
+        keySB.append(row).append(col).append(directionIndex);
+        incrementMapValue(keySB.toString(), diagBuckets);
+    }
+
+    void incrementMapValue(String key, Map<String, Integer> map) {
+        if (map.containsKey(key)) {
+            map.put(key, map.get(key) + 1);
+        } else {
+            map.put(key, 1);
+        }
+    }
+
+    int bishopPairsNPow2(int[][] bishops, int m) {
         //idea is simple - took one bishop and check it with other bishops in sequence. we don't care about board
         //if bishops are on the same diagonal - they in attack position so increment counter.
         //two catches:
         // - don't forget to exclude current bishop
         // - don't forget to divide counter by 2 because it counts unique pairs, while we don't differentiate between
         //   (1->2) and (2->1)
-        long count = 0;
+        int count = 0;
         for (int i =0; i < bishops.length; i++) {
             int[] b = bishops[i];
             int rowB = b[0];
@@ -1318,14 +1374,14 @@ public class SolutionDailyCodingSeptember2018 {
                 {2, 2},
                 {4, 0}
         };
-        System.out.println(obj.bishopPairs(bishops, 5));
+        System.out.println(obj.bishopPairs(bishops, 5)); //2
 
         bishops = new int[][] {
                 {2, 0},
                 {3, 3},
                 {1, 1}
         };
-        System.out.println(obj.bishopPairs(bishops, 4));
+        System.out.println(obj.bishopPairs(bishops, 4));//2
 
         bishops = new int[][] {
                 {2, 0},
@@ -1333,7 +1389,7 @@ public class SolutionDailyCodingSeptember2018 {
                 {1, 1},
                 {0, 2}
         };
-        System.out.println(obj.bishopPairs(bishops, 4));
+        System.out.println(obj.bishopPairs(bishops, 4));//4
 
         bishops = new int[][] {
                 {0, 0},
@@ -1342,6 +1398,6 @@ public class SolutionDailyCodingSeptember2018 {
                 {4, 4},
                 {2, 2}
         };
-        System.out.println(obj.bishopPairs(bishops, 5));
+        System.out.println(obj.bishopPairs(bishops, 5)); //6
     }
 }
