@@ -1,7 +1,6 @@
 import trees.BSTNodeChar;
 import utils.StringUtils;
 
-import java.nio.charset.MalformedInputException;
 import java.util.*;
 
 public class SolutionDailyCodingSeptember2018 {
@@ -1011,6 +1010,76 @@ public class SolutionDailyCodingSeptember2018 {
         return count/2;
     }
 
+    /**
+     * This problem was asked by Facebook.
+     *
+     * Given a list of integers, return the largest product that can be made by multiplying any three integers.
+     *
+     * For example, if the list is [-10, -10, 5, 2], we should return 500, since that's -10 * -10 * 5.
+     *
+     * You can assume the list has at least three integers.
+     *
+     * @param nums
+     * @return
+     */
+    public int maximumProduct(int[] nums) {
+        //idea is following - largest product could be one of those:
+        //- p1*p2*p3 if all p-s are >0 or
+        //- p1*n1*n2 if n-s are larger than p and both are negative
+        //we can sort array and then check from each end, but sorting will take n*log(n). In fact we don't need full
+        //sorting, just 2 smallest elements and 3 largest. So do the limited sorting in one full scan
+        int min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
+        int max1 = Integer.MIN_VALUE, max2 = Integer.MIN_VALUE, max3 = Integer.MIN_VALUE;
+        for (int next : nums) {
+            if (next < min1) {
+                min2 = min1;
+                min1 = next;
+            } else if (next < min2) {
+                min2 = next;
+            }
+            if (next > max1) {
+                max3 = max2;
+                max2 = max1;
+                max1 = next;
+            } else if (next > max2) {
+                max3 = max2;
+                max2 = next;
+            } else if (next > max3) {
+                max3 = next;
+            }
+        }
+        return Math.max(min1*min2*max1, max1*max2*max3);
+    }
+
+    /**
+     * This problem was asked by Microsoft.
+     *
+     * A number is considered perfect if its digits sum up to exactly 10.
+     *
+     * Given a positive integer n, return the n-th perfect number.
+     *
+     * For example, given 1, you should return 19. Given 2, you should return 28.
+     *
+     * @param n
+     * @return
+     */
+    int perfectNum(int n) {
+        //idea is - just calculate number. If you write down the numbers and it count it appears
+        //that n is part of the number itself. So just add to the end whatever is needed to form sum of 10
+        int sumOfDigitsInN = 0;
+        int i = n;
+        while (i > 0) {
+            sumOfDigitsInN += i % 10;
+            i = i / 10;
+        }
+        int cary = sumOfDigitsInN % 10;
+        int result = n * 10;
+        if (cary != 0) {
+            result += (10 - cary);
+        }
+        return result;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingSeptember2018 obj = new SolutionDailyCodingSeptember2018();
 
@@ -1399,5 +1468,15 @@ public class SolutionDailyCodingSeptember2018 {
                 {2, 2}
         };
         System.out.println(obj.bishopPairs(bishops, 5)); //6
+
+        System.out.println("------ largest product from 3 array elements ------");
+        System.out.println(obj.maximumProduct(new int[]{-10, -10, 5, 2}));
+
+        System.out.println("------ n-th perfect number --------");
+        for (int i = 1; i < 101; i++) {
+            System.out.print(obj.perfectNum(i) + ", ");
+        }
+        System.out.println("\n" + obj.perfectNum(101));
+        System.out.println("\n" + obj.perfectNum(15));
     }
 }
