@@ -1011,6 +1011,57 @@ public class SolutionDailyCodingSeptember2018 {
         return count/2;
     }
 
+    long getPerfectNum(int num) {
+        int c = 0;
+        long number = 1;
+        while (c != num) {
+            if (isPerfectNum(number)) {
+                c++;
+                if (c != num)
+                    number += 9;
+            } else
+                number++;
+        }
+        return number;
+    }
+
+    /**
+     * This problem was asked by Microsoft.
+     *
+     * A number is considered perfect if its digits sum up to exactly 10.
+     *
+     * Given a positive integer n, return the n-th perfect number.
+     *
+     * For example, given 1, you should return 19. Given 2, you should return 28.
+     *
+     * @param num
+     * @return
+     */
+    boolean isPerfectNum(long num) {
+        int sumOfDigits = 0;
+        while (num > 0) {
+            sumOfDigits += num % 10;
+            num = num / 10;
+        }
+        return sumOfDigits == 10;
+    }
+
+    public int rand5() {
+        int rand1 = rand7();
+        int rand2 = rand7();
+        //transform two numbers to number between 1 and 49;
+        int combinedNumber = (rand1 - 1) * 7 + rand2;
+        if (combinedNumber > 45)
+            return rand5();
+        else
+            return (combinedNumber % 5) + 1;
+    }
+
+    //given function thar return random from 1 to 7
+    int rand7() {
+        return 1 + rand.nextInt(7);
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingSeptember2018 obj = new SolutionDailyCodingSeptember2018();
 
@@ -1399,5 +1450,25 @@ public class SolutionDailyCodingSeptember2018 {
                 {2, 2}
         };
         System.out.println(obj.bishopPairs(bishops, 5)); //6
+
+        System.out.println("-------- get n-th perfect number (sum of digits is 10) --------");
+        for (int i = 1; i <= 500; i++) {
+            System.out.println(i + "th num is : " + obj.getPerfectNum(i));
+        }
+
+        System.out.println("------ write rand5 having rand7 --------");
+        Map<Integer, Integer> probMap = new HashMap<>();
+        int total = 1000000;
+        for (int i = 0; i < total; i++) {
+            int num = obj.rand5();
+            if (probMap.containsKey(num)) {
+                probMap.put(num, probMap.get(num) + 1);
+            } else {
+                probMap.put(num, 1);
+            }
+        }
+        for (int key : probMap.keySet()) {
+            System.out.println( "'"+key + "' probability is " + (float)probMap.get(key) / total);
+        }
     }
 }

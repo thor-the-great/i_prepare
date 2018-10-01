@@ -10,21 +10,21 @@ public class DiGraph {
     List<Integer>[] vertices;
     int E;
 
-    DiGraph(int V) {
+    public DiGraph(int V) {
         vertices = new ArrayList[V];
         for(int i = 0 ; i < V; i++) {
             vertices[i] = new ArrayList<>();
         }
     }
 
-    void addEdge(int v, int v2) {
+    public void addEdge(int v, int v2) {
         checkVertexNumber(v);
         checkVertexNumber(v2);
         vertices[v].add(v2);
         E++;
     }
 
-    List<Integer> adj(int v) {
+    public List<Integer> adj(int v) {
         checkVertexNumber(v);
         return  vertices[v];
     }
@@ -35,11 +35,11 @@ public class DiGraph {
         }
     }
 
-    int getV() {
+    public int getV() {
         return vertices.length;
     }
 
-    int getE() {
+    public int getE() {
         return E;
     }
 
