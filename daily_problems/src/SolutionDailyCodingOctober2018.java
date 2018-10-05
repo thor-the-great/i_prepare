@@ -1,6 +1,4 @@
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class SolutionDailyCodingOctober2018 {
 
@@ -110,16 +108,14 @@ public class SolutionDailyCodingOctober2018 {
         //time - O(log(n)) BS + O(1), n times => O(n*logn)
         int n = arr.length;
         int[] increasingArr = new int[n];
-        int right = 0;
-        for( int el : arr) {
-            int index = Arrays.binarySearch(increasingArr, 0, right, el);
-            if (index < 0)
-                index = - index - 1;
-            increasingArr[index] = el;
-            if (index == right)
-                right++;
+        int rightPointer = 0;
+        for( int arrayElement : arr) {
+            int indexToInsert = -(Arrays.binarySearch(increasingArr, 0, rightPointer, arrayElement)) - 1;
+            increasingArr[indexToInsert] = arrayElement;
+            if (indexToInsert == rightPointer)
+                rightPointer++;
         }
-        return right;
+        return rightPointer;
     }
 
     private int getLISDP(int[] arr) {
@@ -160,6 +156,104 @@ public class SolutionDailyCodingOctober2018 {
 
     int max;
 
+    /**
+     * This problem was asked by Google.
+     *
+     * You are given an N by M 2D matrix of lowercase letters. Determine the minimum number of columns that can be
+     * removed to ensure that each row is ordered from top to bottom lexicographically. That is, the letter at each
+     * column is lexicographically later as you go down each row. It does not matter whether each row itself is ordered
+     * lexicographically.
+     *
+     * For example, given the following table:
+     *
+     * cba
+     * daf
+     * ghi
+     * This is not ordered because of the a in the center. We can remove the second column to make it ordered:
+     *
+     * ca
+     * df
+     * gi
+     * So your function should return 1, since we only needed to remove 1 column.
+     *
+     * As another example, given the following table:
+     *
+     * abcdef
+     * Your function should return 0, since the rows are already ordered (there's only one row).
+     *
+     * As another example, given the following table:
+     *
+     * zyx
+     * wvu
+     * tsr
+     * Your function should return 3, since we would need to remove all the columns to order it.
+     *
+     * @param matrix
+     * @return
+     */
+    public int columnsToRemove(char[][] matrix) {
+        int count = 0;
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+        if (rows == 0 || cols == 0)
+            return 0;
+        for (int col = 0; col < cols; col++) {
+            char currentChar = matrix[0][col];
+            for (int row = 1; row < rows; row++) {
+                if (matrix[row][col] > currentChar) {
+                    currentChar = matrix[row][col];
+                }
+                else {
+                    count++;
+                    break;
+                }
+            }
+        }
+        return count;
+    }
+
+    /**
+     * This problem was asked by Snapchat.
+     *
+     * Given a list of possibly overlapping intervals, return a new list of intervals where all overlapping intervals
+     * have been merged.
+     *
+     * The input list is not necessarily ordered in any way.
+     *
+     * For example, given [(1, 3), (5, 8), (4, 10), (20, 25)], you should return [(1, 3), (4, 10), (20, 25)].
+     *
+     * @param intervals
+     * @return
+     */
+    List<int[]> mergeIntervals(List<int[]> intervals) {
+        //idea is to sort intervals (per start time) and then iterate, comparing current interval with previously saved.
+        //by sorting original list we save on time it's O(1)
+        //sorting gives O(n*log(n)) running time, iteration - O(n), so overall - O(n*log(n))
+        List<int[]> res = new ArrayList();
+        int n = intervals.size();
+        if (n == 0)
+            return res;
+        //sorting, lambda notation
+        Collections.sort(intervals, (o1, o2) -> (o1[0] - o2[0]));
+        int sPointer = 1;
+        int[] mergedInterval = new int[2];
+        mergedInterval[0] = intervals.get(0)[0];
+        mergedInterval[1] = intervals.get(0)[1];
+        while(sPointer < n) {
+            if (mergedInterval[1] < intervals.get(sPointer)[0]) {
+                res.add(mergedInterval);
+                mergedInterval = new int[2];
+                mergedInterval[0] = intervals.get(sPointer)[0];
+                mergedInterval[1] = intervals.get(sPointer)[1];
+            } else if (mergedInterval[1] < intervals.get(sPointer)[1]) {
+                mergedInterval[1] = intervals.get(sPointer)[1];
+            }
+            sPointer++;
+        }
+        //after last iteration we haven't added array, so do it
+        res.add(mergedInterval);
+        return res;
+    }
 
     public static void main(String[] args) {
         SolutionDailyCodingOctober2018 obj = new SolutionDailyCodingOctober2018();
@@ -180,5 +274,79 @@ public class SolutionDailyCodingOctober2018 {
         System.out.println(obj.getLIS(new int[] {8, 6, 4, 2, 1}));
         System.out.println(obj.getLIS(new int[] {1, 3, 2, 4, 5, 6, 7}));
         System.out.println(obj.getLIS(new int[] {10, 7, 2, 6, 1, 0}));
+
+        System.out.println("--- num of unsorted cols in matrix ----");
+        char[][] charMatrix;
+        charMatrix = new char[][] {
+                {'c', 'b', 'a'},
+                {'d', 'a', 'f'},
+                {'g', 'h', 'i'}
+        };
+        System.out.println(obj.columnsToRemove(charMatrix));
+
+        charMatrix = new char[][] {
+                {'a', 'b', 'c', 'd', 'e', 'f'}
+        };
+        System.out.println(obj.columnsToRemove(charMatrix));
+
+        charMatrix = new char[][] {
+                {'z', 'y', 'x'},
+                {'w', 'v', 'u'},
+                {'t', 's', 'r'}
+        };
+        System.out.println(obj.columnsToRemove(charMatrix));
+
+        System.out.println("---- return list of merged overlapped intervals -----");
+        List<int[]> intervals = new ArrayList<>();
+        intervals.add(new int[] {1, 3});
+        intervals.add(new int[] {5, 8});
+        intervals.add(new int[] {4, 10});
+        intervals.add(new int[] {20, 25});
+
+        List<int[]> merged = obj.mergeIntervals(intervals);
+
+        for (int [] array : merged ) {
+            System.out.print("[" + array[0] + ", "+array[1] + "], ");
+        }
+        System.out.println("");
+
+        intervals = new ArrayList<>();
+        intervals.add(new int[] {1, 3});
+        intervals.add(new int[] {2, 7});
+        intervals.add(new int[] {5, 8});
+        intervals.add(new int[] {4, 10});
+        intervals.add(new int[] {20, 25});
+        merged = obj.mergeIntervals(intervals);
+        for (int [] array : merged ) {
+            System.out.print("[" + array[0] + ", "+array[1] + "], ");
+        }
+        System.out.println("");
+
+        intervals = new ArrayList<>();
+        intervals.add(new int[] {2, 8});
+        intervals.add(new int[] {1, 7});
+        intervals.add(new int[] {5, 8});
+        intervals.add(new int[] {4, 10});
+        intervals.add(new int[] {20, 25});
+        merged = obj.mergeIntervals(intervals);
+        for (int [] array : merged ) {
+            System.out.print("[" + array[0] + ", "+array[1] + "], ");
+        }
+        System.out.println("");
+
+        intervals = new ArrayList<>();
+        intervals.add(new int[] {2, 8});
+        merged = obj.mergeIntervals(intervals);
+        for (int [] array : merged ) {
+            System.out.print("[" + array[0] + ", "+array[1] + "], ");
+        }
+        System.out.println("");
+
+        intervals = new ArrayList<>();
+        merged = obj.mergeIntervals(intervals);
+        for (int [] array : merged ) {
+            System.out.print("[" + array[0] + ", "+array[1] + "], ");
+        }
+        System.out.println("");
     }
 }
