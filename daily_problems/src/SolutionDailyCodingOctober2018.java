@@ -1,3 +1,6 @@
+import linked_list.ListNode;
+import linked_list.StringUtils;
+
 import java.util.*;
 
 public class SolutionDailyCodingOctober2018 {
@@ -56,7 +59,7 @@ public class SolutionDailyCodingOctober2018 {
         }
         //now iterate over primes, divisors are factors of primes
         int numOfDivisors = 1;
-        Set<Integer> usedNums = new HashSet();
+        Set<Integer> usedNums = new HashSet<>();
         int n = X;
         for (int p = 2; p <= N; p++) {
             if (seive[p]) {
@@ -229,7 +232,7 @@ public class SolutionDailyCodingOctober2018 {
         //idea is to sort intervals (per start time) and then iterate, comparing current interval with previously saved.
         //by sorting original list we save on time it's O(1)
         //sorting gives O(n*log(n)) running time, iteration - O(n), so overall - O(n*log(n))
-        List<int[]> res = new ArrayList();
+        List<int[]> res = new ArrayList<>();
         int n = intervals.size();
         if (n == 0)
             return res;
@@ -253,6 +256,77 @@ public class SolutionDailyCodingOctober2018 {
         //after last iteration we haven't added array, so do it
         res.add(mergedInterval);
         return res;
+    }
+
+    /**
+     * This problem was asked recently by Google.
+     *
+     * Given k sorted singly linked lists, write a function to merge all the lists into one sorted singly linked list.
+     *
+     * @param lists
+     * @return
+     */
+    ListNode mergeToSorted(List<ListNode> lists) {
+        //idea is - use mixHeap, put head of each list in it, then poll min element sequentially and add next to the
+        //minHeap. If list is exhausted next will be null so no elements from this list stay in the heap
+        PriorityQueue<ListNode> minQueue = new PriorityQueue<>(Comparator.comparingInt(o -> o.val));
+        for(int i = 0; i < lists.size(); i++) {
+            ListNode head = lists.get(i);
+            minQueue.add(head);
+        }
+        ListNode firstMinNode = minQueue.poll();
+        ListNode curr = firstMinNode;
+        ListNode head = firstMinNode;
+        if (curr.next != null)
+            minQueue.add(curr.next);
+        while(!minQueue.isEmpty()) {
+            ListNode nextMinNode = minQueue.poll();
+            curr.next = nextMinNode;
+            curr = nextMinNode;
+            if (nextMinNode.next != null) {
+                minQueue.add(nextMinNode.next);
+            }
+        }
+        return head;
+    }
+
+    /**
+     * This problem was asked by Facebook.
+     *
+     * Given an array of integers, write a function to determine whether the array could become non-decreasing by
+     * modifying at most 1 element.
+     *
+     * For example, given the array [10, 5, 7], you should return true, since we can modify the 10 into a 1 to make
+     * the array non-decreasing.
+     *
+     * Given the array [10, 5, 1], you should return false, since we can't modify any one element to get a
+     * non-decreasing array.
+     *
+     * @param nums
+     * @return
+     */
+    boolean isNonDecreasingPossible(int[] nums) {
+        //idea is to catch those increasing/decreasing points. If there are two or more of those - we definitely can't
+        // do the requirement
+        //otherwise it depends - if it's at certain index like 0 or last - 1 - we can do it. Otherwise need to check
+        //surrounders of that index. if nums[index - 1] <= nums[index + 1] or nums[index] <= nums[index + 2] we can do it.
+        //edge index cases covered by previous if
+        //time - O(n) - full array scan
+        //space - O(1) - just couple of extra variables
+        int index = -1;
+        int n = nums.length;
+        if (n < 2)
+            return true;
+        for (int i = 0; i < n - 1; i++) {
+            if (nums[i] > nums[i + 1]) {
+                if (index != -1)
+                    return false;
+                else
+                    index = i;
+            }
+        }
+        if (index == -1 || index == 0|| index == n - 2) return true;
+        return nums[index - 1] <= nums[index + 1] || nums[index] <= nums[index + 2];
     }
 
     public static void main(String[] args) {
@@ -348,5 +422,23 @@ public class SolutionDailyCodingOctober2018 {
             System.out.print("[" + array[0] + ", "+array[1] + "], ");
         }
         System.out.println("");
+
+        System.out.println("----- merge k sorted lists --------");
+        ListNode headOne = new ListNode(2, new ListNode(4, new ListNode(8)));
+        ListNode headTwo = new ListNode(1, new ListNode(6, new ListNode(12, new ListNode(15))));
+        ListNode headThree = new ListNode(0, new ListNode(4, new ListNode(7, new ListNode(9, new ListNode(11)))));
+        List<ListNode> lists = new ArrayList<>();
+        lists.add(headOne);
+        lists.add(headTwo);
+        lists.add(headThree);
+        ListNode sortedMerged = obj.mergeToSorted(lists);
+        System.out.println(StringUtils.singlyListNodeToString(sortedMerged));
+
+        System.out.println("----- is non-decreasing array possible with one replacement max -------");
+        System.out.println(obj.isNonDecreasingPossible(new int[] {10, 5, 7}));//true
+        System.out.println(obj.isNonDecreasingPossible(new int[] {10, 5, 1}));//false
+        System.out.println(obj.isNonDecreasingPossible(new int[] {-5, 1, 2, 3, 2, 3, 6}));//true
+        System.out.println(obj.isNonDecreasingPossible(new int[] {5, 1, 2, 3, 2, 3, 6}));//false
+        System.out.println(obj.isNonDecreasingPossible(new int[] {3, 4, 2, 3}));//false
     }
 }
