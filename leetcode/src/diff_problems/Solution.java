@@ -1,5 +1,7 @@
 package diff_problems;
 
+import com.sun.org.apache.regexp.internal.CharacterArrayCharacterIterator;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
@@ -184,6 +186,55 @@ public class Solution {
         return result >= 3 ? result : 0;
     }
 
+    /**
+     * https://leetcode.com/contest/weekly-contest-105/problems/reverse-only-letters/
+     *
+     * Given a string S, return the "reversed" string where all characters that are not a letter stay in the same place,
+     * and all letters reverse their positions.
+     *
+     *
+     *
+     * Example 1:
+     *
+     * Input: "ab-cd"
+     * Output: "dc-ba"
+     * Example 2:
+     *
+     * Input: "a-bC-dEf-ghIj"
+     * Output: "j-Ih-gfE-dCba"
+     * Example 3:
+     *
+     * Input: "Test1ng-Leet=code-Q!"
+     * Output: "Qedo1ct-eeLg=ntse-T!"
+     *
+     *
+     * Note:
+     *
+     * S.length <= 100
+     * 33 <= S[i].ASCIIcode <= 122
+     * S doesn't contain \ or "
+     *
+     * @param S
+     * @return
+     */
+    public String reverseOnlyLetters(String S) {
+        if (S.length() < 2)
+            return S;
+        int n = S.length();
+        int l = 0, r = n - 1;
+        char[] newString = S.toCharArray();
+        while (l <= r) {
+            while (l < n && !Character.isLetter(S.charAt(l))) l++;
+            while (r >= 0 && !Character.isLetter(S.charAt(r))) r--;
+            if (r < 0 || l >= n) break;
+            newString[l] = S.charAt(r);
+            newString[r] = S.charAt(l);
+            r--;
+            l++;
+        }
+        return new String(newString);
+    }
+
     public static void main(String[] args) {
         Solution obj = new Solution();
         //[3,5,1,6,2,9,8,null,null,7,4]
@@ -216,6 +267,24 @@ public class Solution {
 
         //System.out.println(obj.getNumberOfEncodings("111".toCharArray()));
         //System.out.println(obj.getNumberOfEncodings("2712211".toCharArray()));
+        String res = obj.reverseOnlyLetters("Test1ng-Leet=code-Q!");
+        String golden = "Qedo1ct-eeLg=ntse-T!";
+        System.out.println(res + "?" + golden +" " + res.equals(golden));
 
+        res = obj.reverseOnlyLetters("7_28]");
+        golden = "7_28]";
+        System.out.println(res + " ? " + golden +" " + res.equals(golden));
+
+        res = obj.reverseOnlyLetters(";1yDV");
+        golden = ";1VDy";
+        System.out.println(res + " ? " + golden +" " + res.equals(golden));
+
+        res = obj.reverseOnlyLetters("ab-cd");
+        golden = "dc-ba";
+        System.out.println(res + " ? " + golden +" " + res.equals(golden));
+
+        res = obj.reverseOnlyLetters("a-bC-dEf-ghIj");
+        golden = "j-Ih-gfE-dCba";
+        System.out.println(res + " ? " + golden +" " + res.equals(golden));
     }
 }
