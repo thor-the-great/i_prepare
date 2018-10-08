@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="cracking_code" />
+    <orderEntry type="module" module-name="leetcode" />
   </component>
 </module>
