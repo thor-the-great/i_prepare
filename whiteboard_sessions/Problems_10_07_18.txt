@@ -1,0 +1,39 @@
+1.
+Given a keypad and int k return possible number of phone numbers. You can go by keypad in a knight pattern.
+You start from 1.
+
+1 2 3
+4 5 6
+7 8 9
+  0
+Ex: k = 2; result 2 (18, 16)
+
+2.
+matrix
+1, 0, 0, -1
+0, -1, 0, .
+.,  ., ., 0
+., , , ,  0
+
+start at 0,0 , got to n-1, n-1, then go back. 1 is a point, 0 - you can step but no points, -1 - you can't step.
+Collect max number of points two ways
+
+int maxPoints(int[][] grid) {
+	int rows = grid.length;
+	int cols = grid[0].length;
+	int[][] pathBottomRight = new int[2][rows + cols];
+	int[][] distances = new int[rows][cols];
+	for (int r = 1; r < rows; r++) {
+		for (int c = 1; c < rows; c++) {
+			distances[r][c] = Integer.MIN_VALUE;
+		}
+	}
+	distances[0][0] = grid[0][0] == 1 ? 1 : 0;
+	for (int r = 1; r < rows; r++) {
+		for (int c = 1; c < rows; c++) {
+			if (grid[r][c] == -1)
+				continue;
+
+		}
+	}
+}
