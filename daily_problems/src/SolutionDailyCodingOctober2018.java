@@ -1,5 +1,6 @@
 import linked_list.ListNode;
 import linked_list.StringUtils;
+import trees.BSTNode;
 
 import java.util.*;
 
@@ -329,6 +330,119 @@ public class SolutionDailyCodingOctober2018 {
         return nums[index - 1] <= nums[index + 1] || nums[index] <= nums[index + 2];
     }
 
+    BSTNode getDeepest(BSTNode root) {
+        //do the in-level traversal and count levels as well. Keep track of deeper level and node we've seen so far
+        //if we meet deeper level - update our tracking vars
+        BSTNode deepestNode = root;
+        int deepestLevel = 1;
+        Queue<BSTNode> nodeQ = new LinkedList();
+        Queue<Integer> levels = new LinkedList();
+        nodeQ.add(root);
+        levels.add(1);
+        while (!nodeQ.isEmpty()) {
+            BSTNode node = nodeQ.poll();
+            int level = levels.poll();
+            if (deepestLevel < level) {
+                deepestLevel = level;
+                deepestNode = node;
+            }
+            if (node.left != null) {
+                nodeQ.add(node.left);
+                levels.add(level + 1);
+            }
+            if (node.right != null) {
+                nodeQ.add(node.right);
+                levels.add(level + 1);
+            }
+        }
+
+        return deepestNode;
+    }
+
+    /**
+     * This problem was asked by Yelp.
+     *
+     * Given a mapping of digits to letters (as in a phone number), and a digit string, return all possible letters the
+     * number could represent. You can assume each valid number in the mapping is a single digit.
+     *
+     * For example if {“2”: [“a”, “b”, “c”], 3: [“d”, “e”, “f”], …} then “23” should return
+     * [“ad”, “ae”, “af”, “bd”, “be”, “bf”, “cd”, “ce”, “cf"].
+     *
+     * @param mapping
+     * @return
+     */
+    List<String> possibleCombinations(Map<Integer, List<Character>> mapping) {
+        return possibleCombinationsRecusrsive(mapping);
+    }
+
+    List<String> possibleCombinationsRecusrsive(Map<Integer, List<Character>> mapping) {
+        int[] digits = new int[mapping.keySet().size()];
+        int count = 0;
+        for(int digit :  mapping.keySet()) {
+            digits[count] = digit;
+            count++;
+        }
+        List<String> res = new ArrayList();
+        helperRec(mapping, res, "", digits, 0);
+        return res;
+    }
+
+    void helperRec(Map<Integer, List<Character>> mapping, List<String> res, String s, int[] digits, int index) {
+        if (index >= digits.length) {
+            res.add(s);
+            return;
+        }
+
+        for(int i =0; i < mapping.get(digits[index]).size(); i++) {
+            char nextChar = mapping.get(digits[index]).get(i);
+            helperRec(mapping, res, s + nextChar, digits, index + 1);
+        }
+    }
+
+    /**
+     * This problem was asked Microsoft.
+     *
+     * Using a read7() method that returns 7 characters from a file, implement readN(n) which reads n characters.
+     *
+     * For example, given a file with the content “Hello world”, three read7() returns “Hello w”, “orld” and then “”.
+     *
+     * @param n
+     * @return
+     */
+    String readN(int n) {
+        // idea is simple - count number of full reads and count of remaining chars.
+        // do the n full reads and then 1 read is remainder > 0, then substring if needed. On every step check for empty
+        // string
+        pointer = 0;
+        int evenReads = n / 7;
+        int moduloChars = n % 7;
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i <= evenReads; i++) {
+            String s = read7();
+            if (s.isEmpty())
+                return sb.toString();
+            sb.append(s);
+        }
+        if (moduloChars > 0) {
+            String s = read7();
+            if (!s.isEmpty())
+                sb.append(s, 0, moduloChars);
+        }
+        return sb.toString();
+    }
+
+    String readFileString = "Hello World! This is test string for the problem";
+    int pointer = 0;
+
+    //this fucntion required to test the solution
+    String read7() {
+        int startPointer = Math.min(readFileString.length(), pointer);
+        int endPointer = Math.min(readFileString.length(), startPointer + 7);
+        pointer = endPointer;
+        return readFileString.substring(startPointer, endPointer);
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingOctober2018 obj = new SolutionDailyCodingOctober2018();
 
@@ -440,5 +554,73 @@ public class SolutionDailyCodingOctober2018 {
         System.out.println(obj.isNonDecreasingPossible(new int[] {-5, 1, 2, 3, 2, 3, 6}));//true
         System.out.println(obj.isNonDecreasingPossible(new int[] {5, 1, 2, 3, 2, 3, 6}));//false
         System.out.println(obj.isNonDecreasingPossible(new int[] {3, 4, 2, 3}));//false
+
+        System.out.println("---- deepest node in binary tree ------");
+        /*
+         *               1
+         *              /  \
+         *            2      3
+         *          /  \     / \
+         *        4     5   6   7
+         *         \    /\      /\
+         *          8  9  10  11  12
+         *                /    \
+         *               13    14
+         */
+
+        BSTNode root = new BSTNode(1,
+                new BSTNode(2,
+                        new BSTNode(4,
+                                null,
+                                new BSTNode(8, null, null)),
+                        new BSTNode(5,
+                                new BSTNode(9, null, null),
+                                new BSTNode(10, new
+                                        BSTNode(13, null, null), null))),
+                new BSTNode(3,
+                        new BSTNode(6, null, null),
+                        new BSTNode(7,
+                                new BSTNode(11,
+                                        null, new BSTNode(14, null, null)),
+                                new BSTNode(12, null, null))));
+
+        System.out.println(obj.getDeepest(root));//13
+
+        /*
+         *               1
+         *              /  \
+         *            2      3
+         *             \       \
+         *              4       5
+         *                      /
+         *                     6
+         */
+
+        root = new BSTNode(1,
+                new BSTNode(2,
+                        null,
+                        new BSTNode(4,null,null)),
+                new BSTNode(3,
+                        null,
+                        new BSTNode(5,
+                                new BSTNode(6, null, null),
+                                null)));
+        System.out.println(obj.getDeepest(root));//6
+
+        System.out.println("---- possible combinations for keypad (custom) ------\n");
+        Map<Integer, List<Character>> map = new HashMap<>();
+        map.put(2, Arrays.asList(new Character[] {'a', 'b', 'c'}));
+        map.put(3, Arrays.asList(new Character[] {'d', 'e', 'f'}));
+        map.put(4, Arrays.asList(new Character[] {'g', 'h', 'i'}));
+        map.put(5, Arrays.asList(new Character[] {'j', 'k', 'l'}));
+        List<String> possibleWords = obj.possibleCombinations(map);
+        for (String s : possibleWords) {
+            System.out.print(s + ", ");
+        }
+
+        System.out.println("----- read n chars from file using read7 function ------");
+        System.out.println(obj.readN(10));
+        System.out.println(obj.readN(3));
+        System.out.println(obj.readN(20));
     }
 }
