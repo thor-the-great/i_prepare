@@ -443,6 +443,44 @@ public class SolutionDailyCodingOctober2018 {
         return readFileString.substring(startPointer, endPointer);
     }
 
+    /**
+     * This problem was asked by Google.
+     *
+     * Invert a binary tree.
+     *
+     * For example, given the following tree:
+     *
+     *     a
+     *    / \
+     *   b   c
+     *  / \  /
+     * d   e f
+     * should become:
+     *
+     *   a
+     *  / \
+     *  c  b
+     *  \  / \
+     *   f e  d
+     *
+     * @param root
+     * @return
+     */
+    BSTNode reverseBinaryTree(BSTNode root) {
+        //straightforward approach - do the level-order traversal and change node's children in place
+        Queue<BSTNode> q = new LinkedList();
+        q.add(root);
+        while (!q.isEmpty()) {
+            BSTNode n = q.poll();
+            if (n.left != null) q.add(n.left);
+            if (n.right != null) q.add(n.right);
+            BSTNode tmp = n.left;
+            n.left = n.right;
+            n.right = tmp;
+        }
+        return root;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingOctober2018 obj = new SolutionDailyCodingOctober2018();
 
@@ -622,5 +660,31 @@ public class SolutionDailyCodingOctober2018 {
         System.out.println(obj.readN(10));
         System.out.println(obj.readN(3));
         System.out.println(obj.readN(20));
+
+        System.out.println("---- invert binary tree ----");
+        BSTNode root2 = new BSTNode(1,
+                new BSTNode(2,
+                        new BSTNode(4,null,null),
+                        new BSTNode(5,null,null)),
+                new BSTNode(3,
+                        new BSTNode(6, null, null),
+                        new BSTNode(7, null, null)
+                        ));
+        System.out.print("Original tree  : \n" + utils.StringUtils.binaryTreeToString(root2));
+        obj.reverseBinaryTree(root2);
+        System.out.print("\nInverted : \n" + utils.StringUtils.binaryTreeToString(root2));
+        BSTNode root3 = new BSTNode(1,
+                new BSTNode(2,
+                        new BSTNode(4,
+                                new BSTNode(7, null, null),
+                                null),
+                        new BSTNode(5,null,null)),
+                new BSTNode(3,
+                        new BSTNode(6, null, null),
+                        null
+                ));
+        System.out.print("\nOriginal tree  : \n" + utils.StringUtils.binaryTreeToString(root3));
+        obj.reverseBinaryTree(root3);
+        System.out.print("\nInverted : \n" + utils.StringUtils.binaryTreeToString(root3));
     }
 }
