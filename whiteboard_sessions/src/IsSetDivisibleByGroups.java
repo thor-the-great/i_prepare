@@ -2,7 +2,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class InSetDivisibleBuGroups {
+public class IsSetDivisibleByGroups {
 
     boolean isDividePossible(int[] carts) {
         Map<Integer, Integer> counts = new HashMap();
@@ -27,7 +27,7 @@ public class InSetDivisibleBuGroups {
     }
 
     public static void main(String args[]) {
-        InSetDivisibleBuGroups obj = new InSetDivisibleBuGroups();
+        IsSetDivisibleByGroups obj = new IsSetDivisibleByGroups();
         System.out.println(obj.isDividePossible(new int[]{1, 1, 2, 1, 2, 2}));
         System.out.println(obj.isDividePossible(new int[]{1, 1, 2, 1, 2}));
         System.out.println(obj.isDividePossible(new int[]{1, 5, 2, 1, 2}));

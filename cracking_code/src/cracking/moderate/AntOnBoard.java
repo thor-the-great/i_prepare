@@ -83,11 +83,6 @@ class Ant {
         else if (orient == Orientation.left) pos.col--;
         else pos.row--;
     }
-
-    void adjPosition(int rowShift, int colShift) {
-        pos.row += rowShift;
-        pos.col += colShift;
-    }
 }
 
 class Position {

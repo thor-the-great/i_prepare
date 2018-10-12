@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class Lambda {
+public class LambdaFilterReduce1 {
 
 
     int getPopulation(List<Country> countries, String continent) {
@@ -15,7 +15,7 @@ public class Lambda {
     }
 
     public static void main(String[] args) {
-        Lambda obj = new Lambda();
+        LambdaFilterReduce1 obj = new LambdaFilterReduce1();
         List<Country> countries = Arrays.asList( new Country[] {
                 new Country("america", 10),
                 new Country("america", 20),

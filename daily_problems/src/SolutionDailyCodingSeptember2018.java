@@ -1148,6 +1148,7 @@ public class SolutionDailyCodingSeptember2018 {
         System.out.println(inversions);
 
         System.out.println("--------- random_7 from random_5 ---------");
+
         /*List<Integer> randNums = new ArrayList<>();
         Map<Integer, Integer> numCount = new HashMap();
         int _NUM_OF_TRIES = 1 << 24;

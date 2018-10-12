@@ -9,7 +9,7 @@ public class BST {
 
     public void add(int val) {
         if (root == null) {
-            BSTNode node = new BSTNode(val, null, null);
+            BSTNode node = new BSTNode(val, null, null );
             root = node;
             return;
         }

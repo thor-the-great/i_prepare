@@ -1,6 +1,10 @@
 package utils;
 
+import trees.BSTNode;
+
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class StringUtils {
     public static String intArrayToString(int[] a) {
@@ -41,6 +45,33 @@ public class StringUtils {
                 sb.append(", ");
         }
         sb.append("]");
+        return sb.toString();
+    }
+
+    public static String binaryTreeToString(BSTNode node) {
+        StringBuilder sb = new StringBuilder();
+        Queue<BSTNode> q = new LinkedList<>();
+        Queue<Integer> levels = new LinkedList<>();
+        q.add(node);
+        int l = 1;
+        levels.add(l);
+        while(!q.isEmpty()) {
+            BSTNode n = q.poll();
+            int level = levels.poll();
+            if (l != level) {
+                sb.append("\n");
+                l = level;
+            }
+            sb.append(n).append(", ");
+            if (n.left != null) {
+                q.add(n.left);
+                levels.add(level + 1);
+            }
+            if (n.right != null) {
+                q.add(n.right);
+                levels.add(level + 1);
+            }
+        }
         return sb.toString();
     }
 }
