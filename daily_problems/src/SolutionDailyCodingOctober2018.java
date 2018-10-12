@@ -481,6 +481,86 @@ public class SolutionDailyCodingOctober2018 {
         return root;
     }
 
+    /**
+     * This problem was asked by Amazon.
+     *
+     * Given a matrix of 1s and 0s, return the number of "islands" in the matrix. A 1 represents land and 0 represents
+     * water, so an island is a group of 1s that are neighboring and their perimiter is surrounded by water.
+     *
+     * For example, this matrix has 4 islands.
+     *
+     * 1 0 0 0 0
+     * 0 0 1 1 0
+     * 0 1 1 0 0
+     * 0 0 0 0 0
+     * 1 1 0 0 1
+     * 1 1 0 0 1
+     *
+     * @param grid
+     * @return
+     */
+    public int islands(int[][] grid) {
+        //do BFS for every 1 in the grid, find the land and mark it visited
+        int rows = grid.length;
+        int cols = grid[0].length;
+        Set<LandCell> visited = new HashSet<>();
+        int[][] moves = new int[][] {
+                {-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}
+        };
+        int islandsCount = 0;
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                LandCell nextCell = new LandCell(r, c);
+                if (grid[r][c] == 1 &&  !visited.contains(nextCell)) {
+                    //starting BFS
+                    Queue<LandCell> q = new LinkedList();
+                    q.add(new LandCell(r, c));
+                    while (!q.isEmpty()) {
+                        LandCell cell = q.poll();
+                        if (grid[cell.row][cell.col] == 1) {
+                            visited.add(cell);
+                            for (int i =0; i < moves.length; i++) {
+                                int pointRNew = cell.row + moves[i][0];
+                                int pointCNew = cell.col + moves[i][1];
+                                LandCell newCell = new LandCell(pointRNew, pointCNew);
+                                if (pointRNew >= 0 && pointRNew < rows && pointCNew >=0 && pointCNew < cols
+                                        && grid[pointRNew][pointCNew] == 1 && !visited.contains(newCell)) {
+                                    q.add(new LandCell(pointRNew, pointCNew));
+                                    visited.add(newCell);
+                                }
+                            }
+                        }
+                    }
+                    islandsCount++;
+                }
+            }
+        }
+        return islandsCount;
+    }
+
+    class LandCell {
+        int row, col;
+
+        LandCell(int r, int c) {
+            row = r;
+            col = c;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof LandCell) {
+                LandCell l = (LandCell) obj;
+                return (l.row == this.row && l.col == this.col);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return row*31^col;
+        }
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingOctober2018 obj = new SolutionDailyCodingOctober2018();
 
@@ -686,5 +766,39 @@ public class SolutionDailyCodingOctober2018 {
         System.out.print("\nOriginal tree  : \n" + utils.StringUtils.binaryTreeToString(root3));
         obj.reverseBinaryTree(root3);
         System.out.print("\nInverted : \n" + utils.StringUtils.binaryTreeToString(root3));
+
+        System.out.println("\n------ count islands ------------");
+        int[][] grid = new int[][]{{}};
+        grid = new int[][] {
+                {1, 0, 0, 0, 0},
+                {0, 0, 1, 1, 0},
+                {0, 1, 1, 0, 0},
+                {0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 1},
+                {1, 1, 0, 0, 1}
+        };
+        System.out.println(obj.islands(grid));
+
+        grid = new int[][] {
+                {1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 1},
+                {0, 1, 0, 0, 0},
+                {0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0},
+                {1, 0, 0, 0, 1}
+        };
+        System.out.println(obj.islands(grid));
+
+        grid = new int[][] {
+                {0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0}
+        };
+        System.out.println(obj.islands(grid));
+
+        grid = new int[][] {
+                {1, 1, 1, 1, 1},
+                {1, 1, 1, 1, 1}
+        };
+        System.out.println(obj.islands(grid));
     }
 }
