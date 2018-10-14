@@ -561,6 +561,54 @@ public class SolutionDailyCodingOctober2018 {
         }
     }
 
+    /**
+     * This problem was asked by Facebook.
+     *
+     * Given three 32-bit integers x, y, and b, return x if b is 1 and y if b is 0, using only mathematical or bit
+     * operations. You can assume b can only be 1 or 0.
+     *
+     * @param x
+     * @param y
+     * @param b
+     * @return
+     */
+    int chooseNum(int x, int y, int b) {
+
+        return x*b + y*(b^1);
+    }
+
+    /**
+     * This problem was asked by Google.
+     *
+     * Given a string of parentheses, write a function to compute the minimum number of parentheses to be removed to
+     * make the string valid (i.e. each open parenthesis is eventually closed).
+     *
+     * For example, given the string "()())()", you should return 1. Given the string ")(", you should return 2,
+     * since we must remove all of them.
+     *
+     * @param s
+     * @return
+     */
+    int numExtraParentheses(String s) {
+        //idea is to count num of opened and closed paren. In case it starts closing without opened ones - need to count
+        //each such entry. If after all iterations we'll have num of opened paren without closed - count those as well.
+        if (s == null)
+            return 0;
+        int res = 0;
+        int opened = 0, closed = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '(' ) opened++;
+            else closed++;
+            if (closed > opened) {
+                res++;
+                closed -=1;
+            }
+        }
+        if (opened > closed)
+            res += opened - closed;
+        return res;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingOctober2018 obj = new SolutionDailyCodingOctober2018();
 
@@ -800,5 +848,21 @@ public class SolutionDailyCodingOctober2018 {
                 {1, 1, 1, 1, 1}
         };
         System.out.println(obj.islands(grid));
+
+        System.out.println("---- choose number from two depending on the flag ----");
+        System.out.println(obj.chooseNum(4, 16, 1));
+        System.out.println(obj.chooseNum(4, 16, 0));
+        System.out.println(obj.chooseNum(-54, 20, 1));
+        System.out.println(obj.chooseNum(-54, 20, 0));
+
+        System.out.println("---- num of parentheses to remove for ideal string -----");
+        System.out.println(obj.numExtraParentheses("(())()"));
+        System.out.println(obj.numExtraParentheses("(()())"));
+        System.out.println(obj.numExtraParentheses("())()"));//1
+        System.out.println(obj.numExtraParentheses("(()()"));//1
+        System.out.println(obj.numExtraParentheses(")("));//2
+        System.out.println(obj.numExtraParentheses(")))())))"));//6
+        System.out.println(obj.numExtraParentheses("))()("));//3
+        System.out.println(obj.numExtraParentheses("(()((()"));//3
     }
 }
