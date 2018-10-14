@@ -573,7 +573,9 @@ public class SolutionDailyCodingOctober2018 {
      * @return
      */
     int chooseNum(int x, int y, int b) {
-
+        //x*b gives us half of the solution. Now we need to set y to 0 in case b = 0 and we can add it to first expr
+        //same happens with x when b = 1. Need to invert b, for that using XOR (^):
+        //b = 1, b^1 = 0; b = 0, b^1 = 1
         return x*b + y*(b^1);
     }
 
