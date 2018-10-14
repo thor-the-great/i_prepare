@@ -1,6 +1,14 @@
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Return true/false if it's possible to divide a set of ints into groups of size x (whre x >= 2)
+ * where each group consist of equal number of the same numbers
+ *
+ * Ex:
+ * {1, 2, 1, 2, 1, 1, 1} - true, [1, 1], [1, 1], [1, 1], [2, 2]
+ * {1, 2, 1} - false, [1, 1], [2] or [1], [1], [2] - both a not valid
+ */
 
 public class IsSetDivisibleByGroups {
 

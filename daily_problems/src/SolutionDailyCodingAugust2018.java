@@ -105,7 +105,7 @@ public class SolutionDailyCodingAugust2018 {
     /**
      * This problem was asked by Amazon.
      *
-     * Given an integer k and a string s, find the length of the longest substring that contains at most k distinct characters.
+     * Given an integer k and a string s, find the length of the longest substring that exist at most k distinct characters.
      *
      * For example, given s = "abcba" and k = 2, the longest substring with k distinct characters is "bcb".
      *
@@ -317,7 +317,7 @@ public class SolutionDailyCodingAugust2018 {
      *     subdir1
      *     subdir2
      *         file.ext
-     * The directory dir contains an empty sub-directory subdir1 and a sub-directory subdir2 containing a file file.ext.
+     * The directory dir exist an empty sub-directory subdir1 and a sub-directory subdir2 containing a file file.ext.
      *
      * The string "dir\n\tsubdir1\n\t\tfile1.ext\n\t\tsubsubdir1\n\tsubdir2\n\t\tsubsubdir2\n\t\t\tfile2.ext" represents:
      *
@@ -328,7 +328,7 @@ public class SolutionDailyCodingAugust2018 {
      *     subdir2
      *         subsubdir2
      *             file2.ext
-     * The directory dir contains two sub-directories subdir1 and subdir2. subdir1 contains a file file1.ext and an empty second-level sub-directory subsubdir1. subdir2 contains a second-level sub-directory subsubdir2 containing a file file2.ext.
+     * The directory dir exist two sub-directories subdir1 and subdir2. subdir1 exist a file file1.ext and an empty second-level sub-directory subsubdir1. subdir2 exist a second-level sub-directory subsubdir2 containing a file file2.ext.
      *
      * We are interested in finding the longest (number of characters) absolute path to a file within our file system. For example, in the second example above, the longest absolute path is "dir/subdir2/subsubdir2/file2.ext", and its length is 32 (not including the double quotes).
      *
@@ -336,7 +336,7 @@ public class SolutionDailyCodingAugust2018 {
      *
      * Note:
      *
-     * The name of a file contains at least a period and an extension.
+     * The name of a file exist at least a period and an extension.
      *
      * The name of a directory or sub-directory will not contain a period.
      *
@@ -1929,57 +1929,6 @@ public class SolutionDailyCodingAugust2018 {
         return subset;
     }
 
-    /**
-     * This problem was asked by Facebook.
-     *
-     * There is an N by M matrix of zeroes. Given N and M, write a function to count the number of ways of starting at
-     * the top-left corner and getting to the bottom-right corner. You can only move right or down.
-     *
-     * For example, given a 2 by 2 matrix, you should return 2, since there are two ways to get to the bottom-right:
-     *
-     * Right, then down
-     * Down, then right
-     * Given a 5 by 5 matrix, there are 70 ways to get to the bottom-right.
-     *
-     * @param matrix
-     * @return
-     */
-    int paths(int[][] matrix) {
-        //return dfs(matrix.length, matrix[0].length, 1, 1);
-        return pathsDp(matrix);
-    }
-
-    int dfs(int row, int col, int rowRun, int colRun) {
-        if (rowRun == row && colRun == col)
-            return 1;
-
-        if (rowRun > row || colRun > col)
-            return 0;
-
-        return dfs(row, col, rowRun + 1, colRun)
-                + dfs(row, col, rowRun, colRun + 1);
-    }
-
-    int pathsDp(int[][] matrix) {
-        int m = matrix.length;
-        int n = matrix[0].length;
-        int[][] dp = new int[m][n];
-        //initilize dp memo with edge path
-        for (int i = 0; i < m; i++) {
-            dp[i][0] = 1;
-        }
-        for (int i = 0; i < n; i++) {
-            dp[0][i] = 1;
-        }
-
-        for (int i = 1; i < m; i++) {
-            for (int j = 1; j < n; j++) {
-                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
-            }
-        }
-        return dp[m - 1][n - 1];
-    }
-
     public static void main(String[] args) {
         SolutionDailyCodingAugust2018 obj = new SolutionDailyCodingAugust2018();
         //[3,5,1,6,2,9,8,null,null,7,4]
@@ -2332,13 +2281,5 @@ public class SolutionDailyCodingAugust2018 {
             System.out.println("]");
         } else
             System.out.println("Not possible");
-
-        System.out.println("----- number of unique paths ------");
-        int[][] matrix = new int[2][2];
-        System.out.println(obj.paths(matrix));
-        matrix = new int[5][5];
-        System.out.println(obj.paths(matrix));
-        matrix = new int[1000][1000];
-        System.out.println(obj.paths(matrix));
     }
 }
