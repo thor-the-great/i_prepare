@@ -2,9 +2,7 @@ package diff_problems;
 
 import com.sun.org.apache.regexp.internal.CharacterArrayCharacterIterator;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 public class Solution {
 
@@ -348,6 +346,159 @@ public class Solution {
         return arr;
     }
 
+    /**
+     * 923. 3Sum With Multiplicity
+     * Difficulty: Medium
+     * Given an integer array A, and an integer target, return the number of tuples i, j, k  such that i < j < k and
+     * A[i] + A[j] + A[k] == target.
+     *
+     * As the answer can be very large, return it modulo 10^9 + 7.
+     *
+     * Example 1:
+     *
+     * Input: A = [1,1,2,2,3,3,4,4,5,5], target = 8
+     * Output: 20
+     * Explanation:
+     * Enumerating by the values (A[i], A[j], A[k]):
+     * (1, 2, 5) occurs 8 times;
+     * (1, 3, 4) occurs 8 times;
+     * (2, 2, 4) occurs 2 times;
+     * (2, 3, 3) occurs 2 times.
+     * Example 2:
+     *
+     * Input: A = [1,1,2,2,2,2], target = 5
+     * Output: 12
+     * Explanation:
+     * A[i] = 1, A[j] = A[k] = 2 occurs 12 times:
+     * We choose one 1 from [1,1] in 2 ways,
+     * and two 2s from [2,2,2,2] in 6 ways.
+     *
+     * Note:
+     *
+     * 3 <= A.length <= 3000
+     * 0 <= A[i] <= 100
+     * 0 <= target <= 300
+     *
+     * @param A
+     * @param target
+     * @return
+     */
+    public int threeSumMulti(int[] A, int target) {
+        int n = A.length;
+        Map<Integer, Integer> m = new HashMap();
+        int res = 0;
+        int mod = 1000000007;
+        for (int i = 0; i < n; i++) {
+            res = (res + m.getOrDefault(target - A[i], 0)) % mod;
+            for (int j = 0; j < i; j++ ) {
+                int tmp = A[i] + A[j];
+                m.put(tmp, m.getOrDefault(tmp, 0) + 1 );
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 924. Minimize Malware Spread
+     * Difficulty: Hard
+     * In a network of nodes, each node i is directly connected to another node j if and only if graph[i][j] = 1.
+     *
+     * Some nodes initial are initially infected by malware.  Whenever two nodes are directly connected and at least
+     * one of those two nodes is infected by malware, both nodes will be infected by malware.  This spread of malware
+     * will continue until no more nodes can be infected in this manner.
+     *
+     * Suppose M(initial) is the final number of nodes infected with malware in the entire network, after the spread
+     * of malware stops.
+     *
+     * We will remove one node from the initial list.  Return the node that if removed, would minimize M(initial).
+     * If multiple nodes could be removed to minimize M(initial), return such a node with the smallest index.
+     *
+     * Note that if a node was removed from the initial list of infected nodes, it may still be infected later as a
+     * result of the malware spread.
+     *
+     *
+     *
+     * Example 1:
+     *
+     * Input: graph = [[1,1,0],[1,1,0],[0,0,1]], initial = [0,1]
+     * Output: 0
+     * Example 2:
+     *
+     * Input: graph = [[1,0,0],[0,1,0],[0,0,1]], initial = [0,2]
+     * Output: 0
+     * Example 3:
+     *
+     * Input: graph = [[1,1,1],[1,1,1],[1,1,1]], initial = [1,2]
+     * Output: 1
+     *
+     *
+     * Note:
+     *
+     * 1 < graph.length = graph[0].length <= 300
+     * 0 <= graph[i][j] == graph[j][i] <= 1
+     * graph[i][i] = 1
+     * 1 <= initial.length < graph.length
+     * 0 <= initial[i] < graph.length
+     *
+     * @param graph
+     * @param initial
+     * @return
+     */
+    public int minMalwareSpread(int[][] graph, int[] initial) {
+        //idea is following - divide graph on sub-graphs (by doing DFS like traversal) and do following on every sub-graph:
+        //- calculate num of nodes infected. If it's > 1 just keep old min node to del
+        //- if infected nodes in graph == 1 - by illuminating it we can potentially rescue the whole graph
+        //  so we calc number of nodes in graph, and compare it, those with max wins
+        //
+        //global set of visited nodes
+        Set<Integer> visited = new HashSet();
+        //find minimum dle node so far
+        int delNode = Arrays.stream(initial).min().getAsInt();
+        //min subgraph length
+        int subgraphLen = 0;
+        //iterate over each node, check if it not visited
+        for (int i = 0; i < graph.length; i++) {
+            if (!visited.contains(i)) {
+                //visit every node in sub-graph via DFS
+                Set<Integer> vis = new HashSet();
+                vis.add(i);
+                dfs(vis, graph, i);
+                //count infectedCount and minNode in the intersection of vis (visited in this sub-graph) and initial
+                int infectedCount = 0;
+                int minInfectedNode = Integer.MAX_VALUE;
+                for (int initialEl : initial) {
+                    if (vis.contains(initialEl)) {
+                        infectedCount++;
+                        if (minInfectedNode > initialEl) minInfectedNode = initialEl;
+                    }
+                }
+                //if infectedCount > 1 - keep previous results, otherwise - check number of nodes in rescued sub-graph
+                if (infectedCount == 1) {
+                    if (vis.size() > subgraphLen || (vis.size() == subgraphLen && minInfectedNode < delNode)) {
+                        delNode = minInfectedNode;
+                        subgraphLen = vis.size();
+                    }
+                }
+                //add all visited from this sub-graph to the global set
+                visited.addAll(vis);
+            }
+        }
+        return delNode;
+    }
+
+    /**
+     * Standard DFS impl
+     */
+    void dfs(Set<Integer> visited, int[][] graph, int node) {
+        int[] adj = graph[node];
+        for (int i = 0; i < adj.length; i++) {
+            if (i != node && adj[i] == 1 && !visited.contains(i)) {
+                visited.add(i);
+                dfs(visited, graph, i);
+            }
+        }
+    }
+
     public static void main(String[] args) {
         Solution obj = new Solution();
         //[3,5,1,6,2,9,8,null,null,7,4]
@@ -407,5 +558,18 @@ public class Solution {
         System.out.println(obj.maxSumCircularSubarray(new int[] {5,-3,5})); //10
         System.out.println(obj.maxSumCircularSubarray(new int[] {3,-1,2,-1})); //4
         System.out.println(obj.maxSumCircularSubarray(new int[] {3,-2,2,-3})); //3
+
+        System.out.println("---- 3Sum With Multiplicity -------");
+        System.out.println(obj.threeSumMulti(new int[]{1,1,2,2,2,2}, 5));
+        System.out.println(obj.threeSumMulti(new int[]{1,1,2,2,3,3,4,4,5,5}, 8));
+
+        System.out.println("---- Minimize Malware Spread ------");
+        System.out.println(obj.minMalwareSpread( new int[][] {
+                {1,1,1},
+                {1,1,1},
+                {1,1,1}
+            }, new int[] {1,2}
+
+        ));
     }
 }
