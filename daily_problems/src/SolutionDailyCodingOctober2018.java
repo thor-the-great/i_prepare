@@ -611,6 +611,28 @@ public class SolutionDailyCodingOctober2018 {
         return res;
     }
 
+    /**
+     * This question was asked by ContextLogic.
+     *
+     * Implement division of two positive integers without using the division, multiplication, or modulus operators.
+     * Return the quotient as an integer, ignoring the remainder.
+     *
+     * @param a
+     * @param b
+     * @return
+     */
+    int div(int a, int b) {
+        //just use addition - start adding b unless we reach a and count number of times we run the loop
+        if (a == 0 || b == 0) return 0;
+        int res = 0;
+        int tmp = 0;
+        while(tmp <= a) {
+            tmp += b;
+            res++;
+        }
+        return res - 1;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingOctober2018 obj = new SolutionDailyCodingOctober2018();
 
@@ -866,5 +888,10 @@ public class SolutionDailyCodingOctober2018 {
         System.out.println(obj.numExtraParentheses(")))())))"));//6
         System.out.println(obj.numExtraParentheses("))()("));//3
         System.out.println(obj.numExtraParentheses("(()((()"));//3
+
+        System.out.println("---- division without using the division, multiplication, or modulus operators ----");
+        System.out.println(obj.div(15, 6));
+        System.out.println(obj.div(15, 3));
+        System.out.println(obj.div(0, 4));
     }
 }
