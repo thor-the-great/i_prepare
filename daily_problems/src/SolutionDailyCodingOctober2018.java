@@ -622,6 +622,27 @@ public class SolutionDailyCodingOctober2018 {
      * @return
      */
     int div(int a, int b) {
+        //return bruteForceSlow(a, b);
+        return divBitShifts(a, b);
+    }
+
+    int divBitShifts(int x, int y) {
+        int res = 0;
+        int power = 32;
+        int rem = x;
+        int yPow = y << power;
+        while (rem >= y) {
+            while (yPow > rem) {
+                yPow = yPow >> 1;
+                power--;
+            }
+            res = res + 1 << power;
+            rem = rem - yPow;
+        }
+        return res;
+    }
+
+    private int bruteForceSlow(int a, int b) {
         //just use addition - start adding b unless we reach a and count number of times we run the loop
         if (a == 0 || b == 0) return 0;
         int res = 0;
