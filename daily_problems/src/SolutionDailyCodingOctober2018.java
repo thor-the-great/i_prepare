@@ -626,17 +626,24 @@ public class SolutionDailyCodingOctober2018 {
         return divBitShifts(a, b);
     }
 
-    int divBitShifts(int x, int y) {
+    int divBitShifts(long x, long y) {
+        //doing long division approach but in 2-base system. Starting from left to right check how many whole
+        //y-s are fit and carry remainder
+        //start from the max number - y^32, must be long to fit in
         int res = 0;
         int power = 32;
-        int rem = x;
-        int yPow = y << power;
+        long rem = x;
+        long yPow = y << power;
+        //do the main loop unless remainder is lower than y (0 if it's divisible evenly)
         while (rem >= y) {
+            //keep shifting bits (divide by 2) while yPow became <= remainder, then accumulate result in res. We need to
+            //add to result 2^power = do bit shift
             while (yPow > rem) {
                 yPow = yPow >> 1;
                 power--;
             }
-            res = res + 1 << power;
+            res = res + (1 << power);
+            //calculate new remainder by subtracting yPow
             rem = rem - yPow;
         }
         return res;
@@ -914,5 +921,6 @@ public class SolutionDailyCodingOctober2018 {
         System.out.println(obj.div(15, 6));
         System.out.println(obj.div(15, 3));
         System.out.println(obj.div(0, 4));
+        System.out.println(obj.div(1000000000, 40));
     }
 }
