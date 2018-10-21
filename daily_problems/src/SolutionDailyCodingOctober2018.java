@@ -654,6 +654,77 @@ public class SolutionDailyCodingOctober2018 {
         return res - 1;
     }
 
+    /**
+     * This problem was asked by Airbnb.
+     *
+     * We're given a hashmap with a key courseId and value a list of courseIds, which represents that the prerequsite
+     * of courseId is courseIds. Return a sorted ordering of courses such that we can finish all courses.
+     *
+     * Return null if there is no such ordering.
+     *
+     * For example, given {'CSC300': ['CSC100', 'CSC200'], 'CSC200': ['CSC100'], 'CSC100': []}, should return
+     * ['CSC100', 'CSC200', 'CSCS300'].
+     *
+     * @param deps
+     * @return
+     */
+    List<String> scheduleCourses(Map<String, List<String>> deps) {
+        //idea is based on topological sort. Tricky part is to model graph, so we'll be using two maps - one original and
+        //second one - reversed - where keys are courses and values - set of courses that depend on key. In case course
+        //is first in schedule there will be no key for it
+
+        //get courses to start (no dependencies) and form that second reversed map
+        int coursesCount = deps.size();
+        List<String> res = new LinkedList();
+        LinkedList<String> startCourses = new LinkedList();
+        Map<String, LinkedList<String>> revertedDepMap = new HashMap();
+        for (String dependent : deps.keySet()) {
+            List<String> mainCourses = deps.get(dependent);
+            if (mainCourses.isEmpty())
+                startCourses.add(dependent);
+            else {
+                for (String course : mainCourses) {
+                    LinkedList<String> depCourseList = revertedDepMap.getOrDefault(course, new LinkedList());
+                    depCourseList.add(dependent);
+                    revertedDepMap.put(course, depCourseList);
+                }
+            }
+        }
+
+        //while we have courses to start
+        while(!startCourses.isEmpty()) {
+            String nextTodo = startCourses.poll();
+            res.add(nextTodo);
+
+            //iterate over maps and remove our starting course from lists where it has dependants. In case there are
+            //no dependants for this course - take it as next start
+            if (revertedDepMap.containsKey(nextTodo)) {
+                List<String> dependentRevCourses = revertedDepMap.get(nextTodo);
+                for (String nextRev : dependentRevCourses) {
+                    if (deps.containsKey(nextRev)) {
+                        List<String> dependentCourses = deps.get(nextRev);
+                        for (Iterator<String> depCoursesIt = dependentCourses.listIterator(); depCoursesIt.hasNext();) {
+                            String depCourse = depCoursesIt.next();
+                            if (depCourse.equals(nextTodo)) {
+                                depCoursesIt.remove();
+                                break;
+                            }
+                        }
+                        if (dependentCourses.isEmpty()) {
+                            deps.remove(nextRev);
+                            startCourses.add(nextRev);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (res.size() < coursesCount)
+            return null;
+        else
+            return res;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingOctober2018 obj = new SolutionDailyCodingOctober2018();
 
@@ -914,5 +985,32 @@ public class SolutionDailyCodingOctober2018 {
         System.out.println(obj.div(15, 6));
         System.out.println(obj.div(15, 3));
         System.out.println(obj.div(0, 4));
+
+        System.out.println("---- schedule courses ----");
+        Map<String, List<String>> m = new HashMap<>();
+        List<String> l1= new ArrayList<>();
+        l1.add("CSC100");
+        l1.add("CSC200");
+        m.put("CSC300", l1);
+        List<String> l2= new ArrayList<>();
+        l2.add("CSC100");
+        m.put("CSC200", l2);
+        m.put("CSC100", new ArrayList<>());
+        List<String> schedule = obj.scheduleCourses(m);
+        System.out.println("Schedule : " + schedule != null ? StringUtils.listStringsToString(schedule) : "not possible");
+
+        m = new HashMap<>();
+        l1= new ArrayList<>();
+        l1.add("CSC100");
+        l1.add("CSC200");
+        m.put("CSC300", l1);
+        l2= new ArrayList<>();
+        l2.add("CSC100");
+        m.put("CSC200", l2);
+        List<String> l3 = new LinkedList<>();
+        l3.add("CS300");
+        m.put("CSC100", l3);
+        schedule = obj.scheduleCourses(m);
+        System.out.println("Schedule : " + (schedule != null ? StringUtils.listStringsToString(schedule) : "not possible"));
     }
 }
