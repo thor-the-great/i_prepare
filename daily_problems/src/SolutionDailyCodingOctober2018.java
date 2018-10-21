@@ -1,7 +1,10 @@
+import diff_problems.TreeNode;
 import linked_list.ListNode;
 import linked_list.StringUtils;
+import sun.reflect.generics.tree.Tree;
 import trees.BSTNode;
 
+import javax.transaction.TransactionRequiredException;
 import java.util.*;
 
 public class SolutionDailyCodingOctober2018 {
@@ -626,17 +629,24 @@ public class SolutionDailyCodingOctober2018 {
         return divBitShifts(a, b);
     }
 
-    int divBitShifts(int x, int y) {
+    int divBitShifts(long x, long y) {
+        //doing long division approach but in 2-base system. Starting from left to right check how many whole
+        //y-s are fit and carry remainder
+        //start from the max number - y^32, must be long to fit in
         int res = 0;
         int power = 32;
-        int rem = x;
-        int yPow = y << power;
+        long rem = x;
+        long yPow = y << power;
+        //do the main loop unless remainder is lower than y (0 if it's divisible evenly)
         while (rem >= y) {
+            //keep shifting bits (divide by 2) while yPow became <= remainder, then accumulate result in res. We need to
+            //add to result 2^power = do bit shift
             while (yPow > rem) {
                 yPow = yPow >> 1;
                 power--;
             }
-            res = res + 1 << power;
+            res = res + (1 << power);
+            //calculate new remainder by subtracting yPow
             rem = rem - yPow;
         }
         return res;
@@ -652,6 +662,41 @@ public class SolutionDailyCodingOctober2018 {
             res++;
         }
         return res - 1;
+    }
+
+    /**
+     * This problem was asked by LinkedIn.
+     *
+     * Determine whether a tree is a valid binary search tree.
+     *
+     * A binary search tree is a tree with two children, left and right, and satisfies the constraint that the key in
+     * the left child must be less than or equal to the root and the key in the right child must be greater than or
+     * equal to the root.
+     *
+     * @param root
+     * @return
+     */
+    boolean checkTreeIsBST(BSTNode root) {
+        //idea is to utilize inorder traversal. In BST the elements in inorder must be in increasing order, so if this
+        //broken it's not the BST. We don't need to keep all array, just one last element and we check next node
+        // against this element, if next node value is <= - condition is broken
+        int elValue = Integer.MIN_VALUE;
+        //doing inorder traversal iteratively
+        Stack<BSTNode> stack = new Stack<>();
+        BSTNode current = root;
+        while (current != null || !stack.isEmpty()) {
+            while(current != null) {
+                stack.push(current);
+                current = current.left;
+            }
+            current = stack.pop();
+            if (elValue < current.val)
+                elValue = current.val;
+            else
+                return false;
+            current = current.right;
+        }
+        return true;
     }
 
     /**
@@ -985,6 +1030,44 @@ public class SolutionDailyCodingOctober2018 {
         System.out.println(obj.div(15, 6));
         System.out.println(obj.div(15, 3));
         System.out.println(obj.div(0, 4));
+        System.out.println(obj.div(1000000000, 40));
+
+        System.out.println("---- check if tree is BST --------");
+        /*
+         *               4
+         *              /  \
+         *            2     6
+         *           / \   /  \
+         *          1   3  5   7
+         *
+         */
+
+        root = new BSTNode(4,
+                new BSTNode(2,
+                        new BSTNode(1,null,null),
+                        new BSTNode(3,null,null)),
+                new BSTNode(6,
+                        new BSTNode(5,null,null),
+                        new BSTNode(7,null, null)));
+        System.out.println(obj.checkTreeIsBST(root));//true
+
+        /*
+         *               4
+         *              /  \
+         *            3     7
+         *           / \   /
+         *          1   2 5
+         *
+         */
+
+        root = new BSTNode(4,
+                new BSTNode(3,
+                        new BSTNode(1,null,null),
+                        new BSTNode(2,null,null)),
+                new BSTNode(7,
+                        new BSTNode(5,null,null),
+                        null));
+        System.out.println(obj.checkTreeIsBST(root));//false
 
         System.out.println("---- schedule courses ----");
         Map<String, List<String>> m = new HashMap<>();
