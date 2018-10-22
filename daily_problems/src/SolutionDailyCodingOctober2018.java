@@ -826,6 +826,29 @@ public class SolutionDailyCodingOctober2018 {
         int maxSize = 0;
     }
 
+    class Result {
+        int val;
+    }
+
+    public int findMaxPath(BSTNode root){
+        Result res = new Result();
+        findMaxHelper(root, res);
+        return res.val;
+    }
+
+    int findMaxHelper(BSTNode n, Result res) {
+        if (n == null) return 0;
+
+        int l = findMaxHelper(n.left, res);
+        int r = findMaxHelper(n.right, res);
+
+        int maxSingle = Math.max(Math.max(r,l) + n.val, n.val);
+        int maxRes = Math.max(maxSingle, r + l + n.val);
+
+        res.val = Math.max(res.val, maxRes);
+        return maxSingle;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingOctober2018 obj = new SolutionDailyCodingOctober2018();
 
@@ -1161,7 +1184,6 @@ public class SolutionDailyCodingOctober2018 {
          *          1   3  5
          *
          */
-
         root = new BSTNode(8,
                 new BSTNode(2,
                         new BSTNode(1,null,null),
@@ -1170,5 +1192,23 @@ public class SolutionDailyCodingOctober2018 {
                         new BSTNode(5,null,null),
                         null));
         System.out.println(obj.largestBSTSubtree(root));//7
+
+        System.out.println("------ find max path in binary tree -----");
+        /*
+         *               10
+         *              /  \
+         *           -3     7
+         *           / \   /  \
+         *          1   2 5    6
+         *
+         */
+        root = new BSTNode(10,
+                new BSTNode(-3,
+                        new BSTNode(1,null,null),
+                        new BSTNode(2,null,null)),
+                new BSTNode(7,
+                        new BSTNode(5,null,null),
+                        new BSTNode(6,null,null)));
+        System.out.println(obj.findMaxPath(root));
     }
 }
