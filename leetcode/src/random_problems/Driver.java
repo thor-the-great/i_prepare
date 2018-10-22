@@ -3,6 +3,8 @@ package random_problems;
 import linked_list.ListNode;
 import linked_list.StringUtils;
 
+import java.util.Arrays;
+
 public class Driver {
 
     /**
@@ -40,6 +42,30 @@ public class Driver {
         prev.next = null;
     }
 
+    public int triangleNumber(int[] nums) {
+        Arrays.sort(nums);
+        int c = 0;
+        int n = nums.length;
+        for (int i =0; i < n - 2; i++) {
+            /*for (int j = i + 1; j < n - 1; j++) {
+                int s = nums[i] + nums[j];
+                int k = j + 1;
+                while (k < n && s > nums[k]) {
+                    k++;
+                    c++;
+                }
+            }*/
+            for (int j = i + 2; j < n; j++) {
+                for (int k = j - 1; k >= i + 1; k--) {
+                    int dif = nums[j] - nums[k];
+                    if (dif < nums[i]) c++;
+                    else break;
+                }
+            }
+        }
+        return c;
+    }
+
     public static void main(String[] args) {
         Driver obj = new Driver();
         System.out.println("---- find numbers in sorted array -----");
@@ -58,5 +84,7 @@ public class Driver {
         System.out.println("List before deletion : " + StringUtils.singlyListNodeToString(one));
         obj.deleteNode(two);
         System.out.println("List after deletion : " + StringUtils.singlyListNodeToString(one));
+
+        System.out.println(obj.triangleNumber(new int[] {1,2,3,4,5,6}));
     }
 }

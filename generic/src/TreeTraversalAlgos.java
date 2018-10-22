@@ -1,7 +1,9 @@
+import trees.BST;
 import trees.BSTNode;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Stack;
 
 public class TreeTraversalAlgos {
 
@@ -13,7 +15,25 @@ public class TreeTraversalAlgos {
         inOrderTraversal(node.right);
     }
 
-    public void levelOrderTraversalNonRecursive(BSTNode node) {
+    public void inOrderTraversalIterative(BSTNode node) {
+        if (node == null)
+            return;
+
+        Stack<BSTNode> s = new Stack<>();
+        BSTNode curr = node;
+
+        while(!s.isEmpty() || curr != null) {
+            while(curr != null) {
+                s.push(curr);
+                curr = curr.left;
+            }
+            curr = s.pop();
+            visitNode(curr);
+            curr = curr.right;
+        }
+    }
+
+    public void levelOrderTraversalIterative(BSTNode node) {
         Queue<BSTNode> q = new LinkedList<>();
         Queue<Integer> levels = new LinkedList<>();
         q.add(node);
@@ -40,6 +60,19 @@ public class TreeTraversalAlgos {
         preOrderTraversal(node.left);
         preOrderTraversal(node.right);
     }
+    public void preOrderTraversalIterative(BSTNode node) {
+        if (node == null)
+            return;
+        Stack<BSTNode> s = new Stack<>();
+        s.push(node);
+        while (!s.isEmpty()) {
+            BSTNode n = s.pop();
+            visitNode(n);
+            if (n.right != null) s.push(n.right);
+            if (n.left != null) s.push(n.left);
+        }
+    }
+
 
     public void postOrderTraversal(BSTNode node) {
         if (node == null)
@@ -47,6 +80,37 @@ public class TreeTraversalAlgos {
         postOrderTraversal(node.left);
         postOrderTraversal(node.right);
         visitNode(node);
+    }
+
+    public void postOrderTraversalIterative(BSTNode node) {
+        if (node == null)
+            return;
+        Stack<BSTNode> s = new Stack<>();
+        s.push(node);
+        BSTNode prev = null;
+        while (!s.isEmpty()) {
+            BSTNode current = s.peek();
+            if (prev == null || prev.left == current || prev.right == current) {
+                if (current.left != null)
+                    s.push(current.left);
+                else if (current.right != null)
+                    s.push(current.right);
+                else {
+                    s.pop();
+                    visitNode(current);
+                }
+            } else if (current.left == prev) {
+                if (current.right != null) s.push(current.right);
+                else {
+                    s.pop();
+                    visitNode(current);
+                }
+            } else if (current.right == prev) {
+                s.pop();
+                visitNode(current);
+            }
+            prev = current;
+        }
     }
 
     private void visitNode(BSTNode node) {
@@ -124,7 +188,7 @@ public class TreeTraversalAlgos {
         obj.inOrderTraversal(root);
 
         System.out.println("\nLevel-order traversal : ");
-        obj.levelOrderTraversalNonRecursive(root);
+        obj.levelOrderTraversalIterative(root);
 
         System.out.println("\nPre-order traversal tree 1: ");
         obj.preOrderTraversal(root);
@@ -133,11 +197,30 @@ public class TreeTraversalAlgos {
         System.out.println("\nPre-order traversal tree 3: ");
         obj.preOrderTraversal(root3);
 
+        System.out.println("\nPre-order traversal iterative tree 1: ");
+        obj.preOrderTraversalIterative(root);
+        System.out.println("\nPre-order traversal iterative tree 2: ");
+        obj.preOrderTraversalIterative(root2);
+        System.out.println("\nPre-order traversal iterative tree 3: ");
+        obj.preOrderTraversalIterative(root3);
+
         System.out.println("\nPost-order traversal tree 1: ");
         obj.postOrderTraversal(root);
         System.out.println("\nPost-order traversal tree 2: ");
         obj.postOrderTraversal(root2);
         System.out.println("\nPost-order traversal tree 3: ");
         obj.postOrderTraversal(root3);
+
+        System.out.println("\nPost-order traversal iterative tree 1: ");
+        //obj.postOrderTraversalIterative(root);
+        System.out.println("\nPost-order traversal iterative tree 2: ");
+        obj.postOrderTraversalIterative(root2);
+        System.out.println("\nPost-order traversal iterative tree 3: ");
+        obj.postOrderTraversalIterative(root3);
+
+        System.out.println("\nIn-order traversal iterative tree 1: ");
+        obj.inOrderTraversalIterative(root);
+        System.out.println("\nIn-order traversal iterative tree 2: ");
+        obj.inOrderTraversalIterative(root2);
     }
 }
