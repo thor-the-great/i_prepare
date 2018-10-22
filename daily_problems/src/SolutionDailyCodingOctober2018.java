@@ -836,7 +836,14 @@ public class SolutionDailyCodingOctober2018 {
      * @return
      */
     public int findMaxPath(BSTNode root) {
-        //
+        //idea is following - for every node max path is one of following four:
+        //- node itself
+        //- node + max path from left child node
+        //- node + max path from right child node
+        //- node + max path from left child node + max path from right child node
+        //we iterate over all nodes and calculate max path for every node. Passing max path value between nodes.
+        //for every node it's max path value will be max between node value and node value plus max path between right
+        //and left sub-trees
         Result res = new Result();
         findMaxHelper(root, res);
         return res.val;
