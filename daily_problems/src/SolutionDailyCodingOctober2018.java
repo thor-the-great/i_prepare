@@ -699,6 +699,156 @@ public class SolutionDailyCodingOctober2018 {
         return true;
     }
 
+    /**
+     * This problem was asked by Airbnb.
+     *
+     * We're given a hashmap with a key courseId and value a list of courseIds, which represents that the prerequsite
+     * of courseId is courseIds. Return a sorted ordering of courses such that we can finish all courses.
+     *
+     * Return null if there is no such ordering.
+     *
+     * For example, given {'CSC300': ['CSC100', 'CSC200'], 'CSC200': ['CSC100'], 'CSC100': []}, should return
+     * ['CSC100', 'CSC200', 'CSCS300'].
+     *
+     * @param deps
+     * @return
+     */
+    List<String> scheduleCourses(Map<String, List<String>> deps) {
+        //idea is based on topological sort. Tricky part is to model graph, so we'll be using two maps - one original and
+        //second one - reversed - where keys are courses and values - set of courses that depend on key. In case course
+        //is first in schedule there will be no key for it
+
+        //get courses to start (no dependencies) and form that second reversed map
+        int coursesCount = deps.size();
+        List<String> res = new LinkedList();
+        LinkedList<String> startCourses = new LinkedList();
+        Map<String, LinkedList<String>> revertedDepMap = new HashMap();
+        for (String dependent : deps.keySet()) {
+            List<String> mainCourses = deps.get(dependent);
+            if (mainCourses.isEmpty())
+                startCourses.add(dependent);
+            else {
+                for (String course : mainCourses) {
+                    LinkedList<String> depCourseList = revertedDepMap.getOrDefault(course, new LinkedList());
+                    depCourseList.add(dependent);
+                    revertedDepMap.put(course, depCourseList);
+                }
+            }
+        }
+
+        //while we have courses to start
+        while(!startCourses.isEmpty()) {
+            String nextTodo = startCourses.poll();
+            res.add(nextTodo);
+
+            //iterate over maps and remove our starting course from lists where it has dependants. In case there are
+            //no dependants for this course - take it as next start
+            if (revertedDepMap.containsKey(nextTodo)) {
+                List<String> dependentRevCourses = revertedDepMap.get(nextTodo);
+                for (String nextRev : dependentRevCourses) {
+                    if (deps.containsKey(nextRev)) {
+                        List<String> dependentCourses = deps.get(nextRev);
+                        for (Iterator<String> depCoursesIt = dependentCourses.listIterator(); depCoursesIt.hasNext();) {
+                            String depCourse = depCoursesIt.next();
+                            if (depCourse.equals(nextTodo)) {
+                                depCoursesIt.remove();
+                                break;
+                            }
+                        }
+                        if (dependentCourses.isEmpty()) {
+                            deps.remove(nextRev);
+                            startCourses.add(nextRev);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (res.size() < coursesCount)
+            return null;
+        else
+            return res;
+    }
+
+    int largestBSTSubtree(BSTNode root) {
+        Value val = new Value();
+        helper(root, val, val, val, val);
+        return val.maxSize;
+    }
+
+    int helper(BSTNode n, Value min, Value max, Value maxSizeRef, Value isBSTRef) {
+        if (n == null) {
+            isBSTRef.isBST = true;
+            return 0;
+        }
+
+        boolean isLeft = false, isRight = false;
+        int ls, rs;
+        max.max = Integer.MIN_VALUE;
+        ls = helper(n.left, min, max, maxSizeRef, isBSTRef);
+        if (isBSTRef.isBST && n.val > max.max) {
+            isLeft = true;
+        }
+
+        int minVal = min.min;
+
+        min.min = Integer.MAX_VALUE;
+        rs = helper(n.right, min, max, maxSizeRef, isBSTRef);
+        if (isBSTRef.isBST && n.val < min.min) {
+            isRight = true;
+        }
+
+        if (minVal < min.min) {
+            min.min = minVal;
+        }
+        if (n.val < min.min) // For leaf nodes
+        {
+            min.min = n.val;
+        }
+        if (n.val > max.max) {
+            max.max = n.val;
+        }
+
+        if (isLeft && isRight) {
+            if ((ls + rs + 1) > maxSizeRef.maxSize) maxSizeRef.maxSize = ls + rs + 1;
+            return (ls + rs + 1);
+        } else {
+            isBSTRef.isBST = false;
+            return 0;
+        }
+    }
+
+
+    class Value {
+        boolean isBST = false;
+        int min = Integer.MAX_VALUE;
+        int max = Integer.MIN_VALUE;
+        int maxSize = 0;
+    }
+
+    class Result {
+        int val;
+    }
+
+    public int findMaxPath(BSTNode root){
+        Result res = new Result();
+        findMaxHelper(root, res);
+        return res.val;
+    }
+
+    int findMaxHelper(BSTNode n, Result res) {
+        if (n == null) return 0;
+
+        int l = findMaxHelper(n.left, res);
+        int r = findMaxHelper(n.right, res);
+
+        int maxSingle = Math.max(Math.max(r,l) + n.val, n.val);
+        int maxRes = Math.max(maxSingle, r + l + n.val);
+
+        res.val = Math.max(res.val, maxRes);
+        return maxSingle;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingOctober2018 obj = new SolutionDailyCodingOctober2018();
 
@@ -997,5 +1147,68 @@ public class SolutionDailyCodingOctober2018 {
                         new BSTNode(5,null,null),
                         null));
         System.out.println(obj.checkTreeIsBST(root));//false
+
+        System.out.println("---- schedule courses ----");
+        Map<String, List<String>> m = new HashMap<>();
+        List<String> l1= new ArrayList<>();
+        l1.add("CSC100");
+        l1.add("CSC200");
+        m.put("CSC300", l1);
+        List<String> l2= new ArrayList<>();
+        l2.add("CSC100");
+        m.put("CSC200", l2);
+        m.put("CSC100", new ArrayList<>());
+        List<String> schedule = obj.scheduleCourses(m);
+        System.out.println("Schedule : " + schedule != null ? StringUtils.listStringsToString(schedule) : "not possible");
+
+        m = new HashMap<>();
+        l1= new ArrayList<>();
+        l1.add("CSC100");
+        l1.add("CSC200");
+        m.put("CSC300", l1);
+        l2= new ArrayList<>();
+        l2.add("CSC100");
+        m.put("CSC200", l2);
+        List<String> l3 = new LinkedList<>();
+        l3.add("CS300");
+        m.put("CSC100", l3);
+        schedule = obj.scheduleCourses(m);
+        System.out.println("Schedule : " + (schedule != null ? StringUtils.listStringsToString(schedule) : "not possible"));
+
+        System.out.println("----- max size of BST subtree of binary tree ------");
+        /*
+         *               8
+         *              /  \
+         *            2     12
+         *           / \   /
+         *          1   3  5
+         *
+         */
+        root = new BSTNode(8,
+                new BSTNode(2,
+                        new BSTNode(1,null,null),
+                        new BSTNode(3,null,null)),
+                new BSTNode(12,
+                        new BSTNode(5,null,null),
+                        null));
+        System.out.println(obj.largestBSTSubtree(root));//7
+
+        System.out.println("------ find max path in binary tree -----");
+        /*
+         *               10
+         *              /  \
+         *           -3     7
+         *           / \   /  \
+         *          1   2 5    6
+         *
+         */
+        root = new BSTNode(10,
+                new BSTNode(-3,
+                        new BSTNode(1,null,null),
+                        new BSTNode(2,null,null)),
+                new BSTNode(7,
+                        new BSTNode(5,null,null),
+                        new BSTNode(6,null,null)));
+        System.out.println(obj.findMaxPath(root));
     }
 }
