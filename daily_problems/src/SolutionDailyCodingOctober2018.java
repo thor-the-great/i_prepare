@@ -770,6 +770,62 @@ public class SolutionDailyCodingOctober2018 {
             return res;
     }
 
+    int largestBSTSubtree(BSTNode root) {
+        Value val = new Value();
+        helper(root, val, val, val, val);
+        return val.maxSize;
+    }
+
+    int helper(BSTNode n, Value min, Value max, Value maxSizeRef, Value isBSTRef) {
+        if (n == null) {
+            isBSTRef.isBST = true;
+            return 0;
+        }
+
+        boolean isLeft = false, isRight = false;
+        int ls, rs;
+        max.max = Integer.MIN_VALUE;
+        ls = helper(n.left, min, max, maxSizeRef, isBSTRef);
+        if (isBSTRef.isBST && n.val > max.max) {
+            isLeft = true;
+        }
+
+        int minVal = min.min;
+
+        min.min = Integer.MAX_VALUE;
+        rs = helper(n.right, min, max, maxSizeRef, isBSTRef);
+        if (isBSTRef.isBST && n.val < min.min) {
+            isRight = true;
+        }
+
+        if (minVal < min.min) {
+            min.min = minVal;
+        }
+        if (n.val < min.min) // For leaf nodes
+        {
+            min.min = n.val;
+        }
+        if (n.val > max.max) {
+            max.max = n.val;
+        }
+
+        if (isLeft && isRight) {
+            if ((ls + rs + 1) > maxSizeRef.maxSize) maxSizeRef.maxSize = ls + rs + 1;
+            return (ls + rs + 1);
+        } else {
+            isBSTRef.isBST = false;
+            return 0;
+        }
+    }
+
+
+    class Value {
+        boolean isBST = false;
+        int min = Integer.MAX_VALUE;
+        int max = Integer.MIN_VALUE;
+        int maxSize = 0;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingOctober2018 obj = new SolutionDailyCodingOctober2018();
 
@@ -1095,5 +1151,24 @@ public class SolutionDailyCodingOctober2018 {
         m.put("CSC100", l3);
         schedule = obj.scheduleCourses(m);
         System.out.println("Schedule : " + (schedule != null ? StringUtils.listStringsToString(schedule) : "not possible"));
+
+        System.out.println("----- max size of BST subtree of binary tree ------");
+        /*
+         *               8
+         *              /  \
+         *            2     12
+         *           / \   /
+         *          1   3  5
+         *
+         */
+
+        root = new BSTNode(8,
+                new BSTNode(2,
+                        new BSTNode(1,null,null),
+                        new BSTNode(3,null,null)),
+                new BSTNode(12,
+                        new BSTNode(5,null,null),
+                        null));
+        System.out.println(obj.largestBSTSubtree(root));//7
     }
 }
