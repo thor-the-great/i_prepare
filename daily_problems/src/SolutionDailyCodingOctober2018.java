@@ -826,11 +826,17 @@ public class SolutionDailyCodingOctober2018 {
         int maxSize = 0;
     }
 
-    class Result {
-        int val;
-    }
-
-    public int findMaxPath(BSTNode root){
+    /**
+     * This problem was asked by Google.
+     *
+     * Given a binary tree of integers, find the maximum path sum between two nodes. The path must go through at least
+     * one node, and does not need to go through the root.
+     *
+     * @param root
+     * @return
+     */
+    public int findMaxPath(BSTNode root) {
+        //
         Result res = new Result();
         findMaxHelper(root, res);
         return res.val;
@@ -847,6 +853,10 @@ public class SolutionDailyCodingOctober2018 {
 
         res.val = Math.max(res.val, maxRes);
         return maxSingle;
+    }
+
+    class Result {
+        int val;
     }
 
     public static void main(String[] args) {
