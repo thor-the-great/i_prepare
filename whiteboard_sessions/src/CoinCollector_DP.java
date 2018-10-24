@@ -39,5 +39,12 @@ public class CoinCollector_DP {
                 {2,  11,  8}
         };
         System.out.println(obj.maxCoins(grid));
+
+        grid = new int[][] {
+                {4, 7, 35},
+                {6, 6,  1},
+                {25, 4, 3}
+        };
+        System.out.println(obj.maxCoins(grid));
     }
 }
