@@ -866,6 +866,55 @@ public class SolutionDailyCodingOctober2018 {
         int val;
     }
 
+    /**
+     * This problem was asked by Palantir.
+     *
+     * Given a number represented by a list of digits, find the next greater permutation of a number, in terms of
+     * lexicographic ordering. If there is not greater permutation possible, return the permutation with the lowest
+     * value/ordering.
+     *
+     * For example, the list [1,2,3] should return [1,3,2]. The list [1,3,2] should return [2,1,3]. The list [3,2,1]
+     * should return [1,2,3].
+     *
+     * Can you perform the operation without allocating extra memory (disregarding the input memory)?
+     *
+     * @param nums
+     * @return
+     */
+    int[] getNextPerm(int[] nums) {
+        //logic consists of 3 cases:
+        //- array is sorted desc - then sort is asc and return
+        //- array is sorted asc - then swap last wo numbers
+        //- something else - need to search the rightmost element that is greater than it's prev, swap it with the
+        //rightmost element that is > and sort the interval
+        int N = nums.length;
+        int i = N - 1;
+        for (; i > 0; i--) {
+            if (nums[i] > nums[i - 1]) break;
+        }
+        //no such number found - means list in desc order
+        if (i == 0) {
+            Arrays.sort(nums);
+            return nums;
+        }
+        int min = i;
+        int x = nums[i - 1];
+        for (int j = i + 1; j < N; j++ ) {
+            if (nums[j] > x && nums[j] < nums[min]) {
+                min = j;
+            }
+        }
+        swap(min, i - 1, nums);
+        Arrays.sort(nums, i, min);
+        return nums;
+    }
+
+    void swap(int i, int j, int[] nums) {
+        int tmp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = tmp;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingOctober2018 obj = new SolutionDailyCodingOctober2018();
 
@@ -1227,5 +1276,35 @@ public class SolutionDailyCodingOctober2018 {
                         new BSTNode(5,null,null),
                         new BSTNode(6,null,null)));
         System.out.println(obj.findMaxPath(root));
+
+        System.out.println("----- next permutation that greater ----");
+        int[] nums = new int[]{1, 3, 2, 4};
+        System.out.print("Initial array : ");
+        Arrays.stream(nums).forEach(n->System.out.print(n +" "));
+        int[] nextPerm = obj.getNextPerm(nums);
+        System.out.print("\nProcessed array : ");
+        Arrays.stream(nextPerm).forEach(n->System.out.print(n +" "));
+
+        nums = new int[]{1, 2, 3, 4};
+        System.out.print("\nInitial array : ");
+        Arrays.stream(nums).forEach(n->System.out.print(n +" "));
+        nextPerm = obj.getNextPerm(nums);
+        System.out.print("\nProcessed array : ");
+        Arrays.stream(nextPerm).forEach(n->System.out.print(n +" "));
+
+        nums = new int[]{4, 3, 2, 1};
+        System.out.print("\nInitial array : ");
+        Arrays.stream(nums).forEach(n->System.out.print(n +" "));
+        nextPerm = obj.getNextPerm(nums);
+        System.out.print("\nProcessed array : ");
+        Arrays.stream(nextPerm).forEach(n->System.out.print(n +" "));
+
+        nums = new int[]{3, 5, 1, 8, 6, 5};
+        System.out.print("\nInitial array : ");
+        Arrays.stream(nums).forEach(n->System.out.print(n +" "));
+        Arrays.stream(nums).average();
+        nextPerm = obj.getNextPerm(nums);
+        System.out.print("\nProcessed array : ");
+        Arrays.stream(nextPerm).forEach(n->System.out.print(n +" "));
     }
 }
