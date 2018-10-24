@@ -915,6 +915,49 @@ public class SolutionDailyCodingOctober2018 {
         nums[j] = tmp;
     }
 
+    /**
+     * This problem was asked by Microsoft.
+     *
+     * Given a number in the form of a list of digits, return all possible permutations.
+     *
+     * For example, given [1,2,3], return [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]].
+     *
+     * @param nums
+     * @return
+     */
+    public List<List<Integer>> permutations(List<Integer> nums) {
+        //this is Heap permutations algorithm
+        //- The algorithm generates (n-1)! permutations of the first n-1 elements, adjoining the last element to each of
+        //  these. This will generate all of the permutations that end with the last element.
+        //- If n is odd, swap the first and last element and if n is even, then swap the ith element (i is the counter
+        //  starting from 0) and the last element and repeat the above algorithm till i is less than n.
+        //- In each iteration, the algorithm will produce all the permutations that end with the current last element.
+        List<List<Integer>> res = new ArrayList();
+        helper(res, nums, nums.size());
+        return res;
+    }
+
+    void helper(List<List<Integer>> res, List<Integer> state, int size) {
+        if (size == 1) {
+            List<Integer> nextList = new ArrayList(state);
+            res.add(nextList);
+            return;
+        }
+        for (int i = 0; i < size; i++) {
+            helper(res, state, size - 1);
+            if (size % 2 == 1)
+                swap(state, 0, size - 1);
+            else
+                swap(state, i, size - 1);
+        }
+    }
+
+    void swap(List<Integer> l, int i, int j) {
+        int tmp = l.get(i);
+        l.set(i, l.get(j));
+        l.set(j, tmp);
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingOctober2018 obj = new SolutionDailyCodingOctober2018();
 
@@ -1306,5 +1349,22 @@ public class SolutionDailyCodingOctober2018 {
         nextPerm = obj.getNextPerm(nums);
         System.out.print("\nProcessed array : ");
         Arrays.stream(nextPerm).forEach(n->System.out.print(n +" "));
+
+        System.out.println("--- all possible permutations of a number given as list of ints ----");
+        List<Integer> l = new ArrayList<>();
+        Arrays.stream(new int[]{1, 4, 2}).forEach(l::add);
+        System.out.print("Initial array : ");
+        l.forEach(n->System.out.print(n + " "));
+        System.out.println("\nPermutations");
+        List<List<Integer>> res = obj.permutations(l);
+        res.forEach(System.out::println);
+
+        l = new ArrayList<>();
+        Arrays.stream(new int[]{1, 4, 2, 6}).forEach(l::add);
+        System.out.print("Initial array : ");
+        l.forEach(n->System.out.print(n + " "));
+        System.out.println("\nPermutations");
+        res = obj.permutations(l);
+        res.forEach(System.out::println);
     }
 }
