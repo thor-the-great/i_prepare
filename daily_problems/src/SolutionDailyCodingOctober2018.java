@@ -1,11 +1,9 @@
-import diff_problems.TreeNode;
 import linked_list.ListNode;
 import linked_list.StringUtils;
-import sun.reflect.generics.tree.Tree;
 import trees.BSTNode;
 
-import javax.transaction.TransactionRequiredException;
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class SolutionDailyCodingOctober2018 {
 
@@ -926,6 +924,11 @@ public class SolutionDailyCodingOctober2018 {
      * @return
      */
     public List<List<Integer>> permutations(List<Integer> nums) {
+        return permutationsHeapAlg(nums);
+        //return permutationsRecurs(nums);
+    }
+
+    private List<List<Integer>> permutationsHeapAlg(List<Integer> nums) {
         //this is Heap permutations algorithm
         //- The algorithm generates (n-1)! permutations of the first n-1 elements, adjoining the last element to each of
         //  these. This will generate all of the permutations that end with the last element.
@@ -957,6 +960,35 @@ public class SolutionDailyCodingOctober2018 {
         l.set(i, l.get(j));
         l.set(j, tmp);
     }
+
+    /*
+    This is recursive implementation. Base case is for array size 1, the array itself. For every increased n we take
+    every permutation for n-1 (from previous iteration) and add element in every place of the list
+     */
+    List<List<Integer>> permutationsRecurs(List<Integer> nums) {
+        if (nums.size() == 1) {
+            List<List<Integer>> out = new ArrayList();
+            out.add(nums);
+            return out;
+        }
+        List<List<Integer>> out = new ArrayList<>();
+        //create list without 1-st element
+        List<Integer> newL = new ArrayList<>();
+        IntStream.range(1, nums.size()).forEach(i -> newL.add(nums.get(i)));
+        //start loop for every permutation of n - 1
+        for (List<Integer> l : permutationsRecurs(newL)) {
+            //iterate over list and insert element (nums[0]) in every possible position
+            for (int idx = 0; idx < nums.size(); idx++) {
+                List<Integer> perm = new ArrayList<>();
+                IntStream.range(0, idx).forEach(i->perm.add(l.get(i)));
+                perm.add(nums.get(0));
+                IntStream.range(idx, l.size()).forEach(i->perm.add(l.get(i)));
+                out.add(perm);
+            }
+        }
+        return out;
+    }
+
 
     public static void main(String[] args) {
         SolutionDailyCodingOctober2018 obj = new SolutionDailyCodingOctober2018();
