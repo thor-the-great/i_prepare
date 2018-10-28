@@ -989,6 +989,9 @@ public class SolutionDailyCodingOctober2018 {
         return out;
     }
 
+    int[][] dir = new int[][] {
+            {0, 1}, {-1, 0}, {0, -1}, {1, 0}
+    };
     /**
      * This problem was asked by Microsoft.
      *
@@ -1022,6 +1025,92 @@ public class SolutionDailyCodingOctober2018 {
             }
         }
         return max;
+    }
+
+    /**
+     * This problem was asked by Coursera.
+     *
+     * Given a 2D board of characters and a word, find if the word exists in the grid.
+     *
+     * The word can be constructed from letters of sequentially adjacent cell, where "adjacent" cells are those
+     * horizontally or vertically neighboring. The same letter cell may not be used more than once.
+     *
+     * For example, given the following board:
+     *
+     * [
+     *   ['A','B','C','E'],
+     *   ['S','F','C','S'],
+     *   ['A','D','E','E']
+     * ]
+     * exists(board, "ABCCED") returns true, exists(board, "SEE") returns true, exists(board, "ABCB") returns false.
+     *
+     * @param grid
+     * @param word
+     * @return
+     */
+    boolean exists(char[][] grid, String word) {
+        //solution based on DFS style traversal of the grid, starting from every char that matches first character in
+        //the word. Do it in iterative fashion with visited array. Create class Point to make code cleaner
+        int rows = grid.length;
+        int cols = grid[0].length;
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (grid[r][c] == word.charAt(0)) {
+                    Set<Point> visited = new HashSet<>();
+                    Stack<Point> stack = new Stack();
+                    stack.push(new Point(r, c));
+                    int wordIndex = 0;
+                    while(!stack.isEmpty()) {
+                        Point p = stack.pop();
+                        if (!visited.contains(p)) {
+                            if (wordIndex == word.length() - 1)
+                                return true;
+                            visited.add(p);
+                            wordIndex++;
+                            for (int[] d : dir) {
+                                int nextR = p.r + d[0];
+                                int nextC = p.c + d[1];
+                                if (isValid(rows, cols, nextR, nextC) && word.charAt(wordIndex) == grid[nextR][nextC]) {
+                                    Point nextPoint = new Point(nextR, nextC);
+                                    stack.push(nextPoint);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    boolean isValid(int rows, int cols, int r, int c) {
+        if (r >= 0 && r < rows && c >= 0 && c < cols)
+            return true;
+        else
+            return false;
+    }
+
+    class Point {
+        int r, c;
+
+        Point(int row, int col) {
+            r = row;
+            c = col;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof Point) {
+                Point pObj = (Point) obj;
+                return pObj.c == this.c && pObj.r == this.r;
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return r*31^c;
+        }
     }
 
     public static void main(String[] args) {
@@ -1432,6 +1521,17 @@ public class SolutionDailyCodingOctober2018 {
         System.out.println("\nPermutations");
         res = obj.permutations(l);
         res.forEach(System.out::println);
+
+        System.out.println("-----check is word exists in char grid ----------");
+        char[][] charGrid = new char[][] {
+                {'A','B','C','E'},
+                {'S','F','C','S'},
+                {'A','D','E','E'}
+        };
+        System.out.println(obj.exists(charGrid, "ABCCED"));
+        System.out.println(obj.exists(charGrid, "SEE"));
+        System.out.println(obj.exists(charGrid, "ABCB"));
+
 
         System.out.println("----- longest consecutive set in unsorted array -----");
         System.out.println(obj.longestConsecutive(new int[] {2, 100, 4, 200, 3, 1, 5}));
