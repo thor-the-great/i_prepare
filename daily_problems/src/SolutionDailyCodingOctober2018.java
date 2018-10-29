@@ -1113,6 +1113,32 @@ public class SolutionDailyCodingOctober2018 {
         }
     }
 
+    /**
+     * This problem was asked by Google.
+     *
+     * You are in an infinite 2D grid where you can move in any of the 8 directions:
+     *
+     *  (x,y) to
+     *     (x+1, y),
+     *     (x - 1, y),
+     *     (x, y+1),
+     *     (x, y-1),
+     *     (x-1, y-1),
+     *     (x+1,y+1),
+     *     (x-1,y+1),
+     *     (x+1,y-1)
+     * You are given a sequence of points and the order in which you need to cover the points. Give the minimum number
+     * of steps in which you can achieve it. You start from the first point.
+     *
+     * Example:
+     *
+     * Input: [(0, 0), (1, 1), (1, 2)]
+     * Output: 2
+     * It takes 1 step to move from (0, 0) to (1, 1). It takes one more step to move from (1, 1) to (1, 2).
+     *
+     * @param points
+     * @return
+     */
     public int minSteps(int[][] points) {
         int steps = 0;
         if (points.length == 0)
@@ -1125,6 +1151,68 @@ public class SolutionDailyCodingOctober2018 {
             prev = next;
         }
         return steps;
+    }
+
+    /**
+     *
+     Good morning!
+
+     Here's a solution to yesterday's problem.
+
+     This is your coding interview problem for today.
+
+     This problem was asked by Alibaba.
+
+     Given an even number (greater than 2), return two prime numbers whose sum will be equal to the given number.
+
+     A solution will always exist. See Goldbach’s conjecture.
+
+     Example:
+
+     Input: 4
+     Output: 2 + 2 = 4
+     If there are more than one solution possible, return the lexicographically smaller solution.
+
+     If [a, b] is one solution with a <= b, and [c, d] is another solution with c <= d, then
+
+     [a, b] < [c, d]
+     If a < c OR a==c AND b < d.
+     *
+     * @param k
+     * @return
+     */
+    public int[] primesSum(int k) {
+        if (k <= 2 || k % 2 != 0)
+            return null;
+
+        boolean[] primes = getPrimes(k);
+
+        for (int i = 2; i <= k; i++) {
+            if (!primes[i])
+                continue;
+            int comp = k - i;
+            if (primes[comp])
+                return new int[] {i, comp};
+        }
+
+        return null;
+    }
+
+    private boolean[] getPrimes(int k) {
+        boolean[] primes = new boolean[k + 1];
+        Arrays.fill(primes, true);
+        primes[0] = false;
+        primes[1] = false;
+        for (int i = 2; i <= k; i++) {
+            if (primes[i]) {
+                int c = 2*i;
+                while (c <= k) {
+                    primes[c] = false;
+                    c+=i;
+                }
+            }
+        }
+        return primes;
     }
 
     public static void main(String[] args) {
@@ -1555,5 +1643,34 @@ public class SolutionDailyCodingOctober2018 {
         System.out.println(obj.minSteps(new int[][] {{0, 0}, {1, 1}, {1, 2}}));
         System.out.println(obj.minSteps(new int[][] {{1, 1}, {-1, -2}, {3, 6}, {4, 6}}));
         System.out.println(obj.minSteps(new int[][] {{2, 3}, {2, 6}, {10, 6}}));
+
+        System.out.println("----- min sum of two primes that forms even number ------");
+        int[] primes = obj.primesSum(6);
+        if (primes == null)
+            System.out.print("not possible");
+        else
+            Arrays.stream(primes).forEach(i-> System.out.print(i + " "));
+        System.out.println("");
+
+        primes = obj.primesSum(16);
+        if (primes == null)
+            System.out.println("not possible");
+        else
+            Arrays.stream(primes).forEach(i-> System.out.print(i + " "));
+        System.out.println("");
+
+        primes = obj.primesSum(4);
+        if (primes == null)
+            System.out.println("not possible");
+        else
+            Arrays.stream(primes).forEach(i-> System.out.print(i + " "));
+        System.out.println("");
+
+        primes = obj.primesSum(20);
+        if (primes == null)
+            System.out.println("not possible");
+        else
+            Arrays.stream(primes).forEach(i-> System.out.print(i + " "));
+        System.out.println("");
     }
 }
