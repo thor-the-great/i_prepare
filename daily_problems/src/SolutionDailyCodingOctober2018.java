@@ -1113,6 +1113,20 @@ public class SolutionDailyCodingOctober2018 {
         }
     }
 
+    public int minSteps(int[][] points) {
+        int steps = 0;
+        if (points.length == 0)
+            return steps;
+        int[] prev = points[0];
+        for (int i = 1; i < points.length; i++) {
+            int[] next = points[i];
+            int d = Math.max(Math.abs(prev[0] - next[0]), Math.abs(prev[1] - next[1]));
+            steps += d;
+            prev = next;
+        }
+        return steps;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingOctober2018 obj = new SolutionDailyCodingOctober2018();
 
@@ -1536,5 +1550,10 @@ public class SolutionDailyCodingOctober2018 {
         System.out.println("----- longest consecutive set in unsorted array -----");
         System.out.println(obj.longestConsecutive(new int[] {2, 100, 4, 200, 3, 1, 5}));
         System.out.println(obj.longestConsecutive(new int[] {205, 100, 4, 200, 3, 1, 204, 2, 2, 202, 203, 10, 201}));
+
+        System.out.println("----- min path between points -----");
+        System.out.println(obj.minSteps(new int[][] {{0, 0}, {1, 1}, {1, 2}}));
+        System.out.println(obj.minSteps(new int[][] {{1, 1}, {-1, -2}, {3, 6}, {4, 6}}));
+        System.out.println(obj.minSteps(new int[][] {{2, 3}, {2, 6}, {10, 6}}));
     }
 }
