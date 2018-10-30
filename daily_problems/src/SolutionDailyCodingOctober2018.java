@@ -1155,12 +1155,6 @@ public class SolutionDailyCodingOctober2018 {
 
     /**
      *
-     Good morning!
-
-     Here's a solution to yesterday's problem.
-
-     This is your coding interview problem for today.
-
      This problem was asked by Alibaba.
 
      Given an even number (greater than 2), return two prime numbers whose sum will be equal to the given number.
@@ -1182,6 +1176,35 @@ public class SolutionDailyCodingOctober2018 {
      * @return
      */
     public int[] primesSum(int k) {
+        //return primeSumPreCalcPrimes(k);
+        return primeSumCheckEveryPrime(k);
+    }
+
+    private int[] primeSumCheckEveryPrime(int k) {
+        if (k <= 2 || k % 2 != 0)
+            return null;
+
+        for (int i = 2; i <= k; i++) {
+            if (isPrime(i)) {
+                int comp = k - i;
+                if (i == comp || isPrime(comp))
+                    return new int[]{i, comp};
+            }
+        }
+
+        return null;
+    }
+
+    private boolean isPrime(int a) {
+        if (a < 2) return false;
+        if (a == 2) return true;
+        for (int i = 2; i < Math.sqrt(a); i++) {
+            if (a % i == 0) return false;
+        }
+        return true;
+    }
+
+    private int[] primeSumPreCalcPrimes(int k) {
         if (k <= 2 || k % 2 != 0)
             return null;
 
