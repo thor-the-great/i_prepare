@@ -1215,6 +1215,43 @@ public class SolutionDailyCodingOctober2018 {
         return primes;
     }
 
+    /**
+     * This problem was asked by Lyft.
+     *
+     * Given a list of integers and a number K, return which contiguous elements of the list sum to K.
+     *
+     * For example, if the list is [1, 2, 3, 4, 5] and K is 9, then it should return [2, 3, 4].
+     *
+     * @param nums
+     * @param k
+     * @return
+     */
+    int[] contiguousSum(int[] nums, int k) {
+        //idea is to use 2 pointers - left and right, and kind of greedy approach. We go left to right and calculate sum
+        //so far, keeping two pointers - one at the start (left) and other at the end (right). When sum became > than
+        //k - we stop right pointer and move left pointer to the right, unless we get the number < or == K.
+        //time - O(n) - one full array scan
+        //space - O(1) - several state variables
+        int left = -1, right = 0;
+        int sum = 0;
+        while (right < nums.length) {
+            sum += nums[right];
+            if (sum > k) {
+                while(left < right && sum > k) {
+                    left++;
+                    sum -= nums[left];
+                }
+            }
+            if (sum == k) {
+                int start = left + 1;
+                if (start < 0) start = 0;
+                return Arrays.copyOfRange(nums, start, right + 1);
+            }
+            right++;
+        }
+        return new int[0];
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingOctober2018 obj = new SolutionDailyCodingOctober2018();
 
@@ -1672,5 +1709,20 @@ public class SolutionDailyCodingOctober2018 {
         else
             Arrays.stream(primes).forEach(i-> System.out.print(i + " "));
         System.out.println("");
+
+        System.out.println("---- sum of contiguous subarray = k -----");
+        int[] nums2 = new int[] {5, 5, 2, 6, 10, 3, 4};
+        int[] res2 = obj.contiguousSum(nums2, 21);
+        Arrays.stream(res2).forEach(i->System.out.print(i + " "));
+        System.out.print("\n");
+        res2 = obj.contiguousSum(nums2, 19);
+        Arrays.stream(res2).forEach(i->System.out.print(i + " "));
+        System.out.print("\n");
+        res2 = obj.contiguousSum(nums2, 10);
+        Arrays.stream(res2).forEach(i->System.out.print(i + " "));
+        System.out.print("\n");
+        res2 = obj.contiguousSum(nums2, -5);
+        Arrays.stream(res2).forEach(i->System.out.print(i + " "));
+        System.out.print("\n");
     }
 }
