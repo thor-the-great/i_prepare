@@ -710,6 +710,84 @@ public class Solution {
         System.out.println(sb.toString());
     }
 
+    /**
+     * Product of Array Except Self
+     * Given an array nums of n integers where n > 1,  return an array output such that output[i] is equal to the
+     * product of all the elements of nums except nums[i].
+     *
+     * Example:
+     *
+     * Input:  [1,2,3,4]
+     * Output: [24,12,8,6]
+     * Note: Please solve it without division and in O(n).
+     *
+     * Follow up:
+     * Could you solve it with constant space complexity? (The output array does not count as extra space for the
+     * purpose of space complexity analysis.)
+     * @param nums
+     * @return
+     */
+    public int[] productExceptSelf(int[] nums) {
+        //idea is to do two scans - one from left to right and after that - opposie way.
+        //on first iteration - collection products of elements till (i-1) to result
+        //on second iteration - collection products of elements to the right up to i + 1.
+        //this way in i-th element will be product p(0..i-1) * p(i+1...N-1)
+        int N = nums.length;
+        int[] res = new int[N];
+        Arrays.fill(res, 1);
+        //do the first pass - fill array from left to right
+        for (int i = 1; i < N; i++) {
+            res[i] = res[i - 1]*nums[i - 1];
+        }
+        //now fill compliment numbers
+        int tmp = 1;
+        for(int i = N - 2; i >=0 ;i--) {
+            tmp *= nums[i + 1];
+            res[i] = res[i] * tmp;
+        }
+        return res;
+    }
+
+    /**
+     * Given an array nums containing n + 1 integers where each integer is between 1 and n (inclusive), prove that at
+     * least one duplicate number must exist. Assume that there is only one duplicate number, find the duplicate one.
+     *
+     * Example 1:
+     *
+     * Input: [1,3,4,2,2]
+     * Output: 2
+     * Example 2:
+     *
+     * Input: [3,1,3,4,2]
+     * Output: 3
+     * Note:
+     *
+     * You must not modify the array (assume the array is read only).
+     * You must use only constant, O(1) extra space.
+     * Your runtime complexity should be less than O(n2).
+     * There is only one duplicate number in the array, but it could be repeated more than once.
+     *
+     * @param nums
+     * @return
+     */
+    public int findDuplicate(int[] nums) {
+        //idea is to use two pointers technique similar to cycle search in linked list. Iterate with slow and fast pointers
+        //slow goes + 1, fast goes 2xslow. They will meet eventually (meaning that there is a cycle = there is a duplicate)
+        //after that start fresh pointer from 0 and another one from point of met. They will meet at the point when
+        //cycle started = duplicate
+        int slow = 0, fast = 0;
+        do {
+            slow = nums[slow];
+            fast = nums[nums[fast]];
+        } while (slow != fast);
+        int rep = 0;
+        while (rep != slow) {
+            rep = nums[rep];
+            slow = nums[slow];
+        }
+        return rep;
+    }
+
     public static void main(String[] args) {
         Solution obj = new Solution();
 

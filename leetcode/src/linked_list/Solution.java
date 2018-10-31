@@ -93,6 +93,38 @@ public class Solution {
             return shortPointer;
     }
 
+    public ListNode getIntersectionNodeSecondAttempt(ListNode headA, ListNode headB) {
+        //assume first list is longer
+        int sizeA = getSize(headA);
+        int sizeB = getSize(headB);
+        if (sizeB > sizeA) {
+            ListNode tmp = headA;
+            headA = headB;
+            headB = tmp;
+        }
+        int diff = Math.abs(sizeA - sizeB);
+        while (diff > 0) {
+            headA = headA.next;
+            diff--;
+        }
+        while (headA != headB) {
+            headA = headA.next;
+            headB = headB.next;
+        }
+
+        return headA;
+    }
+
+    int getSize(ListNode headA) {
+        ListNode root = headA;
+        int s = 0;
+        while (root != null) {
+            s++;
+            root = root.next;
+        }
+        return s;
+    }
+
     public ListNode removeNthFromEnd(ListNode head, int n) {
         ListNode shiftedPointer = head;
         for (int i = 0; i < n; i++) {
@@ -113,6 +145,55 @@ public class Solution {
             prevPointer.next = pointer.next;
         }
         return head;
+    }
+
+    /**
+     * Add Two Numbers
+     *
+     * You are given two non-empty linked lists representing two non-negative integers. The digits are stored in
+     * reverse order and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.
+     *
+     * You may assume the two numbers do not contain any leading zero, except the number 0 itself.
+     *
+     * Example:
+     *
+     * Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
+     * Output: 7 -> 0 -> 8
+     * Explanation: 342 + 465 = 807.
+     *
+     * @param l1
+     * @param l2
+     * @return
+     */
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        //idea is following:
+        //- first create mock node that will have our head, need it to return result
+        //- then iterate over both lists and calculate value and carry. Create new result node with the %10
+        //and keep carry for the next node.
+        //when finished - check for carry, if not 0 - add one more node.
+        int carry = 0;
+        ListNode mockHead = new ListNode(-1);
+        ListNode curr = mockHead;
+        while (l1 != null || l2 != null) {
+            int val = carry;
+            if (l1 != null) {
+                val += l1.val;
+                l1 = l1.next;
+            }
+            if (l2 != null) {
+                val += l2.val;
+                l2 = l2.next;
+            }
+            ListNode nextNode = new ListNode(val % 10);
+            carry = val / 10;
+            curr.next = nextNode;
+            curr = curr.next;
+        }
+        if (carry > 0) {
+            ListNode n = new ListNode(carry);
+            curr.next = n;
+        }
+        return mockHead.next;
     }
 
     public static void main(String[] args) {
