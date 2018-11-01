@@ -4,6 +4,7 @@ import trees.BSTNode;
 
 import java.util.*;
 import java.util.stream.IntStream;
+import javafx.util.Pair;
 
 public class SolutionDailyCodingOctober2018 {
 
@@ -1275,6 +1276,68 @@ public class SolutionDailyCodingOctober2018 {
         return new int[0];
     }
 
+    /**
+     * This problem was asked by Square.
+     *
+     * Given a string and a set of characters, return the shortest substring containing all the characters in the set.
+     *
+     * For example, given the string "figehaeci" and the set of characters {a, e, i}, you should return "aeci".
+     *
+     * If there is no substring containing all the characters in the set, return null.
+     *
+     * @param s
+     * @param set
+     * @return
+     */
+    String substringContainingSet(String s, String t) {
+        char[] set = t.toCharArray();
+        // idea is to use sliding window. First we expand to the right, then keep shrinking from the left unless
+        // invariant kept
+        // we have mp with char - count of char for both string and set. We base our pointer on the number of occurrences
+        int N = set.length;
+        int M = s.length();
+        if (M < N) return "";
+        Map<Character, Integer> setCharCounts = new HashMap();
+        //count each character in the pattern
+        IntStream.range(0, N).forEach(i->setCharCounts.put(set[i], setCharCounts.getOrDefault(set[i], 0) + 1));
+        int requiredNum = setCharCounts.size();
+        int left = 0,right = 0;
+        Map<Character, Integer> windowCounts = new HashMap();
+        //helping array for result
+        int[] res = {-1, 0, 0};
+        int foundChars = 0;
+        while (right < M) {
+            char nextChar = s.charAt(right);
+            //add char to a map of string chars
+            windowCounts.put(nextChar, windowCounts.getOrDefault(nextChar, 0) + 1);
+            //check if this char is in set and count of these chars are the same
+            if (setCharCounts.containsKey(nextChar) && windowCounts.get(nextChar) == setCharCounts.get(nextChar)) {
+                foundChars++;
+            }
+            //going back (left pointer, from left to right) untill the window size is 0 or foundChars will be decremented
+            while (left <= right && foundChars == requiredNum) {
+                nextChar = s.charAt(left);
+                // Save the smallest window until now.
+                if (res[0] == -1 || right - left + 1 < res[0]) {
+                    res[0] = right - left + 1;
+                    res[1] = left;
+                    res[2] = right;
+                }
+                //decrement number of chars in window
+                windowCounts.put(nextChar, windowCounts.get(nextChar) - 1);
+                //check if we met a character from the pattern
+                if (setCharCounts.containsKey(nextChar) && windowCounts.get(nextChar) < setCharCounts.get(nextChar)) {
+                    foundChars--;
+                }
+                left++;
+            }
+            //keep right pointer moving to the right
+            right++;
+        }
+        //res will have our answer - {window length, left, right}
+        return res[0] == -1 ? "" : s.substring(res[1], res[2] + 1);
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingOctober2018 obj = new SolutionDailyCodingOctober2018();
 
@@ -1747,5 +1810,9 @@ public class SolutionDailyCodingOctober2018 {
         res2 = obj.contiguousSum(nums2, -5);
         Arrays.stream(res2).forEach(i->System.out.print(i + " "));
         System.out.print("\n");
+
+        System.out.println("---- min substring of string contains all chars from set -----");
+        System.out.println(obj.substringContainingSet("figehaeci", new String(new char[]{'a', 'e', 'i'})));
+        System.out.println(obj.substringContainingSet("this is a test string", new String(new char[]{'t', 'i', 's', 't'})));
     }
 }
