@@ -201,6 +201,25 @@ public class Driver {
         return l;
     }
 
+    public int compareVersion(String version1, String version2) {
+        String[] v1Split = version1.split(".");
+        String[] v2Split = version2.split(".");
+        List<Integer> v1 = new LinkedList();
+        List<Integer> v2 = new LinkedList();
+        Arrays.stream(v1Split).forEach(s->v1.add(Integer.parseInt(s)));
+        Arrays.stream(v2Split).forEach(s->v2.add(Integer.parseInt(s)));
+        int c = 0;
+        while (c < v1.size() || c < v2.size()) {
+            int v1Num = c >= v1.size() ? 0 : v1.get(c);
+            int v2Num = c >= v2.size() ? 0 : v2.get(c);
+            if (v1Num != v2Num) {
+                return v1Num > v2Num ? 1 : -1;
+            }
+            c++;
+        }
+        return 0;
+    }
+
     public static void main(String[] args) {
         Driver obj = new Driver();
         System.out.println("---- find numbers in sorted array -----");
@@ -223,5 +242,7 @@ public class Driver {
         System.out.println(obj.triangleNumber(new int[] {1,2,3,4,5,6}));
 
         System.out.println(obj.largestSumOfAverages(new int[] {9,1,2,3,9}, 3));
+
+        System.out.println(obj.compareVersion("0.1", "1.1"));
     }
 }
