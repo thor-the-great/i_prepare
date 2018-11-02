@@ -1,15 +1,8 @@
 package mock_sessions.amazon;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 public class NumOfIslands {
-    int[][] dir = new int[][] {
-            {0, -1}, {1, 0}, {0, 1}, {-1, 0}
-    };
-
     public static void main(String[] args) {
         NumOfIslands obj = new NumOfIslands();
         System.out.println(obj.numIslands(new char[][] {
@@ -21,6 +14,52 @@ public class NumOfIslands {
     }
 
     public int numIslands(char[][] grid) {
+        return bfsReuseGrid(grid);
+        //return bfsSetVisitedPointObjects(grid);
+    }
+
+    int[][] dir = new int[][] {
+            {0, -1}, {1, 0}, {0, 1}, {-1, 0}
+    };
+
+    private int bfsReuseGrid(char[][] grid) {
+        if (grid == null) return 0;
+        int rows = grid.length;
+        if (rows == 0) return 0;
+        int cols = grid[0].length;
+        if (cols == 0) return 0;
+
+        int res = 0;
+        Queue<Integer> q = new ArrayDeque();
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (grid[r][c] == '1') {
+                    grid[r][c] = '#';
+                    //start BFS for this island
+                    res++;
+                    q.clear();
+                    q.add(r);
+                    q.add(c);
+                    while (!q.isEmpty()) {
+                        int nextRow = q.poll();
+                        int nextCol = q.poll();
+                        for (int d = 0; d < dir.length; d++) {
+                            int nextR = nextRow + dir[d][0];
+                            int nextC = nextCol + dir[d][1];
+                            if ((nextR >= 0 && nextR < rows && nextC >= 0 && nextC < cols) && grid[nextR][nextC] == '1') {
+                                q.add(nextR);
+                                q.add(nextC);
+                                grid[nextR][nextC] = '#';
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    private int bfsSetVisitedPointObjects(char[][] grid) {
         if (grid == null) return 0;
         int rows = grid.length;
         if (rows == 0) return 0;
@@ -44,7 +83,12 @@ public class NumOfIslands {
                             for (int d = 0; d < dir.length; d++) {
                                 int nextR = nextPoint.x + dir[d][0];
                                 int nextC = nextPoint.y + dir[d][1];
-                                if (isValid(rows, cols, nextR, nextC)) {
+                                boolean result;
+                                if (nextR >=0 && nextR < rows && nextC >= 0 && nextC < cols)
+                                    result = true;
+                                else
+                                    result = false;
+                                if (result) {
                                     q.add(new Point(nextR, nextC));
                                 }
                             }
@@ -54,13 +98,6 @@ public class NumOfIslands {
             }
         }
         return res;
-    }
-
-    boolean isValid(int rows, int cols, int r, int c) {
-        if (r >=0 && r < rows && c >= 0 && c < cols)
-            return true;
-        else
-            return false;
     }
 
     class Point {
