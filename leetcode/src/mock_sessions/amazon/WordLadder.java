@@ -114,6 +114,44 @@ public class WordLadder {
         list.remove(0);
     }
 
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        Map<String, Integer> ladder = new HashMap();
+        wordList.forEach(s->ladder.put(s, Integer.MAX_VALUE));
+        if (!ladder.containsKey(endWord)) {
+            return 0;
+        }
+        ladder.put(beginWord, 1);
+        //build word ladder
+        Queue<String> queue= new LinkedList();
+        queue.add(beginWord);
+        int min = Integer.MAX_VALUE;
+        while(!queue.isEmpty()) {
+            String word = queue.poll();
+            int steps = ladder.get(word) + 1;
+            if (steps > min) break;
+            for (int i = 0; i < word.length(); i++) {
+                StringBuilder sb = new StringBuilder(word);
+                for (char ch = 'a'; ch<='z'; ch++) {
+                    sb.setCharAt(i, ch);
+                    String newWord = sb.toString();
+                    if (ladder.containsKey(newWord)) {
+                        int stepsToWord = ladder.get(newWord);
+                        if (stepsToWord < steps) continue;
+                        else if (steps < stepsToWord) {
+                            queue.add(newWord);
+                            ladder.put(newWord, steps);
+                        } else;
+                        if (newWord.equals(endWord))
+                            min = steps;
+                    }
+                }
+            }
+        }
+        int minLength = ladder.get(endWord);
+        if (minLength == Integer.MAX_VALUE) minLength = 0;
+        return minLength;
+    }
+
     public static void main(String[] args) {
         WordLadder obj = new WordLadder();
         List<String> dict = new ArrayList<>();
@@ -127,5 +165,12 @@ public class WordLadder {
                 System.out.print("\n");
             }
         }
+
+        //System.out.println(obj.ladderLength("hit", "cog", dict));
+
+        dict = new ArrayList<>();
+        dict.add("hot");dict.add("dog");
+
+        System.out.println(obj.ladderLength("hot", "dog", dict));
     }
 }
