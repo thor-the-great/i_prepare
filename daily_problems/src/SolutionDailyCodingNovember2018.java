@@ -52,47 +52,49 @@ public class SolutionDailyCodingNovember2018 {
     }
 
     public boolean isPalindrome(ListNode head) {
-        /*
-        if (head == null) return true;
-        //start rolling two pointer - slow and fast
-        ListNode slow = head;
-        ListNode fast = head;
-        while (fast.next != null && fast.next.next != null) {
-            fast = fast.next.next;
-            slow = slow.next;
-        }
-        //
-        if (slow == fast && slow.next == null)
-            return true;
-
-        //save second head of the subtree
-        ListNode secondHead = slow.next;
-        slow.next = null;
-        ListNode p1 = secondHead;
-        ListNode p2 = p1.next;
-        while(p1 !=null && p2 != null) {
-            ListNode temp = p2.next;
-            p2.next = p1;
-            p1 = p2;
-            p2 = temp;
-        }
-        secondHead.next = null;
-        //compare two sublists now
-        ListNode p = p2==null ? p1 :p2;
-        ListNode q = head;
-        while (p!=null) {
-            if ( p.val != q.val )
-                return false;
-            p = p.next;
-            q = q.next;
-        }
-        return true;*/
         return isPalindrome2(head);
+    }
+
+    /**
+     * This problem was asked by Pinterest.
+     *
+     * Given an integer list where each number represents the number of hops you can make, determine whether you can
+     * reach to the last index starting at index 0.
+     *
+     * For example, [2, 0, 1, 0] returns true while [1, 1, 0, 1] returns false.
+     *
+     * @param hops
+     * @return
+     */
+    public boolean hopToLast(int[] hops) {
+        //idea is simple - there are only two ways of going from the index, so if we reach it for the second
+        //time - we only can go the same way, so doesn't make sense to repeat any of visited steps.
+        //thus we keep list of visited indexes, and visit only unvisited ones.
+        //this leads to a recursive implementation
+        //O(n) - every element visited n times
+        //O(1) - if we re-using same array to store visited state, if we can't change it - O(n) for extra array
+        if (hops == null || hops.length == 0)
+            return false;
+        this.hops = hops;
+        return helper(0);
+    }
+
+    int[] hops;
+
+    boolean helper(int index) {
+        if (index == hops.length - 1)
+            return true;
+        if (index < 0 || index >= hops.length || hops[index] == Integer.MIN_VALUE)
+            return false;
+        int nextIndex = hops[index];
+        hops[index] = Integer.MIN_VALUE;
+        return helper(index + nextIndex) || helper(index - nextIndex);
     }
 
     public static void main(String[] args) {
         SolutionDailyCodingNovember2018 obj = new SolutionDailyCodingNovember2018();
 
+        System.out.println("---- check if singly linked list is a palindrome ----");
         ListNode head = ListUtils.getSinglyLinkedList(new int[] {1, 2, 5, 2, 1});
         System.out.println(obj.isPalindrome(head));
 
@@ -116,5 +118,12 @@ public class SolutionDailyCodingNovember2018 {
 
         head = ListUtils.getSinglyLinkedList(new int[] {2, 3, 4, 1});
         System.out.println(obj.isPalindrome(head));
+
+        System.out.println("---- check if possible to reach last element from 0 in array of hops -----");
+
+        System.out.println(obj.hopToLast(new int[] {2, 0, 1, 0})); //true
+        System.out.println(obj.hopToLast(new int[] {1, 1, 0, 1})); //false
+        System.out.println(obj.hopToLast(new int[] {3, 3, 0, 2, 2})); //true
+        System.out.println(obj.hopToLast(new int[] {1, 1, 0, 5})); //false
     }
 }
