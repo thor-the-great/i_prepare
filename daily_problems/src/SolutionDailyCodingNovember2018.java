@@ -1,9 +1,12 @@
+import diff_problems.TreeNode;
 import linked_list.ListNode;
 import linked_list.ListUtils;
 import linked_list.StringUtils;
+import sun.reflect.generics.tree.Tree;
 import trees.BST;
 import trees.BSTNode;
 
+import javax.transaction.TransactionRequiredException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -91,6 +94,21 @@ public class SolutionDailyCodingNovember2018 {
         return helper(index + nextIndex) || helper(index - nextIndex);
     }
 
+    List<Integer> binaryTreeLevelOrder(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        while (!q.isEmpty()) {
+            TreeNode n = q.poll();
+            res.add(n.val);
+            if (n.left != null)
+                q.add(n.left);
+            if (n.right != null)
+                q.add(n.right);
+        }
+        return res;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingNovember2018 obj = new SolutionDailyCodingNovember2018();
 
@@ -125,5 +143,14 @@ public class SolutionDailyCodingNovember2018 {
         System.out.println(obj.hopToLast(new int[] {1, 1, 0, 1})); //false
         System.out.println(obj.hopToLast(new int[] {3, 3, 0, 2, 2})); //true
         System.out.println(obj.hopToLast(new int[] {1, 1, 0, 5})); //false
+
+        System.out.println("---- print binary tree in level order ---");
+        TreeNode root = new TreeNode(1,
+                new TreeNode(2),
+                new TreeNode(3,
+                        new TreeNode(4), new TreeNode(5)));
+        List<Integer> levelOrder = obj.binaryTreeLevelOrder(root);
+        levelOrder.forEach(i-> System.out.print(i + " "));
+        System.out.println();
     }
 }
