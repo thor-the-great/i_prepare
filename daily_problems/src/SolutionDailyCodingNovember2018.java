@@ -1,18 +1,8 @@
 import diff_problems.TreeNode;
 import linked_list.ListNode;
 import linked_list.ListUtils;
-import linked_list.StringUtils;
-import sun.reflect.generics.tree.Tree;
-import trees.BST;
-import trees.BSTNode;
 
-import javax.transaction.TransactionRequiredException;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
-import java.util.concurrent.LinkedBlockingDeque;
 
 public class SolutionDailyCodingNovember2018 {
 
@@ -109,6 +99,30 @@ public class SolutionDailyCodingNovember2018 {
         return res;
     }
 
+    /**
+     * This problem was asked by Cisco.
+     *
+     * Given an unsigned 8-bit integer, swap its even and odd bits. The 1st and 2nd bit should be swapped, the
+     * 3rd and 4th bit should be swapped, and so on.
+     *
+     * For example, 10101010 should be 01010101. 11100010 should be 11010001.
+     *
+     * Bonus: Can you do this in one line?
+     * @param num
+     * @return
+     */
+    int swapBits(int num) {
+        //idea is - we need to shift right all even bits and shift left all odd bits
+        //create mask first for every bit type, then shift separately and combine
+        /*int oddBits = num & 85; //85 is 01010101)
+        int evenBits = num & 170; //170 is 10101010)
+        evenBits >>= 1; //shift even bits to the left
+        oddBits <<= 1; //shift odd bits to the right
+        return evenBits | oddBits; //combine both shifts*/
+        //short version of the same
+        return ((num & 85) << 1) | ((num & 170) >> 1);
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingNovember2018 obj = new SolutionDailyCodingNovember2018();
 
@@ -152,5 +166,11 @@ public class SolutionDailyCodingNovember2018 {
         List<Integer> levelOrder = obj.binaryTreeLevelOrder(root);
         levelOrder.forEach(i-> System.out.print(i + " "));
         System.out.println();
+
+        System.out.println("--- swap odd and even bits of number (8bit int)----");
+        System.out.println(Integer.toBinaryString(
+                obj.swapBits(Integer.parseInt("10101010", 2))));//01010101
+        System.out.println(Integer.toBinaryString(
+                obj.swapBits(Integer.parseInt("11100010", 2))));//11010001
     }
 }
