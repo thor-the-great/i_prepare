@@ -119,4 +119,77 @@ public class NumOfIslands {
             return x*31^y;
         }
     }
+
+    /**
+     * idea is to use Union Find DS to keep track of islands
+     * @param grid
+     * @return
+     */
+    public int numIslandsUnionFindBased(char[][] grid) {
+        if (grid == null || grid.length == 0)
+            return 0;
+        UnionFind uf = new UnionFind(grid);
+        int rows = grid.length;
+        int cols = grid[0].length;
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (grid[r][c] == '1') {
+                    grid[r][c] = '0';
+                    if (r - 1 >= 0 && grid[r - 1][c] == '1')
+                        uf.union(r*cols + c, (r-1)*cols + c);
+                    if (r + 1 < rows && grid[r + 1][c] == '1')
+                        uf.union(r*cols + c, (r+1)*cols + c);
+                    if (c - 1 >= 0 && grid[r][c - 1] == '1')
+                        uf.union(r*cols + c, r*cols + c - 1);
+                    if (c + 1 < cols && grid[r][c + 1] == '1')
+                        uf.union(r*cols + c, r*cols + c + 1);
+                }
+            }
+        }
+        return uf.count;
+    }
+
+    class UnionFind {
+        int parents[];
+        int ranks[];
+        int count;
+
+        UnionFind(char[][] grid) {
+            count = 0;
+            int rows = grid.length;
+            int cols = grid[0].length;
+            parents = new int[rows*cols];
+            for (int r = 0; r < rows; r++) {
+                for (int c = 0; c < cols; c++) {
+                    if (grid[r][c] == '1') {
+                        parents[r*cols + c] = r*cols + c;
+                        count++;
+                    }
+                }
+            }
+            ranks = new int[rows*cols];
+        }
+
+        int find(int n) {
+            if (n != parents[n])
+                parents[n] = find(parents[n]);
+            return parents[n];
+        }
+
+        void union(int a, int b) {
+            int rootA = find(a);
+            int rootB = find(b);
+            if (rootA != rootB) {
+                if (ranks[rootA] > ranks[rootB]) {
+                    parents[rootB] = rootA;
+                } else if (ranks[rootB] > ranks[rootA]) {
+                    parents[rootA] = rootB;
+                } else {
+                    parents[rootA] = rootB;
+                    ranks[rootB] += 1;
+                }
+                count--;
+            }
+        }
+    }
 }
