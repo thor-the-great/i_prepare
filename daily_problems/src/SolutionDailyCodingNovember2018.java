@@ -99,6 +99,15 @@ public class SolutionDailyCodingNovember2018 {
         return res;
     }
 
+    boolean shiftPossible(String A, String B) {
+        if (A == null && B == null)
+            return true;
+        if (A.length() != B.length())
+            return false;
+        String doubleString = B + B;
+        return (doubleString.contains(A));
+    }
+
     /**
      * This problem was asked by Cisco.
      *
@@ -166,6 +175,10 @@ public class SolutionDailyCodingNovember2018 {
         List<Integer> levelOrder = obj.binaryTreeLevelOrder(root);
         levelOrder.forEach(i-> System.out.print(i + " "));
         System.out.println();
+
+        System.out.println("---- check if string a can be a shifted to get string b ----");
+        System.out.println(obj.shiftPossible("abcde", "cdeab"));
+        System.out.println(obj.shiftPossible("abc", "acb"));
 
         System.out.println("--- swap odd and even bits of number (8bit int)----");
         System.out.println(Integer.toBinaryString(
