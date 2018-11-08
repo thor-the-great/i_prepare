@@ -129,7 +129,54 @@ public class SolutionDailyCodingNovember2018 {
         oddBits <<= 1; //shift odd bits to the right
         return evenBits | oddBits; //combine both shifts*/
         //short version of the same
-        return ((num & 85) << 1) | ((num & 170) >> 1);
+        return ((num & 0b1010101) << 1) | ((num & 0b10101010) >> 1);
+    }
+
+    /**
+     * This problem was asked by Facebook.
+     *
+     * Given a binary tree, return all paths from the root to leaves.
+     *
+     * For example, given the tree
+     *
+     *    1
+     *   / \
+     *  2   3
+     *     / \
+     *    4   5
+     * it should return [[1, 2], [1, 3, 4], [1, 3, 5]].
+     *
+     * @param root
+     * @return
+     */
+    List<List<Integer>> getBTPaths(TreeNode root) {
+        btPaths = new ArrayList();
+        if (root != null) {
+            List<Integer> path = new ArrayList();
+            path.add(root.val);
+            helper(root, path);
+        }
+        return btPaths;
+    }
+
+    List<List<Integer>> btPaths = new ArrayList();
+
+    void helper(TreeNode n, List<Integer> path) {
+        if (n.left == null && n.right == null) {
+            List<Integer> pathToRes = new ArrayList(path);
+            btPaths.add(pathToRes);
+            return;
+        }
+        if (n.left != null) {
+            path.add(n.left.val);
+            helper(n.left, path);
+            path.remove(path.size() - 1);
+        }
+        if (n.right != null) {
+            path.add(n.right.val);
+            helper(n.right, path);
+            path.remove(path.size() - 1);
+        }
     }
 
     public static void main(String[] args) {
@@ -185,5 +232,30 @@ public class SolutionDailyCodingNovember2018 {
                 obj.swapBits(Integer.parseInt("10101010", 2))));//01010101
         System.out.println(Integer.toBinaryString(
                 obj.swapBits(Integer.parseInt("11100010", 2))));//11010001
+
+        System.out.println("--- return all paths of binary tree ----");
+        root = new TreeNode(1,
+                new TreeNode(2),
+                new TreeNode(3,
+                        new TreeNode(4), new TreeNode(5)));
+        List<List<Integer>> res = obj.getBTPaths(root);
+        for (List<Integer> onePath : res) {
+            onePath.forEach(i-> System.out.print(i +" "));
+            System.out.print("\n");
+        }
+
+        root = new TreeNode(1,
+                new TreeNode(2,
+                        new TreeNode(4), null),
+                new TreeNode(3,
+                        new TreeNode(5,
+                                new TreeNode(7), new TreeNode(8)),
+                        new TreeNode(6)));
+        System.out.println("Tree #2");
+        res = obj.getBTPaths(root);
+        for (List<Integer> onePath : res) {
+            onePath.forEach(i-> System.out.print(i +" "));
+            System.out.print("\n");
+        }
     }
 }

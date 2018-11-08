@@ -638,7 +638,7 @@ public class SolutionDailyCodingOctober2018 {
         long yPow = y << power;
         //do the main loop unless remainder is lower than y (0 if it's divisible evenly)
         while (rem >= y) {
-            //keep shifting bits (divide by 2) while yPow became <= remainder, then accumulate result in res. We need to
+            //keep shifting bits (divide by 2) while yPow became <= remainder, then accumulate result in btPaths. We need to
             //add to result 2^power = do bit shift
             while (yPow > rem) {
                 yPow = yPow >> 1;
@@ -1334,7 +1334,7 @@ public class SolutionDailyCodingOctober2018 {
             //keep right pointer moving to the right
             right++;
         }
-        //res will have our answer - {window length, left, right}
+        //btPaths will have our answer - {window length, left, right}
         return res[0] == -1 ? "" : s.substring(res[1], res[2] + 1);
     }
 
