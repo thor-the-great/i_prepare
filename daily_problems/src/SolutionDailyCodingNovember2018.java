@@ -1,6 +1,7 @@
 import diff_problems.TreeNode;
 import linked_list.ListNode;
 import linked_list.ListUtils;
+import sun.reflect.generics.tree.Tree;
 import utils.StringUtils;
 
 import java.util.*;
@@ -272,7 +273,20 @@ public class SolutionDailyCodingNovember2018 {
             return res;
         }
 
+    /**
+     * This problem was asked by Google.
+     *
+     * Given a string of words delimited by spaces, reverse the words in string. For example, given "hello world
+     * here", return "here world hello"
+     *
+     * Follow-up: given a mutable string representation, can you perform this operation in-place?
+     *
+      * @param s
+     * @return
+     */
     String reverse(String s) {
+        //main idea is - reverse each word individually and then reverse the whole string as one word.
+        //this way double-reverse will give us same sequence in result string.
         char[] sArray = s.toCharArray();
         int l = 0, r =0;
         while(r < s.length()) {
@@ -296,6 +310,80 @@ public class SolutionDailyCodingNovember2018 {
             l++;
             r--;
         }
+    }
+
+    /**
+     * This problem was asked by Twitter.
+     *
+     * Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree. Assume that each
+     * node in the tree also has a pointer to its parent.
+     *
+     * According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes v
+     * and was the lowest node in T that has both v and w as descendants (where we allow a node to be a descendant
+     * of itself).”
+     *
+     * @param n1
+     * @param n2
+     * @return
+     */
+    TreeNode lowestCommonAncestor(TreeNode n1, TreeNode n2) {
+        //return lcaExtraSetOfRootPath(n1, n2);
+        return  lcaTwoPathTraversal(n1, n2);
+    }
+
+    TreeNode lcaTwoPathTraversal(TreeNode n1, TreeNode n2) {
+        //idea is same as in problem - find first common node in path for two linked lists - treat path to root as
+        //linked list. Compute length of both paths, get longest, traverse first only for the amount of steps = diff
+        //in path length. Then start traversing both path simultaneously and compare next nodes. If nodes are from the
+        //same tree - it will eventually give the match. If no match - nodes are not from the same tree
+        int pathN1Length = pathLength(n1);
+        int pathN2Length = pathLength(n2);
+        if (pathN2Length > pathN1Length)
+            return lcaTwoPathTraversal(n2, n1);
+        int diff = pathN1Length - pathN2Length;
+        TreeNode n1c = n1;
+        while (diff > 0) {
+            n1c = n1c.parent;
+            diff--;
+        }
+        TreeNode n2c = n2;
+        while (n1c != null) {
+            if (n1c == n2c)
+                return n1c;
+            n1c = n1c.parent;
+            n2c = n2c.parent;
+        }
+        return null;
+    }
+
+    int pathLength(TreeNode root) {
+        int c = 0;
+        TreeNode n = root;
+        while(n != null) {
+            c++;
+            n = n.parent;
+        }
+        return c;
+    }
+
+    TreeNode lcaExtraSetOfRootPath(TreeNode n1, TreeNode n2) {
+        //idea is - store path n1 to root (using parent pointers) to the set. Then start traversing from n2 to root and
+        //check every next node, if it's in the set - we have found lca.
+        if (n1 == n2) return n1;
+        Set<TreeNode> pathToRootN1 = new HashSet();
+        TreeNode n = n1;
+        while(n != null) {
+            pathToRootN1.add(n);
+            n = n.parent;
+        }
+        n = n2;
+        while (n != null) {
+            if (pathToRootN1.contains(n))
+                return n;
+            else
+                n = n.parent;
+        }
+        return null;
     }
 
     public static void main(String[] args) {
@@ -390,5 +478,50 @@ public class SolutionDailyCodingNovember2018 {
         System.out.println("--- reverse string of several words ----");
         System.out.println(obj.reverse("hello cruel world!"));
         System.out.println(obj.reverse("oh solle, oh solle mio"));
+
+        System.out.println("--- lowest common ancestor for two binary tree nodes ----");
+        /*
+         *               1
+         *              /  \
+         *            2     3
+         *           / \   /
+         *          4   5  6
+         *         /
+         *        7
+         */
+        TreeNode one = new TreeNode(1);
+        TreeNode two = new TreeNode(2);
+        two.parent = one;
+        one.left = two;
+        TreeNode three = new TreeNode(3);
+        three.parent = one;
+        one.right = three;
+
+        TreeNode four = new TreeNode(4);
+        two.left = four;
+        four.parent = two;
+        TreeNode five = new TreeNode(5);
+        two.right = five;
+        five.parent = two;
+        TreeNode six = new TreeNode(6);
+        three.left = six;
+        six.parent = three;
+        TreeNode seven = new TreeNode(7);
+        seven.parent = four;
+        four.left = seven;
+        TreeNode eight = new TreeNode(8);
+
+        TreeNode lca = obj.lowestCommonAncestor(seven, five);
+        System.out.println(lca == null ? "no LCA found" : lca.val);//2
+
+        lca = obj.lowestCommonAncestor(seven, six);
+        System.out.println(lca == null ? "no LCA found" : lca.val);//1
+
+        lca = obj.lowestCommonAncestor(seven, four);
+        System.out.println(lca == null ? "no LCA found" : lca.val);//4
+
+        lca = obj.lowestCommonAncestor(seven, eight);
+        System.out.println(lca == null ? "no LCA found" : lca.val);//n/a
     }
+
 }
