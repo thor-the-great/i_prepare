@@ -5,6 +5,7 @@ import sun.reflect.generics.tree.Tree;
 import utils.StringUtils;
 
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 public class SolutionDailyCodingNovember2018 {
@@ -386,6 +387,64 @@ public class SolutionDailyCodingNovember2018 {
         return null;
     }
 
+    /**
+     * This problem was asked by Facebook.
+     *
+     * Given a string and a set of delimiters, reverse the words in the string while maintaining the relative order of
+     * the delimiters. For example, given "hello/world:here", return "here/world:hello"
+     *
+     * Follow-up: Does your solution work for the following cases: "hello/world:here/", "hello//world:here"
+     *
+     * @param s
+     * @param delims
+     * @return
+     */
+    String reverse(String s, String delims) {
+        String delimString = "[" + delims + "]";
+        String words[] = s.split(delimString);
+        Set<Character> delimSet = new HashSet<>();
+        for(char ch : delims.toCharArray()) delimSet.add(ch);
+        boolean isDelim = true;
+        int wordReverseIndex = words.length - 1;
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < s.length(); i++) {
+            char next = s.charAt(i);
+            if (delimSet.contains(next)) {
+                isDelim = true;
+                sb.append(next);
+            } else {
+                if (isDelim || (i == s.length() - 1 && wordReverseIndex >= 0)) {
+                    sb.append(words[wordReverseIndex]);
+                    wordReverseIndex--;
+                    isDelim = false;
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * This problem was asked by Google.
+     *
+     * Given two non-empty binary trees s and t, check whether tree t has exactly the same structure and node values
+     * with a subtree of s. A subtree of s is a tree consists of a node in s and all of this node's descendants.
+     * The tree s could also be considered as a subtree of itself.
+     *
+     * @param n1
+     * @param n2
+     * @return
+     */
+    boolean checkSubTree(TreeNode n1, TreeNode n2) {
+        if (n1 == null) return false;
+        return helper(n1, n2) || helper(n1.left, n2) || helper(n1.right, n2);
+    }
+
+    boolean helper(TreeNode n1, TreeNode n2) {
+        if (n1 == null && n2 == null) return true;
+        if (n1 == null || n2 == null) return false;
+        return n1.val == n2.val && helper(n1.left, n2.left) && helper(n1.right, n2.right);
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingNovember2018 obj = new SolutionDailyCodingNovember2018();
 
@@ -522,6 +581,17 @@ public class SolutionDailyCodingNovember2018 {
 
         lca = obj.lowestCommonAncestor(seven, eight);
         System.out.println(lca == null ? "no LCA found" : lca.val);//n/a
+
+        System.out.println("---- reverse string with set of delimiters ------");
+        System.out.println(obj.reverse("hello/world:here", "/:"));
+        System.out.println(obj.reverse("hello/world:here/", "/:"));
+        System.out.println(obj.reverse("hello//world:here", "/:"));
+        System.out.println(obj.reverse("my/random:set:of/words+and+delimeters", "/:+"));
+
+        System.out.println("--- check if tree is a subtree of another tree ---");
+        System.out.println(obj.checkSubTree(one, two));
+        System.out.println(obj.checkSubTree(one, eight));
+        System.out.println(obj.checkSubTree(two, three));
     }
 
 }
