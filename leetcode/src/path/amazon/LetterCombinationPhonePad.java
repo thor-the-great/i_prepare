@@ -1,4 +1,4 @@
-package mock_sessions.amazon;
+package path.amazon;
 
 import java.util.HashMap;
 import java.util.LinkedList;

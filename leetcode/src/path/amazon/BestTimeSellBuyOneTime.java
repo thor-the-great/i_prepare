@@ -1,4 +1,4 @@
-package mock_sessions.amazon;
+package path.amazon;
 
 /**
  * Best Time to Buy and Sell Stock
