@@ -10,14 +10,14 @@ import java.util.Stack;
  *
  * Calling next() will return the next smallest number in the BST.
  *
- * Note: next() and hasNext() should run in average O(1) time and uses O(h) memory, where h is the height of the tree.
+ * Note: next() and hasNext() should run in average O(1) time and uses O(helper2) memory, where helper2 is the height of the tree.
  */
 public class BSTIterator {
 
     Stack<TreeNode> s;
 
     /**
-     * Idea is to do inorder traversal in steps. At each step you can add max h (height of the BST) elements
+     * Idea is to do inorder traversal in steps. At each step you can add max helper2 (height of the BST) elements
      *
      * @param root
      */
