@@ -2,8 +2,10 @@ import diff_problems.TreeNode;
 import linked_list.ListNode;
 import linked_list.ListUtils;
 import sun.reflect.generics.tree.Tree;
+import trees.BSTNode;
 import utils.StringUtils;
 
+import javax.transaction.TransactionRequiredException;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
@@ -434,15 +436,137 @@ public class SolutionDailyCodingNovember2018 {
      * @param n2
      * @return
      */
-    boolean checkSubTree(TreeNode n1, TreeNode n2) {
+    public boolean checkSubTree(TreeNode n1, TreeNode n2) {
+        //return checkSubTreeRecursiveCheckChildNodes(n1, n2);
+        return checkSubTreeSubstringInPreorder(n1, n2);
+    }
+
+    private boolean checkSubTreeRecursiveCheckChildNodes(TreeNode n1, TreeNode n2) {
+        //idea is to traverse every node and it's children, checking if they are the same.
+        //O is O(N*M) <n of nodes in n1 * n of node in n2> - potentially need to check every combination
         if (n1 == null) return false;
         return helper(n1, n2) || helper(n1.left, n2) || helper(n1.right, n2);
     }
 
-    boolean helper(TreeNode n1, TreeNode n2) {
+    private boolean helper(TreeNode n1, TreeNode n2) {
         if (n1 == null && n2 == null) return true;
         if (n1 == null || n2 == null) return false;
         return n1.val == n2.val && helper(n1.left, n2.left) && helper(n1.right, n2.right);
+    }
+
+    private boolean checkSubTreeSubstringInPreorder(TreeNode n1, TreeNode n2) {
+        String preOrder1 = getPreOrderTraversal(n1);
+        String preOrder2 = getPreOrderTraversal(n2);
+        return  (preOrder1.contains(preOrder2));
+    }
+
+    String getPreOrderTraversal(TreeNode root) {
+        Stack<TreeNode> s = new Stack<>();
+        s.push(root);
+        StringBuilder sb = new StringBuilder();
+        sb.append(',');
+        while(!s.isEmpty()) {
+            TreeNode n = s.pop();
+            if (n != null) {
+                sb.append(n.val);
+                s.push(n.right);
+                s.push(n.left);
+            }
+            else
+                sb.append("$");
+            sb.append(",");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * This problem was asked by Facebook.
+     *
+     * Given a binary tree, return the level of the tree with minimum sum.
+     *
+     * @param root
+     * @return
+     */
+    int levelMinSum(TreeNode root) {
+        //do level order traversal and keep sum of every level. Keep running min of sum
+        Queue<TreeNode> nodesQ = new LinkedList();
+        Queue<Integer> levelQ = new LinkedList();
+
+        int minLevel = 1;
+        int minSum = root.val;
+
+        nodesQ.add(root);
+        levelQ.add(1);
+
+        int l = 0;
+        int sum = Integer.MAX_VALUE;
+
+        while (!nodesQ.isEmpty()) {
+            TreeNode n = nodesQ.poll();
+            int level = levelQ.poll();
+
+            if (level != l) {
+                if (sum < minSum) {
+                    minSum = sum;
+                    minLevel = l;
+                }
+                l = level;
+                sum = n.val;
+            } else {
+                sum += n.val;
+            }
+
+            if (n.left != null) {
+                nodesQ.add(n.left);
+                levelQ.add(l+ 1);
+            }
+            if (n.right != null) {
+                nodesQ.add(n.right);
+                levelQ.add(l+ 1);
+            }
+        }
+
+        if (sum < minSum) {
+            minLevel = l;
+        }
+        return minLevel;
+    }
+
+    /**
+     * This problem was asked by Google.
+     *
+     * Given a sorted list of integers, square the elements and give the output in sorted order.
+     *
+     * For example, given [-9, -2, 0, 2, 3], return [0, 4, 4, 9, 81].
+     *
+     * @param arr
+     * @return
+     */
+    public int[] sortedArrayOfSquares(int[] arr) {
+        //idea is to use 2 pointers teq and add elements to stack as per their abs value;
+        //then iterate over stack and put element's squares back to array
+        if (arr == null || arr.length == 0)
+            return arr;
+        int N = arr.length;
+        int l = 0, r = N - 1;
+        Stack<Integer> s = new Stack<>();
+        while(l <= r) {
+            if (Math.abs(arr[l]) >= Math.abs(arr[r])) {
+                s.push(arr[l]);
+                l++;
+            } else {
+                s.push(arr[r]);
+                r--;
+            }
+        }
+
+        int i = 0;
+        while(!s.isEmpty()) {
+            int el = s.pop();
+            arr[i] = el * el;
+            i++;
+        }
+        return arr;
     }
 
     public static void main(String[] args) {
@@ -589,9 +713,40 @@ public class SolutionDailyCodingNovember2018 {
         System.out.println(obj.reverse("my/random:set:of/words+and+delimeters", "/:+"));
 
         System.out.println("--- check if tree is a subtree of another tree ---");
-        System.out.println(obj.checkSubTree(one, two));
-        System.out.println(obj.checkSubTree(one, eight));
-        System.out.println(obj.checkSubTree(two, three));
+        System.out.println(obj.checkSubTree(one, two));//true
+        System.out.println(obj.checkSubTree(one, eight));//false
+        System.out.println(obj.checkSubTree(two, three));//false
+
+        System.out.println("--- level min sum in binary tree ----");
+        TreeNode root3 = new TreeNode(40,
+                new TreeNode(5,
+                        new TreeNode(2,null,null),
+                        new TreeNode(1,
+                                new TreeNode(10,null,null),
+                                new TreeNode(13,null,null))),
+                new TreeNode(12,
+                        new TreeNode(1,null,null),
+                        new TreeNode(4,
+                                new TreeNode(32),null)));
+
+        System.out.println(obj.levelMinSum(root3));
+
+        TreeNode root4 = new TreeNode(40,
+                new TreeNode(5,
+                        new TreeNode(2,null,null),
+                        new TreeNode(1,
+                                new TreeNode(10,null,null),
+                                new TreeNode(13,null,null))),
+                new TreeNode(-12,
+                        new TreeNode(1,null,null),
+                        new TreeNode(4,
+                                new TreeNode(32),null)));
+
+        System.out.println(obj.levelMinSum(root4));
+
+        System.out.println("--- return sorted array of squares of elements ---");
+        int[] sortedSq = obj.sortedArrayOfSquares(new int[] {-9, -2, 0, 2, 3, 5});
+        Arrays.stream(sortedSq).forEach(i->System.out.print(i + " "));
     }
 
 }
