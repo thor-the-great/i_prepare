@@ -543,6 +543,49 @@ public class SolutionDailyCodingNovember2018 {
      * @return
      */
     public int[] sortedArrayOfSquares(int[] arr) {
+        //return sortedArrayOfSquaresStack(arr);
+        return sortedArrayOfSquares2PointersFromCenter(arr);
+    }
+
+    public int[] sortedArrayOfSquares2PointersFromCenter(int[] arr) {
+        //idea is to use 2 pointers teq going from center outside. Going from center (gives us sorted (by abs value)
+        //order
+        if (arr == null || arr.length == 0)
+            return arr;
+        int N = arr.length;
+        int[] res = new int[N];
+        int r = N;
+        if (arr[N - 1] >= 0) {
+            while (r - 1>=0 && arr[r - 1] >= 0) {
+                r--;
+            }
+        }
+        int l = r - 1;
+        int i = 0;
+        while (i < N) {
+            int nextRes;
+            if (r < N && l >= 0) {
+                if (Math.abs(arr[l]) < Math.abs(arr[r])) {
+                    nextRes = arr[l];
+                    l--;
+                } else {
+                    nextRes = arr[r];
+                    r++;
+                }
+            } else if (r < N) {
+                nextRes = arr[r];
+                r++;
+            } else {
+                nextRes = arr[l];
+                l--;
+            }
+            res[i] = nextRes * nextRes;
+            i++;
+        }
+        return res;
+    }
+
+    public int[] sortedArrayOfSquaresStack(int[] arr) {
         //idea is to use 2 pointers teq and add elements to stack as per their abs value;
         //then iterate over stack and put element's squares back to array
         if (arr == null || arr.length == 0)
@@ -569,13 +612,31 @@ public class SolutionDailyCodingNovember2018 {
         return arr;
     }
 
+    /**
+     * This problem was asked by Google.
+     *
+     * Given a set of closed intervals, find the smallest set of numbers that covers all the intervals. If there are
+     * multiple smallest sets, return any of them.
+     *
+     * For example, given the intervals [0, 3], [2, 6], [3, 4], [6, 9], one set of numbers that covers all these
+     * intervals is {3, 6}.
+     *
+     * @param sets
+     * @return
+     */
     public List<Integer> intersectionSet(List<int[]> sets) {
+        //idea is - check set one by one for the intersection. Sort sets first so we have following criteria -
+        //if no intersection found then next set will be next intersection part, no backup cases
         List<Integer> res = new ArrayList<>();
-        sets.sort((int[] x, int[] y) -> x[0] - y[0]);
+        sets.sort(Comparator.comparingInt(x->x[0]));
         int i = 0;
         while (i < sets.size()) {
+            //get next interval for comparision. If previous intersection fails - this will be previous set
             int[] interval = sets.get(i);
             while (i < sets.size() && intersects(sets.get(i), interval)) {
+                //construct next set to search -
+                // 0th point is max of current and previous set starts
+                // 1-th point - min of current and previous set ends
                 interval = new int[] {
                         Math.max(sets.get(i)[0], interval[0]),
                         Math.min(sets.get(i)[1], interval[1])
@@ -588,8 +649,8 @@ public class SolutionDailyCodingNovember2018 {
     }
 
     boolean intersects(int[] a, int[] b) {
-        if (b[0] > a[1]) return true;
-        else return false;
+        //strong condition - one end of a must be outside of b
+        return (a[0] <= b[1] && b[0] <= a[1]);
     }
 
     public static void main(String[] args) {
@@ -768,18 +829,49 @@ public class SolutionDailyCodingNovember2018 {
         System.out.println(obj.levelMinSum(root4));
 
         System.out.println("--- return sorted array of squares of elements ---");
-        int[] sortedSq = obj.sortedArrayOfSquares(new int[] {-9, -2, 0, 2, 3, 5});
+        int[] sortedSq;
+        sortedSq = obj.sortedArrayOfSquares(new int[] {-9, -2, 0, 2, 3, 5});
         Arrays.stream(sortedSq).forEach(i->System.out.print(i + " "));
+        System.out.print("\n");
 
-        System.out.println("---- set that cover intersection of sets ---");
+        sortedSq = obj.sortedArrayOfSquares(new int[] {-9, -5, -2});
+        Arrays.stream(sortedSq).forEach(i->System.out.print(i + " "));
+        System.out.print("\n");
+
+        sortedSq = obj.sortedArrayOfSquares(new int[] {0, 4, 6, 11});
+        Arrays.stream(sortedSq).forEach(i->System.out.print(i + " "));
+        System.out.print("\n");
+
+        sortedSq = obj.sortedArrayOfSquares(new int[] {-4, 1, 3, 5, 11});
+        Arrays.stream(sortedSq).forEach(i->System.out.print(i + " "));
+        System.out.print("\n");
+
+        System.out.println("---- find set that covers all numbers from array of sets ----");
         List<int[]> sets = new ArrayList<>();
         sets.add(new int[] {10, 20});
         sets.add(new int[] {1, 6});
         sets.add(new int[] {3, 8});
         sets.add(new int[] {7, 12});
-
         List<Integer> intersectionSet = obj.intersectionSet(sets);
+        intersectionSet.forEach(i-> System.out.print(i+ " "));
+        System.out.print("\n");
 
+        sets = new ArrayList<>();
+        sets.add(new int[] {10, 20});
+        sets.add(new int[] {1, 6});
+        sets.add(new int[] {3, 8});
+        sets.add(new int[] {7, 12});
+        sets.add(new int[] {15, 18});
+        sets.add(new int[] {19, 22});
+        intersectionSet = obj.intersectionSet(sets);
+        intersectionSet.forEach(i-> System.out.print(i+ " "));
+        System.out.print("\n");
+
+        sets = new ArrayList<>();
+        sets.add(new int[] {3, 10});
+        sets.add(new int[] {4, 8});
+        sets.add(new int[] {9, 12});
+        intersectionSet = obj.intersectionSet(sets);
         intersectionSet.forEach(i-> System.out.print(i+ " "));
     }
 
