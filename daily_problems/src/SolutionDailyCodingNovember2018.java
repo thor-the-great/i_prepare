@@ -569,6 +569,29 @@ public class SolutionDailyCodingNovember2018 {
         return arr;
     }
 
+    public List<Integer> intersectionSet(List<int[]> sets) {
+        List<Integer> res = new ArrayList<>();
+        sets.sort((int[] x, int[] y) -> x[0] - y[0]);
+        int i = 0;
+        while (i < sets.size()) {
+            int[] interval = sets.get(i);
+            while (i < sets.size() && intersects(sets.get(i), interval)) {
+                interval = new int[] {
+                        Math.max(sets.get(i)[0], interval[0]),
+                        Math.min(sets.get(i)[1], interval[1])
+                    };
+                i++;
+            }
+            res.add(interval[1]);
+        }
+        return res;
+    }
+
+    boolean intersects(int[] a, int[] b) {
+        if (b[0] > a[1]) return true;
+        else return false;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingNovember2018 obj = new SolutionDailyCodingNovember2018();
 
@@ -747,6 +770,17 @@ public class SolutionDailyCodingNovember2018 {
         System.out.println("--- return sorted array of squares of elements ---");
         int[] sortedSq = obj.sortedArrayOfSquares(new int[] {-9, -2, 0, 2, 3, 5});
         Arrays.stream(sortedSq).forEach(i->System.out.print(i + " "));
+
+        System.out.println("---- set that cover intersection of sets ---");
+        List<int[]> sets = new ArrayList<>();
+        sets.add(new int[] {10, 20});
+        sets.add(new int[] {1, 6});
+        sets.add(new int[] {3, 8});
+        sets.add(new int[] {7, 12});
+
+        List<Integer> intersectionSet = obj.intersectionSet(sets);
+
+        intersectionSet.forEach(i-> System.out.print(i+ " "));
     }
 
 }
