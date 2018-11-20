@@ -220,6 +220,23 @@ public class Driver {
         return 0;
     }
 
+    public boolean judgeSquareSum(int c) {
+        if (c <= 0) return true;
+        int l = 0;
+        int r = (int)Math.sqrt(c);
+        while (l <= r) {
+            int s = (l*l + r*r);
+            if (s == c)
+                return true;
+            if (s > c) {
+                r--;
+            } else {
+                l++;
+            }
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         Driver obj = new Driver();
         System.out.println("---- find numbers in sorted array -----");
