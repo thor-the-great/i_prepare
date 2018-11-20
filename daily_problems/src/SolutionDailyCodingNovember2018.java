@@ -653,6 +653,118 @@ public class SolutionDailyCodingNovember2018 {
         return (a[0] <= b[1] && b[0] <= a[1]);
     }
 
+    /**
+     * This problem was asked by Google.
+     *
+     * Given a string which we can delete at most k, return whether you can make a palindrome.
+     *
+     * For example, given 'waterrfetawx' and a k of 2, you could delete f and x to get 'waterretaw'.
+     *
+     * @param s
+     * @param k
+     * @return
+     */
+    public boolean checkKPalindrome(String s, int k) {
+        //return checkKPalindromeRecusive(s, k);
+        return checkPalindromeDP(s, k);
+    }
+
+    boolean checkPalindromeDP(String s, int k) {
+        //construct same recursive algorithm but in bottom-up DP style
+        char[] origin = s.toCharArray();
+        int N = s.length();
+        if (k > N) return false;
+        //reverse string
+        char[] reverse = new char[N];
+        for (int i = N - 1; i >=0; i--) {
+            reverse[(N - 1) - i] = origin[i];
+        }
+        //build table of states
+        int[][] dp = new int[N + 1][N + 1];
+        IntStream.range(0, N).forEach(i->{
+            dp[0][i] = i;
+            dp[i][0] = i;
+        });
+        //do bottom-up DP
+        for (int i = 1; i <= N; i++) {
+            for(int j = 1; j <= N; j++) {
+                if (origin[i - 1] == reverse[j - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+
+        int doubleEditDist = dp[N][N];
+        return (doubleEditDist <= 2*k);
+    }
+
+    boolean checkKPalindromeRecusive(String s, int k) {
+        char[] origin = s.toCharArray();
+        int N = s.length();
+        if (k > N) return false;
+        char[] reverse = new char[N];
+        for (int i = N - 1; i >=0; i--) {
+            reverse[(N - 1) - i] = origin[i];
+        }
+        int doubleEditDist = helper(origin, reverse, N, N);
+        return (doubleEditDist <= 2*k);
+    }
+
+    int helper(char[] s1, char[] s2, int i, int j) {
+        if (i == 0)
+            return j;
+        if (j == 0)
+            return i;
+
+        if (s1[i - 1] == s2[j - 1])
+            return helper(s1, s2, i - 1, j - 1);
+
+        return 1 + Math.min(
+                helper(s1, s2, i - 1, j),
+                helper(s1, s2, i, j - 1)
+        );
+    }
+
+    /**
+     * This question was asked by Zillow.
+     *
+     * You are given a 2-d matrix where each cell represents number of coins in that cell. Assuming we start at
+     * matrix[0][0], and can only move right or down, find the maximum number of coins you can collect by the bottom
+     * right corner.
+     *
+     * For example, in this matrix
+     *
+     * 0 3 1 1
+     * 2 0 0 4
+     * 1 5 3 1
+     * The most we can collect is 0 + 2 + 1 + 5 + 3 + 1 = 12 coins.
+     *
+     * @param grid
+     * @return
+     */
+    public int maxCoinsCollect(int[][] grid) {
+        int rows = grid.length;
+        int cols = grid[0].length;
+
+        int[][] dp = new int[rows][cols];
+        IntStream.range(0, rows).forEach(r->{
+            dp[r][0] = grid[r][0] + ((r - 1) >= 0 ? dp[r - 1][0] : 0);
+        });
+        IntStream.range(0, cols).forEach(c->{
+            dp[0][c] = grid[0][c] + ((c - 1) >= 0 ? dp[0][c - 1] : 0);
+        });
+
+        for (int r = 1; r < rows; r++) {
+            for (int c = 1; c < cols; c++) {
+                dp[r][c] = grid[r][c] +
+                        Math.max(dp[r - 1][c], dp[r][c - 1]);
+            }
+        }
+        return dp[rows - 1][cols - 1];
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingNovember2018 obj = new SolutionDailyCodingNovember2018();
 
@@ -873,6 +985,27 @@ public class SolutionDailyCodingNovember2018 {
         sets.add(new int[] {9, 12});
         intersectionSet = obj.intersectionSet(sets);
         intersectionSet.forEach(i-> System.out.print(i+ " "));
+
+        System.out.println("--- check if string is a K palindrome (be a pali by removing k chars) ---");
+        System.out.println(obj.checkKPalindrome("abc", 1));//false
+        System.out.println(obj.checkKPalindrome("abc", 2));//true
+        System.out.println(obj.checkKPalindrome("abbea", 1));//true
+        System.out.println(obj.checkKPalindrome("waterrfetawx", 2));//true
+        System.out.println(obj.checkKPalindrome("random string", 3));//false
+
+        System.out.println("--- path with max coins to collect in grid of coins (right/down) ---");
+
+        System.out.println(obj.maxCoinsCollect(new int[][] {
+                {1, 3, 5, 0},
+                {5, 4, 3, 2},
+                {3, 0, 1, 4}
+        }));
+
+        System.out.println(obj.maxCoinsCollect(new int[][] {
+                {0, 3, 1, 1},
+                {2, 0, 0, 4},
+                {1, 5, 3, 1}
+        }));
     }
 
 }
