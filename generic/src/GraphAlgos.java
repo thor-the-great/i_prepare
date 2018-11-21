@@ -56,16 +56,16 @@ public class GraphAlgos {
         //do the BFS
         int startVertex = 0;
         boolean[] visited = new boolean[g.getV()];
-        Queue<Integer> stack = new LinkedList<>();
-        stack.add(startVertex);
-        while(!stack.isEmpty()) {
-            int v = stack.poll();
+        Queue<Integer> q = new LinkedList<>();
+        q.add(startVertex);
+        while(!q.isEmpty()) {
+            int v = q.poll();
             if (!visited[v]) {
                 visitVertex(v);
                 visited[v] = true;
                 if (g.adj(v) != null && !g.adj(v).isEmpty()) {
                     for(int adjV : g.adj(v))
-                        stack.add(adjV);
+                        q.add(adjV);
                 }
             }
         }
