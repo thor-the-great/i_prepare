@@ -39,7 +39,7 @@ package path.google;
 public class ValidNumber {
 
     public boolean isNumber(String s) {
-        //no idea - just parse number carefully :( 
+        //no idea - just parse number carefully :(
         s = s.trim();
         if (s.length() == 0)
             return false;

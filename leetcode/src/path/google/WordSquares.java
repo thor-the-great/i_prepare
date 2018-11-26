@@ -65,7 +65,7 @@ import java.util.*;
  * Explanation:
  * The output consists of two word squares. The order of output does not matter (just the order of words in each word
  * square matters).
- * 
+ *
  */
 public class WordSquares {
     String[] words;
