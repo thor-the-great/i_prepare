@@ -765,6 +765,148 @@ public class SolutionDailyCodingNovember2018 {
         return dp[rows - 1][cols - 1];
     }
 
+    /**
+     * This problem was asked by Microsoft.
+     *
+     * You have 100 fair coins and you flip them all at the same time. Any that come up tails you set aside. The
+     * ones that come up heads you flip again. How many rounds do you expect to play before only one coin remains?
+     *
+     * Write a function that, given n, returns the number of rounds you'd expect to play until one coin remains.
+     * @param n
+     * @return
+     */
+    public int flipCoins(int n) {
+        int x = (int) Math.ceil(Math.log10(n)/Math.log10(2));
+        return x;
+    }
+
+    /**
+     * This problem was asked by Facebook.
+     *
+     * Write a function that rotates a list by k elements. For example, [1, 2, 3, 4, 5, 6] rotated by two becomes
+     * [3, 4, 5, 6, 1, 2]. Try solving this without creating a copy of the list.
+     *
+     * @param nums
+     * @param k
+     */
+    public void rotateArray(int[] nums, int k) {
+        int N = nums.length;
+        if (N == 0 || k == 0)
+            return;
+        k = k % N;
+        rotate(0, N - 1, nums);
+        rotate(0, k - 1, nums);
+        rotate(k, N- 1, nums);
+    }
+
+    void rotate(int l, int r, int[] nums) {
+        int tmp;
+        while(l < r) {
+            tmp = nums[l];
+            nums[l] = nums[r];
+            nums[r] = tmp;
+            l++;
+            r--;
+        }
+    }
+
+    /**
+     * This problem was asked by Microsoft.
+     *
+     * Let's represent an integer in a linked list format by having each node represent a digit in the number.
+     * The nodes make up the number in reversed order.
+     *
+     * For example, the following linked list:
+     *
+     * 1 -> 2 -> 3 -> 4 -> 5
+     * is the number 54321.
+     *
+     * Given two linked lists in this format, return their sum in the same linked list format.
+     *
+     * For example, given
+     *
+     * 9 -> 9
+     * 5 -> 2
+     * return 124 (99 + 25) as:
+     *
+     * 4 -> 2 -> 1
+     *
+     * @return
+     */
+    public ListNode addNumbers(ListNode l1, ListNode l2) {
+        ListNode fakeHead = new ListNode(-1);
+        ListNode curr = fakeHead;
+        int carry = 0;
+        while (l1 != null || l2 != null) {
+            int nextVal = carry;
+            if (l1 != null) {
+                nextVal += l1.val;
+                l1 = l1.next;
+            }
+            if (l2 != null) {
+                nextVal += l2.val;
+                l2 = l2.next;
+            }
+            carry = nextVal / 10;
+            nextVal %= 10;
+            ListNode n = new ListNode(nextVal);
+            curr.next = n;
+            curr = curr.next;
+        }
+        if (carry > 0 ) {
+            ListNode n = new ListNode(carry);
+            curr.next = n;
+        }
+        return fakeHead.next;
+    }
+
+
+    public List<String> hanoiTowers(int n) {
+        HanoiTower[] towers = new HanoiTower[3];
+        IntStream.range(0, 3).forEach(i->towers[i] = new HanoiTower(i));
+        for(int i = n; i >= 1; i--)
+            towers[0].add(i);
+
+        List<String> steps = new ArrayList<>();
+        towers[0].moveDisks(n, towers[1], towers[2], steps);
+        return steps;
+    }
+
+    class HanoiTower {
+        Stack<Integer> disks;
+        int idx;
+
+        HanoiTower(int i) {
+            idx = i;
+            disks = new Stack<>();
+        }
+
+        void add(int disk) {
+            if (!disks.isEmpty() && disk > disks.peek()) {
+                throw new RuntimeException("Disk must be smaller then the current top");
+            }
+            disks.push(disk);
+        }
+
+        void moveTopToOther(HanoiTower t, List<String> steps) {
+            if (!this.disks.isEmpty()) {
+                int disk = this.disks.pop();
+                t.add(disk);
+                String step = "move " + disk + "  " + this.idx +" -> " + t.idx;
+                steps.add(step);
+            }
+        }
+
+        void moveDisks(int disks, HanoiTower buffer, HanoiTower dest, List<String> steps) {
+            if (disks > 0) {
+                moveDisks(disks - 1, dest, buffer, steps);
+                moveTopToOther(dest, steps);
+                buffer.moveDisks(disks - 1, this, dest, steps);
+            }
+        }
+
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingNovember2018 obj = new SolutionDailyCodingNovember2018();
 
@@ -1006,6 +1148,37 @@ public class SolutionDailyCodingNovember2018 {
                 {2, 0, 0, 4},
                 {1, 5, 3, 1}
         }));
+
+        System.out.println("--- number of times to flip n fair coins ---");
+        System.out.println(obj.flipCoins(100));//7
+        System.out.println(obj.flipCoins(200));//8
+        System.out.println(obj.flipCoins(4));//2
+
+        System.out.println("--- rotate arrays of ints on k positions ---");
+        int[] rotateArray = new int[]{1, 2, 3, 4, 5, 6, 7};
+        obj.rotateArray(rotateArray, 3);
+        Arrays.stream(rotateArray).forEach(i->System.out.print(i + " "));
+        System.out.println();
+
+        System.out.println("--- add numbers as lists ---");
+        ListNode l1 = new ListNode(2, new ListNode(4, new ListNode(8)));
+        ListNode l2 = new ListNode(4, new ListNode(7, new ListNode(3, new ListNode(2))));
+        ListNode addRes = obj.addNumbers(l1, l2);
+        System.out.println("result of addition : " + linked_list.StringUtils.singlyListNodeToString(addRes));
+
+        System.out.println("--- towers of hanoi -----");
+        List<String> steps;
+        System.out.println("2 disks");
+        steps = obj.hanoiTowers(2);
+        steps.forEach(System.out::println);
+
+        System.out.println("3 disks");
+        steps = obj.hanoiTowers(3);
+        steps.forEach(System.out::println);
+
+        System.out.println("4 disks");
+        steps = obj.hanoiTowers(4);
+        steps.forEach(System.out::println);
     }
 
 }
