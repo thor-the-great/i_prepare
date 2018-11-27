@@ -860,8 +860,67 @@ public class SolutionDailyCodingNovember2018 {
         return fakeHead.next;
     }
 
-
+    /**
+     * The Tower of Hanoi is a puzzle game with three rods and n disks, each a different size.
+     *
+     * All the disks start off on the first rod in a stack. They are ordered by size, with the largest disk on the
+     * bottom and the smallest one at the top.
+     *
+     * The goal of this puzzle is to move all the disks from the first rod to the last rod while following these rules:
+     *
+     * You can only move one disk at a time.
+     * A move consists of taking the uppermost disk from one of the stacks and placing it on top of another stack.
+     * You cannot place a larger disk on top of a smaller disk.
+     * Write a function that prints out all the steps necessary to complete the Tower of Hanoi. You should assume that
+     * the rods are numbered, with the first rod being 1, the second (auxiliary) rod being 2, and the last (goal)
+     * rod being 3.
+     *
+     * For example, with n = 3, we can do this in 7 moves:
+     *
+     * Move 1 to 3
+     * Move 1 to 2
+     * Move 3 to 2
+     * Move 1 to 3
+     * Move 2 to 1
+     * Move 2 to 3
+     * Move 1 to 3
+     *
+     * @param n
+     * @return
+     */
     public List<String> hanoiTowers(int n) {
+        //return hanoiTowersOOP(n);
+        return hanoiTowerRecursive(n);
+    }
+
+    /**
+     * Super simple idea:
+     * thnik of task recursively -
+     * - if there are 0 disks - we don't do anything - base case for recursion
+     * - if there is 1 disk - move it from source to destination directly
+     * - for anything more that 1 - we move all disks except last one (recursively) from source to tmp, then do actual
+     * move of biggest disk from source to destination and then move rest of disks (all except of biggest one) from
+     * tmp to destination.
+     *
+     * @param n
+     * @return
+     */
+    private List<String> hanoiTowerRecursive(int n) {
+        List<String> steps = new LinkedList<>();
+        helper(steps, n, 0, 1, 2);
+        return steps;
+    }
+
+    private void helper(List<String> steps, int disks, int source, int tmp, int dest) {
+        if (disks >= 1) {
+            helper(steps, disks - 1, source, dest, tmp);
+            String step = "move " + disks + "  " + source +" -> " + dest;
+            steps.add(step);
+            helper(steps, disks - 1, tmp, source, dest);
+        }
+    }
+
+    private List<String> hanoiTowersOOP(int n) {
         HanoiTower[] towers = new HanoiTower[3];
         IntStream.range(0, 3).forEach(i->towers[i] = new HanoiTower(i));
         for(int i = n; i >= 1; i--)
@@ -905,6 +964,28 @@ public class SolutionDailyCodingNovember2018 {
             }
         }
 
+    }
+
+    /**
+     * Given a real number n, find the square root of n. For example, given n = 9, return 3.
+     * @param x
+     * @return
+     */
+    public int mySqrt(int x) {
+        long l = 0;
+        long r = 1 + (x/2);
+        while (l <= r ) {
+            long m = l + (r - l) / 2;
+            long ans = m * m;
+            if (x == ans)
+                return (int)m;
+            else if (ans > x) {
+                r = m - 1;
+            } else {
+                l = m + 1;
+            }
+        }
+        return (int)r;
     }
 
     public static void main(String[] args) {

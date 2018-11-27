@@ -5,10 +5,9 @@ import java.util.Arrays;
 public class MinIncrementUniqueArray {
     public int minIncrementForUnique(int[] A) {
         int N = A.length;
-        if (N == 0) return 0;
         Arrays.sort(A);
         int res = 0;
-        int prev = A[0];
+        int prev = N > 0 ? A[0] : 0;
 
         for (int i = 1; i < N; i++) {
             //this is when elements are identical (or less) - violation of uniqueness. prev will
