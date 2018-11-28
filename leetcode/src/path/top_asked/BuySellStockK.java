@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class BuySellStockK {
 
-    public int maxProfit(int k, int[] prices) {
+    public int maxProfit1(int k, int[] prices) {
         int N = prices.length;
         if (N <= 1) return 0;
         int MAX = 2*k;
@@ -57,6 +57,99 @@ public class BuySellStockK {
         return dp[k - 1][N - 1];
     }
 
+    public int maxProfit3(int k, int[] prices) {
+        int N = prices.length;
+        if (N <= 1) return 0;
+        int MAX = 2*k;
+        if (MAX >= N) {
+            //this case we can do max allowed transactions anddo max profit
+            int s = 0;
+            for (int i = 1; i < N; i++) {
+                if (prices[i] > prices[i - 1])
+                    s += prices[i] - prices[i - 1];
+            }
+            return s;
+        }
+        int[][] dp = new int[N][k+1];
+        /*for (int[] d : dp)
+           Arrays.fill(d, Integer.MIN_VALUE);
+
+        for (int i = 0; i <= k; i++)
+            dp[0][i] = 0;
+        for (int i = 0; i <N; i++)
+            dp[i][0] = 0;*/
+
+        int maxSoFar;
+        for (int kk = 1; kk <= k; kk++) {
+            maxSoFar = Integer.MIN_VALUE;
+            for (int i = 1; i < N; i++) {
+                maxSoFar = Math.max(maxSoFar, dp[i - 1][kk - 1] - prices[i - 1]);
+                dp[i][kk] = Math.max(maxSoFar + prices[i], dp[i - 1][kk]);
+            }
+        }
+        return dp[N -1][k];
+    }
+
+    public int maxProfit4(int k, int[] prices) {
+        int N = prices.length;
+        if (N <= 1) return 0;
+        if (2*k > N) {
+            int res = 0;
+            for (int i = 1; i < N; i++) {
+                int dif = prices[i] - prices[i - 1];
+                if (dif > 0)
+                    res += dif;
+            }
+            return res;
+        }
+
+        int[][] dp = new int[k + 1][N];
+        for (int kk = 1; kk <= k; kk++) {
+            int tmp = Integer.MIN_VALUE;
+            for (int i = 1; i < N; i++) {
+                tmp = Math.max(tmp, dp[kk - 1][i - 1] - prices[i - 1]);
+                dp[kk][i] = Math.max(tmp + prices[i], dp[kk][i - 1]);
+            }
+        }
+        return dp[k][N - 1];
+    }
+
+    /**
+     * This is optimized dp in terms of memory - use only 2*N space instead of N*k. In fact we need only
+     * current line of profits and the previous one to compare - don't need all k at once
+     * @param k
+     * @param prices
+     * @return
+     */
+    public int maxProfit5DPOpt(int k, int[] prices) {
+        int N = prices.length;
+        if (N <= 1) return 0;
+        if (2*k > N) {
+            int res = 0;
+            for (int i = 1; i < N; i++) {
+                int dif = prices[i] - prices[i - 1];
+                if (dif > 0)
+                    res += dif;
+            }
+            return res;
+        }
+
+        int[][] dp = new int[2][N];
+        for (int kk = 0; kk < k; kk++) {
+            int tmp = Integer.MIN_VALUE;
+            for (int i = 1; i < N; i++) {
+                tmp = Math.max(tmp, dp[0][i - 1] - prices[i - 1]);
+                dp[1][i] = Math.max(tmp + prices[i], dp[1][i - 1]);
+            }
+            dp[0] = Arrays.copyOf(dp[1], N);
+        }
+        return dp[0][N - 1];
+    }
+
+    public int maxProfit(int k, int[] prices) {
+        return maxProfit5DPOpt(k, prices);
+    }
+
     public static void main(String[]  args) {
 
         BuySellStockK obj = new BuySellStockK();
@@ -65,6 +158,18 @@ public class BuySellStockK {
 
         p = new int[]{1, 4, 3, 2, 7};
         k = 2;
-        System.out.println(obj.maxProfit2(k, p));
+        System.out.println(obj.maxProfit(k, p));
+
+        p = new int[]{1, 3, 1, 4, 1, 5, 7, 8};
+        k = 2;
+        System.out.println(obj.maxProfit(k, p));
+
+        p = new int[]{1, 4, 3, 2, 7};
+        k = 20;
+        System.out.println(obj.maxProfit(k, p));
+
+        p = new int[]{1, 3, 1, 4, 1, 5, 7, 8};
+        k = 20;
+        System.out.println(obj.maxProfit(k, p));
     }
 }
