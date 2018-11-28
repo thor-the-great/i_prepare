@@ -1213,9 +1213,9 @@ public class SolutionDailyCodingSeptember2018 {
         System.out.println(obj.getLongestPalindrome(s)); */
 
         /*System.out.println("---- max profit of selling stocks ones -----");
-        System.out.println(obj.maxProfit(new int[] {9, 11, 8, 5, 7, 10 ,9 }));//5
-        System.out.println(obj.maxProfit(new int[] {8, 4, 1, 3, 1, 10, 5, 6, 9, 1 }));//9
-        System.out.println(obj.maxProfit(new int[] {8, 4, 3, 8, 5, 1, 2, 1, 7, 1 }));//6
+        System.out.println(obj.maxProfitArrayDivider(new int[] {9, 11, 8, 5, 7, 10 ,9 }));//5
+        System.out.println(obj.maxProfitArrayDivider(new int[] {8, 4, 1, 3, 1, 10, 5, 6, 9, 1 }));//9
+        System.out.println(obj.maxProfitArrayDivider(new int[] {8, 4, 3, 8, 5, 1, 2, 1, 7, 1 }));//6
         */
 
         System.out.println("----- max sum of contiguous subarray");
