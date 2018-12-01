@@ -988,6 +988,45 @@ public class SolutionDailyCodingNovember2018 {
         return (int)r;
     }
 
+    /**
+     * This problem was asked by Amazon.
+     *
+     * Given a node in a binary tree, return the next bigger element, also known as the inorder successor.
+     *
+     * For example, the inorder successor of 22 is 30.
+     *
+     *    10
+     *   /  \
+     *  5    30
+     *      /  \
+     *    22    35
+     * You can assume each node has a parent pointer.
+     * @param node
+     * @return
+     */
+    public TreeNode inorderSuccessorBST(TreeNode node) {
+        //idea is to find proper node right away.
+        //- if node has right child - take this right and then find leftmost its child
+        //- else result is one of node previous nodes. This prev node must be left child of some parent.
+        //thus we take node and it's parent and check if the node is left child of that parent
+        TreeNode res;
+        if (node.right != null) {
+            node = node.right;
+            while (node.left != null) {
+                node = node.left;
+            }
+            res = node;
+        } else {
+            TreeNode p = node.parent;
+            if (p != null && node != p.left) {
+                node = p;
+                p = node.parent;
+            }
+            res = p;
+        }
+        return res;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingNovember2018 obj = new SolutionDailyCodingNovember2018();
 
@@ -1260,6 +1299,56 @@ public class SolutionDailyCodingNovember2018 {
         System.out.println("4 disks");
         steps = obj.hanoiTowers(4);
         steps.forEach(System.out::println);
+
+        System.out.println("--- inorder successor in BST ----");
+        /*
+         *               20
+         *              /  \
+         *           12     30
+         *           / \   /
+         *          8  16 25
+         *         / \
+         *        7  10
+         */
+        one = new TreeNode(20);
+        two = new TreeNode(12);
+        two.parent = one;
+        one.left = two;
+        three = new TreeNode(30);
+        three.parent = one;
+        one.right = three;
+
+        four = new TreeNode(8);
+        two.left = four;
+        four.parent = two;
+        five = new TreeNode(16);
+        two.right = five;
+        five.parent = two;
+        six = new TreeNode(25);
+        three.left = six;
+        six.parent = three;
+        seven = new TreeNode(7);
+        seven.parent = four;
+        four.left = seven;
+        eight = new TreeNode(10);
+        four.right = eight;
+        eight.parent = four;
+
+        TreeNode inorderNext = null;
+        inorderNext = obj.inorderSuccessorBST(two);
+        System.out.println(inorderNext);//16
+
+        inorderNext = obj.inorderSuccessorBST(one);
+        System.out.println(inorderNext);//25
+
+        inorderNext = obj.inorderSuccessorBST(seven);
+        System.out.println(inorderNext);//8
+
+        inorderNext = obj.inorderSuccessorBST(six);
+        System.out.println(inorderNext);//30
+
+        inorderNext = obj.inorderSuccessorBST(eight);
+        System.out.println(inorderNext);//12
     }
 
 }
