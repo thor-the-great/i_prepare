@@ -50,6 +50,47 @@ public class SolutionDailyCodingDecember2018 {
         }
     }
 
+    public int maximalRectangle(char[][] matrix) {
+        int N = matrix[0].length;
+        int[] flat = new int[N];
+        for (int i =0; i < N; i++ ) {
+            flat[i] = matrix[0][i] - '0';
+        }
+        int res = getMaxArea(flat, N);
+        for (int r = 1; r < matrix.length; r++) {
+            recalcFlat(flat, matrix[r]);
+            res = Math.max(res, getMaxArea(flat, N));
+        }
+        return res;
+    }
+
+    void recalcFlat(int[] flat, char[] nextRow) {
+        for (int i = 0; i < flat.length; i++) {
+            if (nextRow[i] == '1')
+                flat[i] += 1;
+            else
+                flat[i] = 0;
+        }
+    }
+
+    int getMaxArea(int[] arr, int N) {
+        Stack<Integer> s = new Stack<>();
+        s.push(-1);
+        int res = 0;
+        for(int i = 0; i < N; i++) {
+            while(s.peek() != -1 && arr[i] <= arr[s.peek()]) {
+                int p = s.pop();
+                res = Math.max(res, arr[p] * (i - s.peek() - 1));
+            }
+            s.push(i);
+        }
+        while (s.peek() != -1) {
+            int p = s.pop();
+            res = Math.max(res, arr[p] * (N - s.peek() - 1));
+        }
+        return res;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingDecember2018 obj = new SolutionDailyCodingDecember2018();
 
@@ -79,5 +120,10 @@ public class SolutionDailyCodingDecember2018 {
                                 new TreeNode(2), new TreeNode(1)),
                         new TreeNode(4)));
         System.out.println(obj.minPath(root));
+
+        System.out.println("---- find min path in BST (from root to any of leaves) ----");
+        System.out.println(obj.maximalRectangle(new char[][] {
+                {'1', '0'}
+        }));
     }
 }
