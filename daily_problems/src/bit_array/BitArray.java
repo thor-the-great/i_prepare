@@ -35,9 +35,9 @@ public class BitArray {
         int intPosition = i % MAX_BITS;
 
         if (val == 1)
-            values[numPosition] |= (val << intPosition);
+            values[numPosition] |= (1 << intPosition);
         else
-            values[numPosition] &= ~(val << intPosition);
+            values[numPosition] = values[numPosition]&~(1 << intPosition);
     }
 
     //gets the value at index i
@@ -62,7 +62,7 @@ public class BitArray {
         System.out.println(bitArray.get(70));//1
         System.out.println(bitArray.get(72));//0
         bitArray.set(70, 0);
-        System.out.println(bitArray.get(70));//0
+        System.out.println("70, 0 " + bitArray.get(70));//0
         bitArray.set(70, 1);
         bitArray.set(70, 1);
         System.out.println(bitArray.get(70));//1
