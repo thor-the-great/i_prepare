@@ -91,6 +91,30 @@ public class SolutionDailyCodingDecember2018 {
         return res;
     }
 
+    public void partitionArray(int[] arr, int pivot) {
+        int N = arr.length;
+        int l = 0, r = N - 1, mid = 0;
+        while (mid <= r) {
+            int num = arr[mid];
+            if (num < pivot) {
+                swap(arr, mid, l);
+                mid++;
+                l++;
+            } else if (num > pivot) {
+                swap(arr, mid, r);
+                r--;
+            } else{
+                mid++;
+            }
+        }
+    }
+
+    void swap(int[] arr, int i, int j) {
+        int t = arr[i];
+        arr[i] = arr[j];
+        arr[j] = t;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingDecember2018 obj = new SolutionDailyCodingDecember2018();
 
@@ -125,5 +149,11 @@ public class SolutionDailyCodingDecember2018 {
         System.out.println(obj.maximalRectangle(new char[][] {
                 {'1', '0'}
         }));
+
+        System.out.println("--- partitiion array around pivot ----");
+        int[] arr;
+        arr = new int[] {9, 3, 12, 10, 5, 10, 16};
+        obj.partitionArray(arr, 10);
+        System.out.println(StringUtils.intArrayToString(arr));
     }
 }
