@@ -91,28 +91,49 @@ public class SolutionDailyCodingDecember2018 {
         return res;
     }
 
+    /**
+     * This problem was asked by Amazon.
+     *
+     * Given a pivot x, and a list lst, partition the list into three parts.
+     *
+     * The first part contains all elements in lst that are less than x
+     * The second part contains all elements in lst that are equal to x
+     * The third part contains all elements in lst that are larger than x
+     * Ordering within a part can be arbitrary.
+     *
+     * For example, given x = 10 and lst = [9, 12, 3, 5, 14, 10, 10], one partition may be `[9, 3, 5, 10, 10, 12, 14].
+     *
+     * @param arr
+     * @param pivot
+     */
     public void partitionArray(int[] arr, int pivot) {
+        //this solution is for array based on deque
+        //- first create |...|equals|greater|
+        //- then on second pass fill less part
+        //after that generate resulting array from the deque
         int N = arr.length;
-        int l = 0, r = N - 1, mid = 0;
-        while (mid <= r) {
-            int num = arr[mid];
-            if (num < pivot) {
-                swap(arr, mid, l);
-                mid++;
-                l++;
-            } else if (num > pivot) {
-                swap(arr, mid, r);
-                r--;
-            } else{
-                mid++;
-            }
+        Deque<Integer> dq = new LinkedList<>();
+        for (int i = 0; i < N; i ++) {
+            if (arr[i] == pivot)
+                dq.addFirst(arr[i]);
+            else if (arr[i] > pivot)
+                dq.addLast(arr[i]);
+        }
+        for (int i = N - 1; i >= 0; i --) {
+            if (arr[i] < pivot)
+                dq.addFirst(arr[i]);
+        }
+        int i = 0;
+        while (i < N) {
+            arr[i] = dq.pollFirst();
+            i++;
         }
     }
 
-    void swap(int[] arr, int i, int j) {
-        int t = arr[i];
-        arr[i] = arr[j];
-        arr[j] = t;
+    public void partitionList(ListNode list, int pivot) {
+        ListNode less = null;
+        ListNode eq = null;
+
     }
 
     public static void main(String[] args) {
@@ -153,7 +174,11 @@ public class SolutionDailyCodingDecember2018 {
         System.out.println("--- partitiion array around pivot ----");
         int[] arr;
         arr = new int[] {9, 3, 12, 10, 5, 10, 16};
-        obj.partitionArray(arr, 10);
+        obj.partitionArray(arr, 10); // 9, 3, 5, 10, 10, 12, 16
+        System.out.println(StringUtils.intArrayToString(arr));
+
+        arr = new int[] {10, 1, 13, 9, 3, 12, 10, 5, 10, 11};
+        obj.partitionArray(arr, 10); // 1, 9, 3, 5, 10, 10, 10, 13, 12, 11
         System.out.println(StringUtils.intArrayToString(arr));
     }
 }
