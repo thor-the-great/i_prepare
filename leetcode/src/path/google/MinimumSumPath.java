@@ -29,7 +29,7 @@ public class MinimumSumPath {
      * last cell. finally last dp element will have a solution.
      *
      * Then next optimization is to switch from 2D to 1D. On every step we just need one previous row, so keep only one
-     * from previous grid row. 
+     * from previous grid row.
      *
      * @param grid
      * @return
