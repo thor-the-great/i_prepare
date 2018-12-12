@@ -3,6 +3,7 @@ import linked_list.ListNode;
 import linked_list.ListUtils;
 import utils.StringUtils;
 
+import javax.sound.midi.SysexMessage;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -136,6 +137,62 @@ public class SolutionDailyCodingDecember2018 {
 
     }
 
+    /**
+     * This problem was asked by Google.
+     *
+     * Given an array of numbers and an index i, return the index of the nearest larger number of the number at index
+     * i, where distance is measured in array indices.
+     *
+     * For example, given [4, 1, 3, 5, 6] and index 0, you should return 3.
+     *
+     * If two distances to larger numbers are the equal, then return any one of them. If the array at i doesn't have
+     * a nearest larger integer, then return null.
+     *
+     * Follow-up: If you can preprocess the array, can you do this in constant time?
+     *
+     * @param arr
+     * @param i
+     * @return
+     */
+    public int nextGreaterElementByIndexDistance(int[] arr, int i) {
+        return oneScan(arr, i);
+        //return constantWithPreprocessing(arr, i);
+    }
+
+    private int oneScan(int[] arr, int i) {
+        int N = arr.length;
+        int el = arr[i];
+
+        int r = i + 1, l = i - 1;
+        while (l >= 0 || r < N) {
+            if (l >= 0) {
+                if(arr[l] > el)
+                    return l;
+                else
+                    l--;
+            }
+            if (r < N) {
+                if(arr[r] > el)
+                    return r;
+                else
+                    r++;
+            }
+        }
+        return -1;
+    }
+
+    /*private int constantWithPreprocessing(int[] arr, int i) {
+    }*/
+
+    class IndexDistance {
+        int index;
+        int val;
+        IndexDistance(int index, int val) {
+            this.index = index;
+            this.val = val;
+        }
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingDecember2018 obj = new SolutionDailyCodingDecember2018();
 
@@ -180,5 +237,13 @@ public class SolutionDailyCodingDecember2018 {
         arr = new int[] {10, 1, 13, 9, 3, 12, 10, 5, 10, 11};
         obj.partitionArray(arr, 10); // 1, 9, 3, 5, 10, 10, 10, 13, 12, 11
         System.out.println(StringUtils.intArrayToString(arr));
+
+        System.out.println("--- next greater element by index distance ---");
+        arr = new int[] {4, 1, 3, 5, 6};
+        System.out.println(obj.nextGreaterElementByIndexDistance(arr, 0));//3
+        arr = new int[] {4, 2, 1, 3, 5, 6, 9, 2};
+        System.out.println(obj.nextGreaterElementByIndexDistance(arr, 1));//0
+        System.out.println(obj.nextGreaterElementByIndexDistance(arr, 6));//-1
+        System.out.println(obj.nextGreaterElementByIndexDistance(arr, 7));//6
     }
 }

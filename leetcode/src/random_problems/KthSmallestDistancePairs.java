@@ -30,6 +30,9 @@ public class KthSmallestDistancePairs {
 
     /**
      * binary search based on distance plus sliding window to count number of pairs
+     * - define max dif (arr[N - 1] - arr[0] after sorting) and min dif - 0. Start doing binary search and counting how
+     * many elements of array make diff from 0 to this value (mid). If this number is more than k - mid is too high
+     * and we make big = mid. Otherwise low = mid
      *
      * @param nums
      * @param k
@@ -38,23 +41,33 @@ public class KthSmallestDistancePairs {
     public int smallestDistancePair(int[] nums, int k) {
         Arrays.sort(nums);
         int N = nums.length;
-
-        int small = 0;
-        int big = nums[N - 1] - nums[0];
-
-        while (small < big ) {
-            int mid = (big + small) / 2;
-            int c = 0, l = 0, r = 0;
-            for (; r < N; ++r) {
+        int biggestDif = nums[N - 1] - nums[0];
+        int smallestDif = 0;
+        while (smallestDif < biggestDif) {
+            int mid = (smallestDif + biggestDif) / 2;
+            int c = 0;
+            int l = 0, r = 1;
+            while (r < N) {
                 while (nums[r] - nums[l] > mid)
                     l++;
                 c += r - l;
+                r++;
+                if (c >= k) {
+                    biggestDif = mid;
+                    break;
+                }
             }
-            if (c >= k)
-                big = mid;
-            else
-                small = mid + 1;
+            if (c < k)
+                smallestDif = mid + 1;
         }
-        return small;
+        return smallestDif;
+    }
+
+
+    public static void main(String[] args) {
+        KthSmallestDistancePairs obj = new KthSmallestDistancePairs();
+        int[] arr;
+        arr = new int[] {1,3, 6, 4, 5, 2, 8, 11};
+        System.out.println(obj.smallestDistancePair(arr, 10));
     }
 }
