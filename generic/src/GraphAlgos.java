@@ -1,8 +1,8 @@
+import com.sun.javafx.geom.Edge;
 import cracking.trees_graphs.DiGraph;
+import cracking.trees_graphs.SimpleGraph;
 
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Stack;
+import java.util.*;
 
 public class GraphAlgos {
 
@@ -100,6 +100,61 @@ public class GraphAlgos {
         }
     }
 
+    /**
+     * Detect cycles in digraph by usage of DFS. Keep recursion stack set of nodes, if some node met second time - this
+     * is a cycle
+     * @param g
+     * @param startVertex
+     */
+    void detectCycleDiGraphDFS(DiGraph g, int startVertex) {
+        Set<Integer> visited = new HashSet<>();
+        Set<Integer> recStack = new HashSet<>();
+
+        if (dfsCycle(visited, recStack, startVertex, g)) {
+            System.out.println("\nCycle detected !!!");
+            recStack.forEach(i -> System.out.print(i + " -> "));
+        } else
+            System.out.print("\nNo cycles detected");
+    }
+
+    void detectCycleDiGraphDFS(DiGraph g) {
+        detectCycleDiGraphDFS(g, 0);
+    }
+
+    boolean dfsCycle(Set<Integer> visited, Set<Integer> recStack, int vertex, DiGraph graph) {
+        if (recStack.contains(vertex))
+            return true;
+
+        if (visited.contains(vertex))
+            return false;
+
+        recStack.add(vertex);
+        visited.add(vertex);
+        List<Integer> adjList = graph.adj(vertex);
+        if ( adjList != null && !adjList.isEmpty()) {
+            for (int adj : adjList) {
+                if (dfsCycle(visited, recStack, adj, graph))
+                    return true;
+            }
+        }
+        recStack.remove(vertex);
+        return false;
+    }
+
+    public void detectCycleUndirGraphUF(SimpleGraph uniGraph) {
+        UnionFind uf = new UnionFind(uniGraph.getV());
+        for(SimpleGraph.Edge e : uniGraph.getEdges()) {
+            int u = e.u;
+            int v = e.v;
+            if (uf.find(v) == uf.find(u)) {
+                System.out.println("\nCycle detected!!");
+                return;
+            }
+            uf.union(u, v);
+        }
+        System.out.println("\nNo cycles detected");
+    }
+
     private void visitVertex(int v) {
         System.out.print("vertex " + v +", ");
     }
@@ -119,11 +174,95 @@ public class GraphAlgos {
         return g;
     }
 
+    private DiGraph getDiGraph2() {
+        DiGraph g = new DiGraph(7);
+        g.addEdge(0, 1);
+        g.addEdge(1, 2);
+        g.addEdge(1, 4);
+        g.addEdge(2, 5);
+        g.addEdge(4, 5);
+        g.addEdge(3, 1);
+        g.addEdge(5, 6);
+        g.addEdge(6, 3);
+        return g;
+    }
+
+    private DiGraph getDiGraph3() {
+        DiGraph g = new DiGraph(7);
+        g.addEdge(0, 1);
+        g.addEdge(0, 2);
+        g.addEdge(1, 2);
+        return g;
+    }
+
+    private SimpleGraph getUniGraph1() {
+        SimpleGraph g = new SimpleGraph(7);
+        g.addEdge(0, 3);
+        g.addEdge(1, 3);
+        g.addEdge(0, 2);
+        g.addEdge(2, 4);
+        g.addEdge(2, 5);
+        g.addEdge(2, 6);
+        return g;
+    }
+
+    private SimpleGraph getUniGraph2() {
+        SimpleGraph g = new SimpleGraph(3);
+        g.addEdge(0, 1);
+        g.addEdge(0, 2);
+        g.addEdge(2, 1);
+        return g;
+    }
+
     public static void main(String[] args) {
         GraphAlgos obj = new GraphAlgos();
         //obj.doDFS();
         //obj.doBFS();
         obj.doDFSRecursive();
         obj.doTopological();
+
+        obj.detectCycleDiGraphDFS(obj.getDiGraph1());
+        obj.detectCycleDiGraphDFS(obj.getDiGraph2(), 4);
+        obj.detectCycleDiGraphDFS(obj.getDiGraph3());
+
+        obj.detectCycleUndirGraphUF(obj.getUniGraph1());//no cycle
+        obj.detectCycleUndirGraphUF(obj.getUniGraph2());//cycle
+    }
+}
+
+class UnionFind {
+    int[] sets;
+    int[] rank;
+
+    UnionFind(int numOfSets) {
+        sets = new int[numOfSets];
+        for (int i = 0; i < sets.length; i++) {
+            sets[i] = i;
+        }
+        rank = new int[numOfSets];
+    }
+
+    int find(int set) {
+        while(sets[set] != set) {
+            set = sets[set];
+        }
+        return set;
+    }
+
+    void union(int set1, int set2) {
+        int set1Parent = find(set1);
+        int set2Parent = find(set2);
+        if (set1Parent != set2Parent) {
+            int set1Rank = rank[set1Parent];
+            int set2Rank = rank[set2Parent];
+            if (set1Rank > set2Rank)
+                sets[set2Parent] = set1Parent;
+            else if (set2Rank > set1Rank)
+                sets[set1Parent] = set2Parent;
+            else {
+                rank[set1Parent]+=1;
+                sets[set2Parent] = set1Parent;
+            }
+        }
     }
 }

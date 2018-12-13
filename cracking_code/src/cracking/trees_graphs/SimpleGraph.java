@@ -1,6 +1,7 @@
 package cracking.trees_graphs;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -8,6 +9,7 @@ import java.util.List;
  */
 public class SimpleGraph {
     List<Integer>[] vertices;
+    List<Edge> edges;
     int E;
 
     public SimpleGraph(int V) {
@@ -15,6 +17,7 @@ public class SimpleGraph {
         for(int i = 0 ; i < V; i++) {
             vertices[i] = new ArrayList<Integer>();
         }
+        edges = new LinkedList();
     }
 
     public void addEdge(int v, int v2) {
@@ -23,6 +26,7 @@ public class SimpleGraph {
         vertices[v].add(v2);
         vertices[v2].add(v);
         E++;
+        this.edges.add(new Edge(v, v2));
     }
 
     public List<Integer> adj(int v) {
@@ -42,6 +46,10 @@ public class SimpleGraph {
 
     public int getE() {
         return E;
+    }
+
+    public List<Edge> getEdges() {
+        return this.edges;
     }
 
     @Override
@@ -76,5 +84,13 @@ public class SimpleGraph {
         G.addEdge(3,4);
 
         System.out.print(G);
+    }
+
+    public class Edge {
+        public int u, v;
+        Edge(int u, int v) {
+            this.u = u;
+            this.v = v;
+        }
     }
 }
