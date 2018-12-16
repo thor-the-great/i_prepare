@@ -193,6 +193,40 @@ public class SolutionDailyCodingDecember2018 {
         }
     }
 
+    public void pancakeSorting(int[] nums) {
+        int N = nums.length;
+        int i = N - 1;
+        while (i >= 0 ) {
+            int maxIdx = findMax(nums, i);
+            if (maxIdx != i) {
+                reverse(nums, 0, maxIdx);
+                reverse(nums, 0, i);
+            }
+            i--;
+        }
+    }
+
+    int findMax(int[] nums, int idx) {
+        int maxIdx = 0;
+        for (int i = 1; i <= idx; i++) {
+            if (nums[i] > nums[maxIdx]) {
+                maxIdx = i;
+            }
+        }
+        return maxIdx;
+    }
+
+    void reverse(int[] nums, int start, int end) {
+        int tmp = 0;
+        while (start <= end) {
+            tmp = nums[start];
+            nums[start] = nums[end];
+            nums[end] = tmp;
+            start++;
+            end--;
+        }
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingDecember2018 obj = new SolutionDailyCodingDecember2018();
 
@@ -245,5 +279,14 @@ public class SolutionDailyCodingDecember2018 {
         System.out.println(obj.nextGreaterElementByIndexDistance(arr, 1));//0
         System.out.println(obj.nextGreaterElementByIndexDistance(arr, 6));//-1
         System.out.println(obj.nextGreaterElementByIndexDistance(arr, 7));//6
+
+        System.out.println("---  reverse pancake sorting ----");
+        int numOfElements = 50_000;
+        int[] nums = new int[numOfElements];
+        Random rand = new Random();
+        IntStream.range(0, numOfElements).forEach(i-> nums[i] = rand.nextInt(4*numOfElements));
+        System.out.println(StringUtils.intArrayToString(nums));
+        obj.pancakeSorting(nums);
+        System.out.println(StringUtils.intArrayToString(nums));
     }
 }
