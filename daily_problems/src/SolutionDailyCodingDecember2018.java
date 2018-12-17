@@ -1,6 +1,7 @@
 import diff_problems.TreeNode;
 import linked_list.ListNode;
 import linked_list.ListUtils;
+import util.Point;
 import utils.StringUtils;
 
 import javax.sound.midi.SysexMessage;
@@ -227,6 +228,24 @@ public class SolutionDailyCodingDecember2018 {
         }
     }
 
+    public List<Point> getKClosestPoints(Point[] points, Point center, int k) {
+        Comparator<Point> comp = (o1, o2) -> {
+            int l1 = ((o1.x - center.x)*(o1.x - center.x)) + ((o1.y - center.y)*(o1.y - center.y));
+            int l2 = ((o2.x - center.x)*(o2.x - center.x)) + ((o2.y - center.y)*(o2.y - center.y));
+            return Integer.compare(l2, l1);
+        };
+        PriorityQueue<Point> pq = new PriorityQueue<>(comp);
+        for (int i =0; i < k; i++) {
+            pq.add(points[i]);
+        }
+        for (int i = k; i < points.length; i++) {
+            pq.add(points[i]);
+            pq.poll();
+        }
+        List<Point> res = new LinkedList<>(pq);
+        return res;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingDecember2018 obj = new SolutionDailyCodingDecember2018();
 
@@ -288,5 +307,22 @@ public class SolutionDailyCodingDecember2018 {
         System.out.println(StringUtils.intArrayToString(nums));
         obj.pancakeSorting(nums);
         System.out.println(StringUtils.intArrayToString(nums));
+
+        System.out.println("-- find k closest points ---");
+        Point[] points;
+        Point center;
+        points = new Point[] {
+                new Point(2, 3),
+                new Point(1, 2),
+                new Point(2, 2),
+                new Point(5, 2),
+                new Point(-2, -3),
+                new Point(-2, 5),
+                new Point(-1, 3)
+        };
+        center = new Point(-2,5);
+        List<Point> closest = obj.getKClosestPoints(points, center, 3);
+        closest.forEach(p->System.out.print("[" + p.x +", " + p.y +"] "));
+        System.out.print("\n");
     }
 }
