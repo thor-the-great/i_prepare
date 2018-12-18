@@ -1,38 +1,40 @@
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.IntStream;
 
+/**
+ * This is connection pool implementation based on producer-consumer and blocking queue.
+ *
+ * Pool has initial capacity and maximum capacity. Also it has a timeout for getConnection method, returns null in
+ * case of timeout
+ *
+ * there are no synchronized methods
+ */
 public class ConnectionPoolLock {
     int count;
-    int current;
-    BlockingQueue<Connection> q = new LinkedBlockingQueue();
+    AtomicInteger current;
+    BlockingQueue<Connection> q;
     Lock lock = new ReentrantLock();
+    int timeout = 5000;
 
-    ConnectionPoolLock(int c) {
-        this.count = c;
-        this.current = 0;
-        //lock = new ReentrantLock();
-        //for (int i = 0; i < c; i++)
-        //    getNewConnection();
+    ConnectionPoolLock(int overallCapacity, int initCapacity) {
+        this.count = overallCapacity;
+        this.current = new AtomicInteger(0);
+        q = new LinkedBlockingQueue(overallCapacity);
+        for (int i = 0; i < initCapacity; i++)
+            getNewConnection();
     }
 
-    Connection getConn() {
-        //lock.lock();
-        if (q.peek() == null && current < count) {
-        //if (current < count) {
+    Connection getConnection() {
+        if (q.peek() == null && current.get() < count) {
             getNewConnection();
         }
-        //lock.unlock();
         Connection conn = null;
         try {
-            conn = q.take();
+            //conn = q.take();
+            conn = q.poll(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -40,14 +42,12 @@ public class ConnectionPoolLock {
     }
 
     private void getNewConnection() {
-        Connection conn = new Connection(current);
+        Connection conn = new Connection(current.incrementAndGet());
         q.offer(conn);
-        current++;
     }
 
     void releaseConn(Connection c) {
         q.offer(c);
-
     }
 
     class Connection {
@@ -58,19 +58,23 @@ public class ConnectionPoolLock {
     }
 
     public static void main(String[] args) {
-        ConnectionPoolLock pool = new ConnectionPoolLock(1);
+        ConnectionPoolLock pool = new ConnectionPoolLock(8, 4);
         Random rand = new Random();
-        int numOfThreds = 25;
-        ExecutorService executor = Executors.newFixedThreadPool(numOfThreds);
+        int numOfThreads = 16;
+        ExecutorService executor = Executors.newFixedThreadPool(numOfThreads);
         long start = System.currentTimeMillis();
-        for (int i = 0; i < numOfThreds; i++) {
+        for (int i = 0; i < numOfThreads; i++) {
             Runnable r = () -> {
                 //System.out.println("requesting ");
-                Connection conn = pool.getConn();
-                //System.out.println("acquired " + conn.id );
-                String s = "ddfgdfgdfgdfghgyt";
+                Connection conn = pool.getConnection();
+                if (conn == null) {
+                    System.out.println("Connection timeout");
+                    return;
+                }
+                System.out.println("acquired " + conn.id );
+                String s = "ddfgdfgdfgdfghg";
                 //int iter = 1000 + rand.nextInt(5_000_000);
-                int iter = 5_000_000 + rand.nextInt(500);
+                int iter = 5_000_000 + rand.nextInt(300);
                 for (int j =0; j < iter; j++) {
                     int k = j*j;
                     for (int l = 0; l < s.length();l++) {
@@ -81,7 +85,6 @@ public class ConnectionPoolLock {
                 pool.releaseConn(conn);
 
             };
-            //r.run();
             executor.execute(r);
         }
         executor.shutdown();
