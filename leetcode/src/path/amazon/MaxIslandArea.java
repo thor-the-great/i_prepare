@@ -34,7 +34,7 @@ public class MaxIslandArea {
     int res;
 
     /**
-     * Idea - do the dfs from every point, check connected that are not seen yet and are = 1.  
+     * Idea - do the dfs from every point, check connected that are not seen yet and are = 1.
      * @param grid
      * @return
      */
