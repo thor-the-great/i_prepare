@@ -127,6 +127,13 @@ public class FindKClosestElements {
         int k;
         List<Integer> closest;
 
+        arr = new int[] {1,2,3,4, 5, 7, 8, 10, 13, 18, 20, 21};
+        k = 3;
+        x = 7;
+        closest = obj.findClosestElements(arr, k, x);
+        closest.forEach(i->System.out.print(i+" ")); //1,2,3,4
+        System.out.print("\n");
+
         arr = new int[] {1,2,3,4,5};
         k = 4;
         x =3;
