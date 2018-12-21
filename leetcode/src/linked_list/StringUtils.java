@@ -33,7 +33,7 @@ public class StringUtils {
         sb.append("[");
         if (a != null) {
             for (int i = 0; i < a.size(); i++) {
-                sb.append(a.get(i));
+                sb.append("'").append(a.get(i)).append("'");
                 if (i < a.size() - 1)
                     sb.append(", ");
             }
