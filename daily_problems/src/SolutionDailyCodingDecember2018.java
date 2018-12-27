@@ -246,6 +246,74 @@ public class SolutionDailyCodingDecember2018 {
         return res;
     }
 
+    /**
+     * This problem was asked by Facebook.
+     *
+     * Given a positive integer n, find the smallest number of squared integers which sum to n.
+     *
+     * For example, given n = 13, return 2 since 13 = 32 + 22 = 9 + 4.
+     *
+     * Given n = 27, return 3 since 27 = 32 + 32 + 32 = 9 + 9 + 9.
+     *
+     * @param n
+     * @return
+     */
+    public int perfectSquares(int n){
+        //type of greedy dp approach - on every step the min num is min between previous +1.
+        int[] dp = new int[n + 1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        dp[0] = 0;
+        for (int i = 1; i <= n; i++) {
+            int k = 1;
+            while (i - k*k >= 0) {
+                dp[i] = Math.min(dp[i], dp[i -k*k] + 1);
+                k++;
+            }
+        }
+        return dp[n];
+    }
+
+    /**
+     * This problem was asked by Slack.
+     *
+     * You are given an N by M matrix of 0s and 1s. Starting from the top left corner, how many ways are there to
+     * reach the bottom right corner?
+     *
+     * You can only move right and down. 0 represents an empty space while 1 represents a wall you cannot walk through.
+     *
+     * For example, given the following matrix:
+     *
+     * [[0, 0, 1],
+     *  [0, 0, 1],
+     *  [1, 0, 0]]
+     * Return two, as there are only two ways to get to the bottom right:
+     *
+     * Right, down, down, right
+     * Down, right, down, right
+     * The top left corner and bottom right corner will always be 0.
+     * @param grid
+     * @return
+     */
+    int numOfPaths(int[][] grid) {
+        numOfPath = 0;
+        helper(grid, 0, 0);
+        return numOfPath;
+    }
+    int numOfPath = 0;
+    void helper(int[][] grid, int r, int c) {
+        if (r == grid.length - 1 && c == grid[0].length - 1) {
+            numOfPath++;
+            return;
+        }
+
+        if (r < grid.length - 1 && grid[r + 1][c] == 0) {
+            helper(grid, r + 1, c);
+        }
+        if (c < grid[0].length - 1 && grid[r][c + 1] == 0) {
+            helper(grid, r, c + 1);
+        }
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingDecember2018 obj = new SolutionDailyCodingDecember2018();
 
@@ -324,5 +392,25 @@ public class SolutionDailyCodingDecember2018 {
         List<Point> closest = obj.getKClosestPoints(points, center, 3);
         closest.forEach(p->System.out.print("[" + p.x +", " + p.y +"] "));
         System.out.print("\n");
+
+        System.out.println("--- min sum of int squares that forms a number ----");
+        System.out.println(obj.perfectSquares(12));
+        System.out.println(obj.perfectSquares(30));
+
+        System.out.println("--- number of paths in the grid ---");
+        int[][] grid;
+        grid = new int[][] {
+                {0, 0, 1},
+                {0, 0, 1},
+                {1, 0, 0}
+        };
+        System.out.println(obj.numOfPaths(grid));
+        grid = new int[][] {
+                {0, 0, 1, 0},
+                {0, 0, 0, 0},
+                {0, 0, 1, 1},
+                {1, 0, 0, 0}
+        };
+        System.out.println(obj.numOfPaths(grid));
     }
 }
