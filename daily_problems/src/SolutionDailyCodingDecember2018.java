@@ -1,10 +1,8 @@
 import diff_problems.TreeNode;
 import linked_list.ListNode;
-import linked_list.ListUtils;
 import util.Point;
 import utils.StringUtils;
 
-import javax.sound.midi.SysexMessage;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -182,8 +180,6 @@ public class SolutionDailyCodingDecember2018 {
         return -1;
     }
 
-    /*private int constantWithPreprocessing(int[] arr, int i) {
-    }*/
 
     class IndexDistance {
         int index;
@@ -314,6 +310,108 @@ public class SolutionDailyCodingDecember2018 {
         }
     }
 
+    /**
+     * This problem was asked by Facebook.
+     *
+     * Given a 32-bit integer, return the number with its bits reversed.
+     *
+     * For example, given the binary number 1111 0000 1111 0000 1111 0000 1111 0000,
+     * return 0000 1111 0000 1111 0000 1111 0000 1111.
+     *
+     * @param n
+     * @return
+     */
+    public int reverseBits(int n) {
+        int bits = 32;
+        int res = 0;
+        int shift;
+        for (int i = 0; i < bits; i++) {
+            shift = 31 - 2*i;
+            int mask = (n & (1<<i));
+            if (shift >= 0) {
+                mask <<= shift;
+            } else {
+                mask >>>= -shift;
+            }
+            res |= mask;
+        }
+        return res;
+    }
+
+    /**
+     * This problem was asked by Square.
+     *
+     * Given a list of words, return the shortest unique prefix of each word. For example, given the list:
+     *
+     * dog
+     * cat
+     * apple
+     * apricot
+     * fish
+     * Return the list:
+     *
+     * d
+     * c
+     * app
+     * apr
+     * f
+     * @param words
+     * @return
+     */
+    public String[] shortestUniquePrefix(String[] words) {
+        //idea - create trie for the set of words, for each word increment count of each letter-node.
+        //then for each word traverse the Trie, when we meet count = 1 for the first time - it's the unique prefix
+        int N = words.length;
+        String[] res = new String[N];
+        if (N == 0)
+            return res;
+        Trie root = new Trie(0);
+        for (String s : words) {
+            Trie t = root;
+            char[] chs = s.toCharArray();
+            for (int i = 0; i < chs.length; i++) {
+                int idx = chs[i] - 'a';
+                Trie n = t.next[idx];
+                if (n == null) {
+                    n = new Trie(1);
+                    t.next[idx] = n;
+                } else {
+                    n.count++;
+                }
+                t = n;
+            }
+        }
+
+        for (int j =0; j < words.length; j++) {
+            String s  = words[j];
+            Trie t = root;
+            char[] chs = s.toCharArray();
+            for (int i = 0; i < chs.length; i++) {
+                int idx = chs[i] - 'a';
+                Trie n = t.next[idx];
+                if (n.count == 1) {
+                    String p = s.substring(0, i + 1);
+                    res[j] = p;
+                    break;
+                } else {
+                    t = n;
+                }
+            }
+        }
+        return res;
+    }
+
+    class Trie {
+        Trie[] next = new Trie[26];
+        int count;
+        boolean isWord;
+
+        Trie(int c) {
+            count = c;
+            this.isWord = isWord;
+        }
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingDecember2018 obj = new SolutionDailyCodingDecember2018();
 
@@ -412,5 +510,18 @@ public class SolutionDailyCodingDecember2018 {
                 {1, 0, 0, 0}
         };
         System.out.println(obj.numOfPaths(grid));
+
+        System.out.println("--- reverse bits -----");
+        System.out.println(Integer.toBinaryString(obj.reverseBits(0b11111111111111111111111111111101)));
+        System.out.println(Integer.toBinaryString(obj.reverseBits(0b00000010100101000001111010011100)));
+
+        System.out.println("---- shortest unique prefix -----");
+        String[] words;
+        String[] prefs;
+        words = new String[] {
+                "dog", "cat", "apple", "apricot", "fish"
+        };
+        prefs = obj.shortestUniquePrefix(words);
+        Arrays.stream(prefs).forEach(p->System.out.print(p +" "));
     }
 }
