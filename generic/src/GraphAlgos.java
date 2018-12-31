@@ -1,4 +1,3 @@
-import com.sun.javafx.geom.Edge;
 import cracking.trees_graphs.DiGraph;
 import cracking.trees_graphs.SimpleGraph;
 
@@ -155,6 +154,105 @@ public class GraphAlgos {
         System.out.println("\nNo cycles detected");
     }
 
+    long[] shortestPathsDjikstra(DiGraph graph, int source) {
+        boolean[] visited = new boolean[graph.getV()];
+        long[] paths = new long[graph.getV()];
+        Arrays.fill(paths, Integer.MAX_VALUE);
+        paths[source] = 0;
+        int start = source;
+        while (!visited[start]) {
+            visited[start] = true;
+            List<DiGraph.Edge> adjEdges = graph.adjEdges(start);
+            if (!adjEdges.isEmpty()) {
+                for(DiGraph.Edge edge : adjEdges) {
+                    int adjVertex = edge.v;
+                    if (paths[adjVertex] > paths[start] + edge.weight) {
+                        paths[adjVertex] = paths[start] + edge.weight;
+                    }
+                }
+            }
+            long d = Integer.MAX_VALUE;
+            for (int i = 0; i < graph.getV(); i++) {
+                if (!visited[i] && d > paths[i]) {
+                    d = paths[i];
+                    start = i;
+                }
+            }
+        }
+        return paths;
+    }
+
+    long[] shortestPathsBellmanFord(DiGraph graph, int source) {
+        long[] paths = new long[graph.getV()];
+        Arrays.fill(paths, Integer.MAX_VALUE);
+        paths[source] = 0;
+        for (int i = 0; i < graph.getV() - 1; i++) {
+            for(DiGraph.Edge edge : graph.adjAllEdges()) {
+                int u = edge.u;
+                int v = edge.v;
+                if (paths[u] + edge.weight < paths[v])
+                    paths[v] = paths[u] + edge.weight;
+            }
+        }
+        return paths;
+    }
+
+    boolean negativeCycleDetectBellmanFord(DiGraph graph) {
+        int source = 0;
+        long[] paths = new long[graph.getV()];
+        Arrays.fill(paths, Integer.MAX_VALUE);
+        paths[source] = 0;
+        //do the BellmanFord n - 1 times
+        for (int i = 0; i < graph.getV() - 1; i++) {
+            for(DiGraph.Edge edge : graph.adjAllEdges()) {
+                int u = edge.u;
+                int v = edge.v;
+                if (paths[u] + edge.weight < paths[v])
+                    paths[v] = paths[u] + edge.weight;
+            }
+        }
+
+        for(DiGraph.Edge edge : graph.adjAllEdges()) {
+            int u = edge.u;
+            int v = edge.v;
+            if (paths[u] + edge.weight < paths[v])
+                return true;
+        }
+        return false;
+    }
+
+    long[] shortestPathsFloydWarshall(DiGraph graph, int source) {
+        long[][] dp = new long[graph.getV()][graph.getV()];
+        for (int i = 0; i < graph.getV(); i++) {
+            List<DiGraph.Edge> edges = graph.adjEdges(i);
+            for (int j = 0; j < graph.getV(); j++) {
+                if (i != j) {
+                    boolean found = false;
+                    for (DiGraph.Edge e : edges) {
+                        if (e.v == j) {
+                            dp[i][j] = e.weight;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                        dp[i][j] = Integer.MAX_VALUE;
+                }
+            }
+        }
+
+        for (int k = 0; k < graph.getV(); k++) {
+            for (int i = 0; i < graph.getV(); i++) {
+                for (int j = 0; j < graph.getV(); j++) {
+                    if (dp[i][k] + dp[k][j] < dp[i][j]) {
+                        dp[i][j] = dp[i][k] + dp[k][j];
+                    }
+                }
+            }
+        }
+        return dp[source];
+    }
+
     private void visitVertex(int v) {
         System.out.print("vertex " + v +", ");
     }
@@ -214,6 +312,70 @@ public class GraphAlgos {
         return g;
     }
 
+    private DiGraph getDiGraphWeighted1() {
+        DiGraph g = new DiGraph(6);
+        g.addEdge(0, 1, 6);
+        g.addEdge(0, 2, 2);
+        g.addEdge(2, 1, 1);
+        g.addEdge(1, 3, 1);
+        g.addEdge(1, 4, 3);
+        g.addEdge(2, 3, 4);
+        g.addEdge(2, 4, 6);
+        g.addEdge(3, 5, 4);
+        g.addEdge(3, 4, 2);
+        g.addEdge(4, 5, 1);
+        return g;
+    }
+
+    private DiGraph getDiGraphWeighted2() {
+        DiGraph g = new DiGraph(4);
+        g.addEdge(0, 1, 3);
+        g.addEdge(0, 2, 8);
+        g.addEdge(1, 3, 1);
+        g.addEdge(2, 1, 4);
+        g.addEdge(3, 0, 2);
+        g.addEdge(3, 2, -5);
+        return g;
+    }
+
+    private DiGraph getDiGraphWeightedNeg1() {
+        DiGraph g = new DiGraph(5);
+        g.addEdge(0, 1, 6);
+        g.addEdge(0, 2, 7);
+        g.addEdge(1, 2, 8);
+
+        g.addEdge(1, 3, 5);
+        g.addEdge(1, 4, -4);
+
+        g.addEdge(2, 3, -3);
+        g.addEdge(2, 4, 9);
+
+        g.addEdge(3, 1, -2);
+
+        g.addEdge(4, 0, 2);
+        g.addEdge(4, 3, 7);
+        return g;
+    }
+
+    private DiGraph getDiGraphWeightedNegCycle2() {
+        DiGraph g = new DiGraph(5);
+        g.addEdge(0, 1, 6);
+        g.addEdge(0, 2, 7);
+        g.addEdge(1, 2, 8);
+
+        g.addEdge(1, 3, -5);
+        g.addEdge(1, 4, -4);
+
+        g.addEdge(2, 3, -3);
+        g.addEdge(2, 4, 9);
+
+        g.addEdge(3, 1, -2);
+
+        g.addEdge(4, 0, 2);
+        g.addEdge(4, 3, 7);
+        return g;
+    }
+
     public static void main(String[] args) {
         GraphAlgos obj = new GraphAlgos();
         //obj.doDFS();
@@ -227,6 +389,53 @@ public class GraphAlgos {
 
         obj.detectCycleUndirGraphUF(obj.getUniGraph1());//no cycle
         obj.detectCycleUndirGraphUF(obj.getUniGraph2());//cycle
+
+        long[] paths = obj.shortestPathsDjikstra(obj.getDiGraphWeighted1(), 0);
+        System.out.print("\nShortest paths getDiGraphWeighted1 [0] : ");
+        Arrays.stream(paths).forEach(i-> System.out.print(i + " "));
+
+        paths = obj.shortestPathsBellmanFord(obj.getDiGraphWeighted1(), 0);
+        System.out.print("\nShortest paths Bellman-Ford getDiGraphWeighted1 [0] : ");
+        Arrays.stream(paths).forEach(i-> System.out.print(i + " "));
+
+        paths = obj.shortestPathsFloydWarshall(obj.getDiGraphWeighted1(), 0);
+        System.out.print("\nShortest paths Floyd Warshall getDiGraphWeighted1 [0] : ");
+        Arrays.stream(paths).forEach(i-> System.out.print(i + " "));
+
+        paths = obj.shortestPathsDjikstra(obj.getDiGraphWeighted1(), 2);
+        System.out.print("\nShortest paths getDiGraphWeighted1 [2] : ");
+        Arrays.stream(paths).forEach(i-> System.out.print(i + " "));
+
+        paths = obj.shortestPathsDjikstra(obj.getDiGraphWeightedNeg1(), 0);
+        System.out.print("\nShortest paths getDiGraphWeightedNeg1 [0] : ");
+        Arrays.stream(paths).forEach(i-> System.out.print(i + " "));
+
+        paths = obj.shortestPathsFloydWarshall(obj.getDiGraphWeightedNeg1(), 0);
+        System.out.print("\nShortest paths Floyd Warshall getDiGraphWeightedNeg1 [0] : ");
+        Arrays.stream(paths).forEach(i-> System.out.print(i + " "));
+
+        paths = obj.shortestPathsBellmanFord(obj.getDiGraphWeightedNeg1(), 0);
+        System.out.print("\nShortest paths Bellman-Ford getDiGraphWeightedNeg1 [0] : ");
+        Arrays.stream(paths).forEach(i-> System.out.print(i + " "));
+
+        paths = obj.shortestPathsDjikstra(obj.getDiGraphWeightedNeg1(), 3);
+        System.out.print("\nShortest paths getDiGraphWeightedNeg1 [3] : ");
+        Arrays.stream(paths).forEach(i-> System.out.print(i + " "));
+
+        paths = obj.shortestPathsBellmanFord(obj.getDiGraphWeightedNeg1(), 1);
+        System.out.print("\nShortest paths Bellman-Ford getDiGraphWeightedNeg1 [1] : ");
+        Arrays.stream(paths).forEach(i-> System.out.print(i + " "));
+
+        paths = obj.shortestPathsFloydWarshall(obj.getDiGraphWeighted2(), 0);
+        System.out.print("\nShortest paths Floyd Warshall getDiGraphWeighted2 [0] : ");
+        Arrays.stream(paths).forEach(i-> System.out.print(i + " "));
+
+        System.out.print("\nCycle detection Floyd Warshall getDiGraphWeightedNeg1 : " +
+                obj.negativeCycleDetectBellmanFord(obj.getDiGraphWeightedNeg1()));
+        System.out.print("\nCycle detection Floyd Warshall getDiGraphWeightedNegCycle2 : " +
+                obj.negativeCycleDetectBellmanFord(obj.getDiGraphWeighted2()));
+        System.out.print("\nCycle detection Floyd Warshall getDiGraphWeighted2 : " +
+                obj.negativeCycleDetectBellmanFord(obj.getDiGraphWeightedNegCycle2()));
     }
 }
 

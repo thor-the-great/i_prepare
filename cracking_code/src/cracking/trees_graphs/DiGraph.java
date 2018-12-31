@@ -1,6 +1,7 @@
 package cracking.trees_graphs;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -8,6 +9,7 @@ import java.util.List;
  */
 public class DiGraph {
     List<Integer>[] vertices;
+    List<Edge>[] edges;
     int E;
 
     public DiGraph(int V) {
@@ -15,18 +17,40 @@ public class DiGraph {
         for(int i = 0 ; i < V; i++) {
             vertices[i] = new ArrayList<>();
         }
+        edges = new ArrayList[V];
+        for(int i = 0 ; i < V; i++) {
+            edges[i] = new ArrayList<>();
+        }
     }
 
     public void addEdge(int v, int v2) {
+        addEdge(v, v2, 1);
+    }
+
+    public void addEdge(int v, int v2, int w) {
         checkVertexNumber(v);
         checkVertexNumber(v2);
         vertices[v].add(v2);
+        edges[v].add(new Edge(v, v2, w));
         E++;
     }
 
     public List<Integer> adj(int v) {
         checkVertexNumber(v);
         return  vertices[v];
+    }
+
+    public List<Edge> adjEdges(int v) {
+        checkVertexNumber(v);
+        return  edges[v];
+    }
+
+    public List<Edge> adjAllEdges() {
+        List<Edge> allEdges = new LinkedList<>();
+        for (int i = 0; i < getV(); i++) {
+            allEdges.addAll(edges[i]);
+        }
+        return allEdges;
     }
 
     private void checkVertexNumber(int v) {
@@ -41,6 +65,10 @@ public class DiGraph {
 
     public int getE() {
         return E;
+    }
+
+    public List<Edge>[] getEdges() {
+        return edges;
     }
 
     @Override
@@ -61,6 +89,16 @@ public class DiGraph {
             vertexCounter++;
         }
         return sb.toString();
+    }
+
+    public class Edge {
+        public int u, v;
+        public int weight;
+        Edge(int u, int v, int w) {
+            this.u = u;
+            this.v = v;
+            this.weight = w;
+        }
     }
 
     public static void main(String[] args) {
