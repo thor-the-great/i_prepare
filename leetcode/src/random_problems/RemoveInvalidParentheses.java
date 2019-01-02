@@ -14,7 +14,7 @@ public class RemoveInvalidParentheses {
             return res;
         }
         //check number of invalid pars
-        int c = 0;
+        int l = 0, r = 0;
         Stack<Integer> stack = new Stack();
         for (char ch : s.toCharArray()) {
             int code = charToCode(ch);
@@ -24,17 +24,17 @@ public class RemoveInvalidParentheses {
                 continue;
             } else {
                 if (stack.isEmpty()) {
-                    c++;
+                    r++;
                     continue;
                 }
                 int prev = stack.pop();
                 if (prev != 1) {
-                    c++;
+                    r++;
                 }
             }
         }
-        c += stack.size();
-        System.out.println("count of invalid " + c);
+        l += stack.size();
+        System.out.println("count of invalid: left " + l + ", right " + r);
         return res;
     }
 
