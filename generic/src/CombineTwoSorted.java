@@ -1,4 +1,3 @@
-package problems;
 
 public class CombineTwoSorted {
 

@@ -60,10 +60,12 @@ public class ConnectionPoolLock {
     public static void main(String[] args) {
         ConnectionPoolLock pool = new ConnectionPoolLock(8, 4);
         Random rand = new Random();
-        int numOfThreads = 16;
+        int numOfTasks = 20;
+        int numOfThreads = Runtime.getRuntime().availableProcessors() + 1;
+        //int numOfThreads = 10;
         ExecutorService executor = Executors.newFixedThreadPool(numOfThreads);
         long start = System.currentTimeMillis();
-        for (int i = 0; i < numOfThreads; i++) {
+        for (int i = 0; i < numOfTasks; i++) {
             Runnable r = () -> {
                 //System.out.println("requesting ");
                 Connection conn = pool.getConnection();

@@ -1,4 +1,5 @@
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -6,7 +7,13 @@ import java.util.concurrent.Executors;
 public class ExecutorPools {
 
     void testPool(int n) {
-        Executor exec = Executors.newFixedThreadPool(4);
+        //Executor exec = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
+        //int numOfThread = 1;
+        int numOfThread = Runtime.getRuntime().availableProcessors() + 1;
+        //int numOfThread = n;
+        Executor exec = Executors.newFixedThreadPool(numOfThread);
+        CountDownLatch endCounter = new CountDownLatch(n);
+        long start = System.currentTimeMillis();
         for (int i =0; i < n; i++) {
             int finalI = i;
             Runnable run = ()-> {
@@ -18,10 +25,19 @@ public class ExecutorPools {
                         String b = s.substring(0, l + 1);
                     }
                 }
-                System.out.println("Done "  + finalI);
+                //System.out.println("Done "  + finalI);
+                endCounter.countDown();
             };
             exec.execute(run);
         }
+
+        try {
+            endCounter.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        long end = System.currentTimeMillis() - start;
+        System.out.println("Overall time: " + end);
         ((ExecutorService) exec).shutdown();
     }
 

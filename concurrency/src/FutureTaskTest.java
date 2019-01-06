@@ -2,7 +2,7 @@ import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
-public class FutureTask {
+public class FutureTaskTest {
 
     java.util.concurrent.FutureTask futureTask = new java.util.concurrent.FutureTask((Callable) () -> {
         Random rand = new Random();
@@ -36,7 +36,7 @@ public class FutureTask {
     }
 
     public static void main(String[] args) {
-        FutureTask obj = new FutureTask();
+        FutureTaskTest obj = new FutureTaskTest();
         obj.startTestTask();
         obj.doOtherThing();
     }

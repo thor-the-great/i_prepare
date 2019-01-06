@@ -29,7 +29,7 @@ public class Memoizer {
         } else {
             int p1 = getCached(i - 1);
             int p2 = getCached(i - 2);
-            java.util.concurrent.FutureTask ft = new java.util.concurrent.FutureTask(() -> computable.compute(i, p1, p2));
+            FutureTask ft = new FutureTask(() -> computable.compute(i, p1, p2));
             map.putIfAbsent(i, ft);
             future = ft;
             ft.run();
