@@ -197,6 +197,32 @@ public class TreeTraversalAlgos {
         }
     }
 
+    public void postOrderTraversalOnStack2(BSTNode root) {
+        Stack<BSTNode> stack = new Stack<>();
+        BSTNode c = root;
+        while (c!= null) {
+            stack.push(c);
+            stack.push(c);
+            c = c.left;
+        }
+
+        while(!stack.isEmpty()) {
+            while (c!= null) {
+                stack.push(c);
+                stack.push(c);
+                c = c.left;
+            }
+
+            c = stack.pop();
+            if (!stack.isEmpty() && stack.peek() == c) {
+                c = c.right;
+            } else {
+                visitNode(c);
+                c = null;
+            }
+        }
+    }
+
     private void visitNode(BSTNode node) {
         System.out.print(node + ", ");
     }
@@ -319,6 +345,9 @@ public class TreeTraversalAlgos {
 
         System.out.println("\nPost order traversal one stack double push, tree 3");
         obj.postOrderTraversalOnStack(root3);
+
+        System.out.println("\nPost order traversal one stack double push, tree 3, test");
+        obj.postOrderTraversalOnStack2(root3);
         /*
         System.out.println("\nPost-order traversal iterative tree 1: ");
         //obj.postOrderTraversalIterative(root);
