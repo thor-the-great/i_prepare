@@ -29,16 +29,18 @@ public class WordLadder {
         int res = Integer.MAX_VALUE;
         Queue<String> q = new LinkedList();
         q.add(beginWord);
+        int minSoFar;
+        char[] wordChar;
         while (!q.isEmpty()) {
             String w = q.poll();
-            int minSoFar = m.get(w) + 1;
+            minSoFar = m.get(w) + 1;
             if (minSoFar > res)
                 break;
             for (int i = 0; i < w.length(); i++) {
-                StringBuilder wSB = new StringBuilder(w);
+                wordChar = w.toCharArray();
                 for (char ch = 'a'; ch <= 'z'; ch++) {
-                    wSB.setCharAt(i, ch);
-                    String transWord = wSB.toString();
+                    wordChar[i] = ch;
+                    String transWord = new String(wordChar);
                     if (m.containsKey(transWord)) {
                         int steps = m.get(transWord);
                         if (steps < minSoFar)
@@ -50,7 +52,7 @@ public class WordLadder {
                         } else;
                         if (transWord.equals(endWord)) {
                             res = Math.min(res, minSoFar);
-                            continue;
+                            break;
                         }
                     }
                 }
