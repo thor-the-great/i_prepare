@@ -81,10 +81,10 @@ public class SolutionDailyCodingJanuary2019 {
      * @param entries
      * @return
      */
-    int[] busiestTime(List<int[]> entries) {
+    List<int[]> busiestTime(List<int[]> entries) {
         //each entry is in form [time, numOfPeople, type]
         //type is 1 - enter, 2 - exit
-        int[] res = new int[] {-1, -1};
+        List<int[]> res = new LinkedList();
         List<int[]> sortedIntervals = new ArrayList<>();
         for (int[] entry : entries) {
             int idx = entry[1];
@@ -96,14 +96,18 @@ public class SolutionDailyCodingJanuary2019 {
         sortedIntervals.sort(Comparator.comparingInt(e->e[0]));
         int max = 0;
         int numOfPeople = 0;
+        int[] oneRes = new int[]{-1, -1};
         for (int[] e : sortedIntervals) {
             if (max == numOfPeople && e[1] < 0) {
-                res[1] = e[0];
+                oneRes[1] = e[0];
+                res.add(Arrays.copyOf(oneRes, oneRes.length));
             }
             numOfPeople += e[1];
             if (numOfPeople >= max) {
+                if (numOfPeople > max)
+                    res.clear();
                 max = numOfPeople;
-                res[0] = e[0];
+                oneRes[0] = e[0];
             }
         }
         return res;
@@ -135,7 +139,9 @@ public class SolutionDailyCodingJanuary2019 {
         entries.add(new int[] {40, 5, 2});
         entries.add(new int[] {45, 3, 2});
 
-        int[] time = obj.busiestTime(entries);
-        System.out.println("[ " + time[0] + ", " + time[1] + " ]");
+        List<int[]> time = obj.busiestTime(entries);
+        for (int[] t : time) {
+            System.out.println("[" + t[0] + ", " + t[1] + "] , ");
+        }
     }
 }
