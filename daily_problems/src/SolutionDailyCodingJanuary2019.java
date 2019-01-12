@@ -5,6 +5,7 @@ import utils.StringUtils;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.function.DoubleBinaryOperator;
 import java.util.stream.IntStream;
 
 public class SolutionDailyCodingJanuary2019 {
@@ -113,6 +114,61 @@ public class SolutionDailyCodingJanuary2019 {
         return res;
     }
 
+    /**
+     * This problem was asked by Google.
+     *
+     * You are given a starting state start, a list of transition probabilities for a Markov chain, and a number of
+     * steps num_steps. Run the Markov chain starting from start for num_steps and compute the number of times we
+     * visited each state.
+     *
+     * For example, given the starting state a, number of steps 5000, and the following transition probabilities:
+     *
+     * [
+     *   ('a', 'a', 0.9),
+     *   ('a', 'b', 0.075),
+     *   ('a', 'c', 0.025),
+     *   ('b', 'a', 0.15),
+     *   ('b', 'b', 0.8),
+     *   ('b', 'c', 0.05),
+     *   ('c', 'a', 0.25),
+     *   ('c', 'b', 0.25),
+     *   ('c', 'c', 0.5)
+     * ]
+     * One instance of running this Markov chain might produce { 'a': 3012, 'b': 1656, 'c': 332 }.
+     */
+    public void calculateMarkovState() {
+        int num = 3;
+        double[][] stateTrans = new double[][] {
+                {0.9,   0.075,  0.025},
+                {0.15,  0.8,    0.05},
+                {0.25,  0.25,   0.5}
+        };
+        double[] initState = new double[] {
+                1.0, 0.0, 0.0
+        };
+        Map<Integer, Double> c = new HashMap<>();
+        for (int i = 0; i < 5000; i++) {
+            initState = nextState(initState, stateTrans);
+            for (int j =0; j < initState.length; j++) {
+                c.put(j, c.getOrDefault(j, 0.0) + initState[j]);
+            }
+        }
+        for(int i =0; i< initState.length; i++) {
+            System.out.println(i + " = " + Math.floor(c.get(i)) +", ");
+        }
+    }
+
+    private double[] nextState(double[] state, double[][] transition) {
+        double[] next = new double[state.length];
+        for (int c = 0; c < state.length; c++) {
+            double el = 0;
+            for (int cc = 0; cc < state.length; cc++) {
+                el += transition[cc][c] * state[cc];
+            }
+            next[c] = el;
+        }
+        return next;
+    }
 
     public static void main(String[] args) {
         SolutionDailyCodingJanuary2019 obj = new SolutionDailyCodingJanuary2019();
@@ -143,5 +199,8 @@ public class SolutionDailyCodingJanuary2019 {
         for (int[] t : time) {
             System.out.println("[" + t[0] + ", " + t[1] + "] , ");
         }
+
+        System.out.println("--- calculate markov state ----");
+        obj.calculateMarkovState();
     }
 }
