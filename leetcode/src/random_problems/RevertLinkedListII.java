@@ -1,6 +1,7 @@
 package random_problems;
 
 import linked_list.ListNode;
+import linked_list.StringUtils;
 
 public class RevertLinkedListII {
 
@@ -15,7 +16,7 @@ public class RevertLinkedListII {
         }
         i = 1;
         ListNode mNode = head;
-        ListNode prevMNode = null;
+        ListNode prevMNode = f;
         while (i < m) {
             prevMNode = mNode;
             mNode = mNode.next;
@@ -38,6 +39,11 @@ public class RevertLinkedListII {
     public static void main(String[] args) {
         RevertLinkedListII obj = new RevertLinkedListII();
         ListNode l = new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(4, new ListNode(5)))));
-        obj.reverseBetween(l ,2, 4);
+        l = obj.reverseBetween(l ,2, 4);
+        System.out.println(StringUtils.singlyListNodeToString(l));
+
+        l = new ListNode(3, new ListNode(5 ));
+        l = obj.reverseBetween(l ,1, 2);
+        System.out.println(StringUtils.singlyListNodeToString(l));
     }
 }
