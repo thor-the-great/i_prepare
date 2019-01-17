@@ -1,5 +1,7 @@
 import diff_problems.TreeNode;
 import linked_list.ListNode;
+import path.google.TrappedRainWater;
+import trees.TreeUtils;
 import util.Point;
 import utils.StringUtils;
 
@@ -170,6 +172,127 @@ public class SolutionDailyCodingJanuary2019 {
         return next;
     }
 
+    /**
+     * This problem was asked by Google.
+     *
+     * Given the sequence of keys visited by a postorder traversal of a binary search tree, reconstruct the tree.
+     *
+     * For example, given the sequence 2, 4, 3, 8, 7, 5, you should construct the following tree:
+     *
+     *     5
+     *    / \
+     *   3   7
+     *  / \   \
+     * 2   4   8
+     * @param postorder
+     * @return
+     */
+    TreeNode constructTreeFromPostorder(int[] postorder) {
+        //return constructTreeFromPostorderScanSlow(postorder);
+        return constructTreeFromPostorderIntervalsFast(postorder);
+    }
+    class PostOrderIndex {
+        int idx;
+        PostOrderIndex(int i) {
+            idx = i;
+        }
+    }
+    TreeNode constructTreeFromPostorderIntervalsFast(int[] postorder) {
+        return helperIntervals(Integer.MIN_VALUE, Integer.MAX_VALUE, postorder, new PostOrderIndex(postorder.length - 1));
+    }
+
+    TreeNode helperIntervals(int min, int max, int[] postorder, PostOrderIndex idx) {
+        if (idx.idx < 0)
+            return null;
+        TreeNode node = null;
+        int val = postorder[idx.idx];
+        if (val > min && val < max) {
+            node = new TreeNode(val);
+            idx.idx -= 1;
+            node.right = helperIntervals(val, max, postorder, idx);
+            node.left = helperIntervals(min, val, postorder, idx);
+        }
+        return node;
+    }
+
+    TreeNode constructTreeFromPostorderScanSlow(int[] postorder) {
+        TreeNode root = helper(postorder, 0, postorder.length - 1);
+        return root;
+    }
+
+    TreeNode helper(int[] postorder, int start, int end) {
+        if (start == end)
+            return new TreeNode(postorder[start]);
+        else if (start > end)
+            return null;
+        int rootVal = postorder[end];
+        TreeNode root = new TreeNode(rootVal);
+        int i = end - 1;
+        while (i >= start) {
+            if (postorder[i] < rootVal) {
+                break;
+            }
+            i--;
+        }
+        root.left = helper(postorder, start, i);
+        root.right = helper(postorder, i + 1, end - 1);
+        return root;
+    }
+
+    /**
+     * This problem was asked by Google.
+     *
+     * Given a stack of N elements, interleave the first half of the stack with the second half reversed using only one
+     * other queue. This should be done in-place.
+     *
+     * Recall that you can only push or pop from a stack, and enqueue or dequeue from a queue.
+     *
+     * For example, if the stack is [1, 2, 3, 4, 5], it should become [1, 5, 2, 4, 3]. If the stack is [1, 2, 3, 4],
+     * it should become [1, 4, 2, 3].
+     *
+     * Hint: Try working backwards from the end state.
+     */
+    public void interleaveStackWithReversedHalf(Stack<Integer> stack) {
+        //idea - just borengly put elements back and forth
+        Queue<Integer> q = new LinkedList<>();
+        int N = stack.size();
+        boolean isEven = N % 2 == 0;
+        stackToQueue(stack, q, N);
+        //here for odd must be less, so keep it
+        queueToStack(q, stack, N/ 2);
+
+        stackToQueue(stack, q, stack.size());
+        //here must be 1 more for odd
+        queueToStack(q, stack, isEven ? N/2 : 1 + (N/2));
+
+        stackToQueue(stack, q, stack.size());
+        queueToStack(q, stack, N/2);
+        //final step - combine. Small catch for odd num of elements
+        int i = isEven ? N/2 : 1 + (N/2);
+        while (i > 0) {
+            q.add(q.poll());
+            if (!stack.isEmpty()) {
+                q.add(stack.pop());
+            }
+            i--;
+        }
+        queueToStack(q, stack, N);
+    }
+
+    void stackToQueue(Stack<Integer> s, Queue<Integer> q, int i) {
+        while (i > 0) {
+            q.add(s.pop());
+            i--;
+        }
+    }
+
+    void queueToStack(Queue<Integer> q, Stack<Integer> s, int i) {
+        while (i > 0) {
+            s.push(q.poll());
+            i--;
+        }
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingJanuary2019 obj = new SolutionDailyCodingJanuary2019();
 
@@ -202,5 +325,48 @@ public class SolutionDailyCodingJanuary2019 {
 
         System.out.println("--- calculate markov state ----");
         obj.calculateMarkovState();
+
+        System.out.println("--- construct binary search tree from postorder traversal ---");
+        TreeNode bst = obj.constructTreeFromPostorder(new int[] {2, 4, 3, 8, 7, 5});
+        System.out.println(TreeUtils.binaryTreeToString(bst));
+        /**
+         *      10
+         *    /   \
+         *   5     40
+         *  /  \      \
+         * 1    7      50
+         */
+        bst = obj.constructTreeFromPostorder(new int[] {1, 7, 5, 50, 40, 10});
+        System.out.println(TreeUtils.binaryTreeToString(bst));
+        /**
+         *                25
+         *              /     \
+         *          15          50
+         *       /    \        /    \
+         *     10      22    35      70
+         *    / \     / \    / \     / \
+         *  4   12   18 24  31  44  66  90
+         */
+        bst = obj.constructTreeFromPostorder(new int[] {4, 12, 10, 18, 24, 22, 15, 31, 44, 35, 66, 90, 70, 50, 25});
+        System.out.println(TreeUtils.binaryTreeToString(bst));
+
+        System.out.println("--- interleave the first half of the stack with the second half reversed ---");
+        Stack<Integer> stack = new Stack<>();
+        IntStream.range(1, 5).forEach(i->stack.push(i));
+        System.out.println("Initial stack state " + stack);
+        obj.interleaveStackWithReversedHalf(stack);
+        System.out.println("Interleaved stack " + stack);
+
+        stack.clear();
+        IntStream.range(1, 6).forEach(i->stack.push(i));
+        System.out.println("Initial stack state " + stack);
+        obj.interleaveStackWithReversedHalf(stack);
+        System.out.println("Interleaved stack " + stack);
+
+        stack.clear();
+        IntStream.range(1, 10).forEach(i->stack.push(i));
+        System.out.println("Initial stack state " + stack);
+        obj.interleaveStackWithReversedHalf(stack);
+        System.out.println("Interleaved stack " + stack);
     }
 }
