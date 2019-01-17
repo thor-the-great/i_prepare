@@ -223,6 +223,22 @@ public class TreeTraversalAlgos {
         }
     }
 
+    public List<Integer> postorderTraversalIterativeStackAddToListHead(BSTNode root) {
+        Stack<BSTNode> s = new Stack();
+        if (root != null)
+            s.push(root);
+        List<Integer> res = new ArrayList();
+        while (!s.isEmpty()) {
+            BSTNode n = s.pop();
+            res.add(0, n.val);
+            if (n.left != null)
+                s.push(n.left);
+            if (n.right != null)
+                s.push(n.right);
+        }
+        return res;
+    }
+
     private void visitNode(BSTNode node) {
         System.out.print(node + ", ");
     }
