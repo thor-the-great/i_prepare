@@ -11,7 +11,7 @@ public class GraphAlgos {
         //do the DFS
         int startVertex = 0;
         boolean[] visited = new boolean[g.getV()];
-        Stack<Integer> stack = new Stack();
+        Stack<Integer> stack = new Stack<>();
         stack.push(startVertex);
         while(!stack.isEmpty()) {
             int v = stack.pop();
@@ -254,7 +254,7 @@ public class GraphAlgos {
         for (int k = 0; k < graph.getV(); k++) {
             for (int i = 0; i < graph.getV(); i++) {
                 for (int j = 0; j < graph.getV(); j++) {
-                    if (dp[i][k] + dp[k][j] < dp[i][j]) {
+                    if (dp[i][j] > dp[i][k] + dp[k][j]) {
                         dp[i][j] = dp[i][k] + dp[k][j];
                     }
                 }

@@ -1,13 +1,9 @@
+import cracking.trees_graphs.DiGraph;
 import diff_problems.TreeNode;
-import linked_list.ListNode;
-import path.google.TrappedRainWater;
 import trees.TreeUtils;
-import util.Point;
 import utils.StringUtils;
 
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.function.DoubleBinaryOperator;
 import java.util.stream.IntStream;
 
 public class SolutionDailyCodingJanuary2019 {
@@ -293,6 +289,50 @@ public class SolutionDailyCodingJanuary2019 {
         }
     }
 
+    /**
+     * A graph is minimally-connected if it is connected and there is no edge that can be removed while still leaving
+     * the graph connected. For example, any binary tree is minimally-connected.
+     *
+     * Given an undirected graph, check if the graph is minimally-connected. You can choose to represent the graph as
+     * either an adjacency matrix or adjacency list.
+     *
+     * @param g
+     * @return
+     */
+    int minGraphEdges = 0;
+    boolean checkGraphMinConnected(DiGraph g) {
+        //check for cycles, count edges at the same time. Idea is following - in minimal graph there must be num of
+        //edges = num of vertexes - 1. If there are no cycles we just count edges and compare. Check cycles via DFS
+        Set<Integer> visited = new HashSet<>();
+        Set<Integer> recursionStack = new HashSet<>();
+        minGraphEdges = 0;
+        if (checkCycle(g, 0, visited, recursionStack)) {
+           return false;
+        } else {
+            return minGraphEdges == g.getV() - 1;
+        }
+    }
+
+    private boolean checkCycle(DiGraph g, int v, Set<Integer> visited, Set<Integer> recursionStack) {
+        if (recursionStack.contains(v))
+            return true;
+        if (visited.contains(v))
+            return false;
+
+        visited.add(v);
+        recursionStack.add(v);
+        List<DiGraph.Edge> adjList = g.adjEdges(v);
+        if (!adjList.isEmpty()) {
+            for (DiGraph.Edge e: adjList ) {
+                minGraphEdges++;
+                if (checkCycle(g, e.v, visited, recursionStack))
+                    return true;
+            }
+        }
+        recursionStack.remove(v);
+        return false;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingJanuary2019 obj = new SolutionDailyCodingJanuary2019();
 
@@ -368,5 +408,29 @@ public class SolutionDailyCodingJanuary2019 {
         System.out.println("Initial stack state " + stack);
         obj.interleaveStackWithReversedHalf(stack);
         System.out.println("Interleaved stack " + stack);
+
+        System.out.println("--- given undirected graph check if it's minimally-connected ---");
+        DiGraph g = new DiGraph(5);
+        g.addEdge(0, 1);
+        g.addEdge(0, 4);
+        g.addEdge(1, 2);
+        g.addEdge(1, 3);
+        System.out.println(obj.checkGraphMinConnected(g));//true
+
+        g = new DiGraph(5);
+        g.addEdge(0, 1);
+        g.addEdge(0, 4);
+        g.addEdge(1, 2);
+        g.addEdge(3, 0);
+        g.addEdge(1, 3);
+        System.out.println(obj.checkGraphMinConnected(g));//false
+
+        g = new DiGraph(7);
+        g.addEdge(0, 1);
+        g.addEdge(0, 4);
+        g.addEdge(1, 2);
+        g.addEdge(1, 3);
+        g.addEdge(5, 6);
+        System.out.println(obj.checkGraphMinConnected(g));//false
     }
 }
