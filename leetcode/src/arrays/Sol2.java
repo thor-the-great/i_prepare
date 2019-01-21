@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * https://leetcode.com/explore/learn/card/array-and-string/
  */
-public class Solution {
+public class Sol2 {
 
     /**
      * https://leetcode.com/explore/learn/card/array-and-string/201/introduction-to-array/1144/
@@ -789,7 +789,7 @@ public class Solution {
     }
 
     public static void main(String[] args) {
-        Solution obj = new Solution();
+        Sol2 obj = new Sol2();
 
         obj.getNext("ababcaabc");
 

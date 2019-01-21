@@ -412,7 +412,7 @@ public class SolutionDailyCodingSeptember2018 {
         //solution has - vertex as index, color as value
         int[] solution = new int[g.length];
         boolean res = color(g, 0, solution, k);
-        System.out.print("Solution : [ ");
+        System.out.print("Sol2 : [ ");
         for (int i = 0; i < solution.length; i++) {
             System.out.print(i + "=" + solution[i]+", ");
         }

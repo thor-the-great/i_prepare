@@ -1,5 +1,5 @@
-import com.sun.javafx.image.IntPixelGetter;
 import cracking.trees_graphs.DiGraph;
+import graphs.GraphUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +18,7 @@ public class ShortestPathsFromTopBottom {
             dp[i][i] = 0;
             List<DiGraph.Edge> adjList = g.adjEdges(i);
             for (DiGraph.Edge e : adjList) {
-                int v = e.v;
+                int v = e.to;
                 dp[i][v] = e.weight;
             }
         }

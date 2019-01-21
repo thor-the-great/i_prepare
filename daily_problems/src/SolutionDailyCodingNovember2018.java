@@ -321,8 +321,8 @@ public class SolutionDailyCodingNovember2018 {
      * Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree. Assume that each
      * node in the tree also has a pointer to its parent.
      *
-     * According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes v
-     * and was the lowest node in T that has both v and w as descendants (where we allow a node to be a descendant
+     * According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes to
+     * and was the lowest node in T that has both to and w as descendants (where we allow a node to be a descendant
      * of itself).”
      *
      * @param n1

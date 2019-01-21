@@ -1,112 +1,142 @@
-import path.linkedin.MaxPointsOnLine;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.IntStream;
 
-public class  MyHashMap <K, V> {
-    int size = 0;
-    //int cap = 0;
-    int load = 0;
-    List<Entity>[] values;
-    double loadFactor;
+class MyHashMap {
 
-    MyHashMap () {
-        this(8);
+    double load = 0.75;
+    int capacity = 32;
+    int tsh;
+    List<Entry>[] values;
+
+    /**
+     * Initialize your data structure here.
+     */
+    public MyHashMap() {
+        tsh = (int) (capacity * load);
+        values = new ArrayList[capacity];
     }
 
-    MyHashMap (int capacity) {
-        values = new LinkedList[capacity];
-        load = 0;
-        loadFactor = 0.75;
-    }
-
-    void put(K key, V val) {
-
-        if (((double)load/values.length) >= loadFactor) {
-            rehash();
-        }
-
-        int idx = getIdx(key, values.length);
-        if (values[idx] == null) {
-            values[idx] = new LinkedList<>();
-            values[idx].add(new Entity(key, val));
-            load++;
-            size++;
-        } else {
-            List<Entity> vals = values[idx];
-            boolean found = false;
-            for (int i =0; i < vals.size(); i++) {
-                Entity e = vals.get(i);
-                if (e.key.equals(key)) {
-                    e.val = val;
+    /**
+     * value will always be non-negative.
+     */
+    public void put(int key, int value) {
+        int hash = hashKey(key);
+        boolean found = false;
+        List<Entry> list = values[hash];
+        if (list != null && !list.isEmpty()) {
+            for (Entry e : list) {
+                if (e.key == key) {
+                    e.val = value;
                     found = true;
-                    break;
                 }
             }
-            if (!found) {
-                vals.add(new Entity(key, val));
-                size++;
+        }
+        if (!found) {
+            if (tsh == 0) {
+                rebuild();
+                hash = hashKey(key);
+                list = values[hash];
             }
+            Entry e = new Entry(key, value);
+            if (list != null) {
+                list.add(e);
+            } else {
+                list = new ArrayList();
+                list.add(e);
+                values[hash] = list;
+            }
+            tsh--;
         }
     }
 
-    private int getIdx(K key, int mod) {
-        int hash = key.hashCode();
-        return hash % mod;
-    }
-
-    private void rehash() {
-        int newCap = values.length * 2;
-        List<Entity>[] tmp = new LinkedList[newCap];
-        for (int i =0; i < values.length; i++) {
-            if (values[i] == null)
-                continue;
-            List<Entity> entList = values[i];
-            for (Entity e : entList) {
-                int newIdx = getIdx(e.key, newCap);
-                if (tmp[newIdx] == null) {
-                    tmp[newIdx] = new LinkedList<>();
+    private void rebuild() {
+        capacity *= 2;
+        tsh = (int) (capacity * load);
+        List<Entry>[] tmp = new ArrayList[capacity];
+        for (List<Entry> lE : values) {
+            if (lE != null && !lE.isEmpty()) {
+                for (Entry e : lE) {
+                    int newHash = hashKey(e.key);
+                    List<Entry> newLE = tmp[newHash];
+                    if (newLE == null) {
+                        newLE = new ArrayList();
+                        tmp[newHash] = newLE;
+                    }
+                    newLE.add(e);
+                    tsh--;
                 }
-                tmp[newIdx].add(e);
             }
         }
         values = tmp;
     }
 
-    V get(K key) {
-        int idx = getIdx(key, values.length);
-        if (values[idx] == null)
-            return null;
-        List<Entity> vals = values[idx];
-        for (int i =0; i < vals.size(); i++) {
-            Entity e = vals.get(i);
-            if (e.key.equals(key)) {
+    /**
+     * Returns the value to which the specified key is mapped, or -1 if this map contains no mapping for the key
+     */
+    public int get(int key) {
+        int hash = hashKey(key);
+        List<Entry> list = values[hash];
+        if (list == null || list.isEmpty())
+            return -1;
+        for (Entry e : list) {
+            if (e.key == key)
                 return e.val;
+        }
+        return -1;
+    }
+
+    /**
+     * Removes the mapping of the specified value key if this map contains a mapping for the key
+     */
+    public void remove(int key) {
+        int hash = hashKey(key);
+        List<Entry> list = values[hash];
+        if (list == null || list.isEmpty())
+            return;
+        int idx = -1;
+        for (int i = 0; i < list.size(); i++) {
+            Entry e = list.get(i);
+            if (e.key == key) {
+                idx = i;
+                break;
             }
         }
-        return null;
-    }
-
-    int size() {
-        return size;
-    }
-
-    class Entity  {
-        K key;
-        V val;
-        Entity (K key, V val) {
-            this.key = key;
-            this.val = val;
+        if (idx != -1) {
+            list.remove(idx);
+            tsh++;
         }
+    }
+
+    int hashKey(int key) {
+        return key % capacity;
     }
 
     public static void main(String[] args) {
-        MyHashMap<Integer, String> m = new MyHashMap();
-        IntStream.range(0, 16).forEach(i->m.put(i, Integer.toString(i)));
-        System.out.println(m.size());
-        IntStream.range(0, 20).forEach(i->System.out.print(m.get(i) + ", "));
-        System.out.println(m.size());
+        MyHashMap myMap = new MyHashMap();
+        myMap.put(1, 1);
+        myMap.put(2, 2);
+        myMap.get(1);
+        myMap.get(3);
     }
 }
+
+class Entry {
+    int key;
+    int val;
+
+    Entry(int key, int val) {
+        this.key = key;
+        this.val = val;
+    }
+}
+/**
+ * Your MyHashMap object will be instantiated and called as such:
+ * MyHashMap obj = new MyHashMap();
+ * obj.put(key,value);
+ * int param_2 = obj.get(key);
+ * obj.remove(key);
+ */
+
+
+
+

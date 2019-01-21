@@ -1,3 +1,5 @@
+package graphs;
+
 import cracking.trees_graphs.DiGraph;
 import cracking.trees_graphs.SimpleGraph;
 
@@ -40,7 +42,7 @@ public class GraphAlgos {
             visitVertex(v);
             visited[v] = true;
             if (g.adj(v) != null && !g.adj(v).isEmpty()) {
-                //for(int adjV : g.adj(v))
+                //for(int adjV : g.adj(to))
                 for (int i = g.adj(v).size() - 1; i >= 0; i--) {
                     int adjV = g.adj(v).get(i);
                     doDFSRecursiveHelper(g, visited, adjV);
@@ -81,7 +83,7 @@ public class GraphAlgos {
             List<DiGraph.Edge> list = g.adjEdges(i);
             for(DiGraph.Edge edge : list)
             {
-                indegree[edge.v]++;
+                indegree[edge.to]++;
             }
         }
         Stack<Integer> stack = new Stack<>();
@@ -97,7 +99,7 @@ public class GraphAlgos {
 
     void doTopoRecursiveHelper(DiGraph g, boolean[] visited, int v, Stack<Integer> stack) {
         if (!visited[v]) {
-            //visitVertex(v);
+            //visitVertex(to);
             visited[v] = true;
             if (g.adj(v) != null && !g.adj(v).isEmpty()) {
                 for (int i = g.adj(v).size() - 1; i >= 0; i--) {
@@ -175,7 +177,7 @@ public class GraphAlgos {
             List<DiGraph.Edge> adjEdges = graph.adjEdges(start);
             if (!adjEdges.isEmpty()) {
                 for(DiGraph.Edge edge : adjEdges) {
-                    int adjVertex = edge.v;
+                    int adjVertex = edge.to;
                     if (paths[adjVertex] > paths[start] + edge.weight) {
                         paths[adjVertex] = paths[start] + edge.weight;
                     }
@@ -198,8 +200,8 @@ public class GraphAlgos {
         paths[source] = 0;
         for (int i = 0; i < graph.getV() - 1; i++) {
             for(DiGraph.Edge edge : graph.adjAllEdges()) {
-                int u = edge.u;
-                int v = edge.v;
+                int u = edge.from;
+                int v = edge.to;
                 if (paths[u] + edge.weight < paths[v])
                     paths[v] = paths[u] + edge.weight;
             }
@@ -215,16 +217,16 @@ public class GraphAlgos {
         //do the BellmanFord n - 1 times
         for (int i = 0; i < graph.getV() - 1; i++) {
             for(DiGraph.Edge edge : graph.adjAllEdges()) {
-                int u = edge.u;
-                int v = edge.v;
+                int u = edge.from;
+                int v = edge.to;
                 if (paths[u] + edge.weight < paths[v])
                     paths[v] = paths[u] + edge.weight;
             }
         }
 
         for(DiGraph.Edge edge : graph.adjAllEdges()) {
-            int u = edge.u;
-            int v = edge.v;
+            int u = edge.from;
+            int v = edge.to;
             if (paths[u] + edge.weight < paths[v])
                 return true;
         }
@@ -239,7 +241,7 @@ public class GraphAlgos {
                 if (i != j) {
                     boolean found = false;
                     for (DiGraph.Edge e : edges) {
-                        if (e.v == j) {
+                        if (e.to == j) {
                             dp[i][j] = e.weight;
                             found = true;
                             break;

@@ -325,7 +325,7 @@ public class SolutionDailyCodingJanuary2019 {
         if (!adjList.isEmpty()) {
             for (DiGraph.Edge e: adjList ) {
                 minGraphEdges++;
-                if (checkCycle(g, e.v, visited, recursionStack))
+                if (checkCycle(g, e.to, visited, recursionStack))
                     return true;
             }
         }
