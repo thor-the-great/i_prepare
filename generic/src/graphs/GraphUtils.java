@@ -90,4 +90,16 @@ public class GraphUtils {
         g.addEdge(4, 3, 7);
         return g;
     }
+
+    public static DiGraph getTopoOrderGraph1() {
+        DiGraph g = new DiGraph(6);
+        g.addEdge(2, 3);
+        g.addEdge(3, 1);
+        g.addEdge(4, 0);
+        g.addEdge(4, 1);
+        g.addEdge(5, 0);
+        g.addEdge(5, 2);
+
+        return g;
+    }
 }

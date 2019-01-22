@@ -72,31 +72,6 @@ public class GraphAlgos {
         }
     }
 
-    void doTopological(DiGraph g) {
-        System.out.println("Topological sort : " + g.toString());
-        //do the DFS
-        boolean[] visited = new boolean[g.getV()];
-
-        int indegree[] = new int[g.getV()];
-        for(int i = 0; i < g.getV(); i++)
-        {
-            List<DiGraph.Edge> list = g.adjEdges(i);
-            for(DiGraph.Edge edge : list)
-            {
-                indegree[edge.to]++;
-            }
-        }
-        Stack<Integer> stack = new Stack<>();
-        for (int i = 0; i < indegree.length; i++) {
-            if (indegree[i] == 0)
-                doTopoRecursiveHelper(g, visited, i, stack);
-        }
-        System.out.print("topo sorted: ");
-        while (!stack.isEmpty()) {
-            System.out.print(stack.pop() + ", ");
-        }
-    }
-
     void doTopoRecursiveHelper(DiGraph g, boolean[] visited, int v, Stack<Integer> stack) {
         if (!visited[v]) {
             //visitVertex(to);
@@ -403,7 +378,6 @@ public class GraphAlgos {
         //obj.doDFS();
         //obj.doBFS();
         obj.doDFSRecursive();
-        obj.doTopological(obj.getDiGraph4());
 
         obj.detectCycleDiGraphDFS(obj.getDiGraph1());
         obj.detectCycleDiGraphDFS(obj.getDiGraph2(), 4);
