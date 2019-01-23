@@ -1,3 +1,5 @@
+package graphs;
+
 import cracking.trees_graphs.DiGraph;
 
 public class GraphUtils {
@@ -40,6 +42,17 @@ public class GraphUtils {
         return g;
     }
 
+    public static DiGraph getDiGraphWeighted4() {
+        DiGraph g = new DiGraph(4);
+        g.addEdge(0, 1, 1);
+        g.addEdge(0, 2, 4);
+        g.addEdge(0, 3, 6);
+        g.addEdge(1, 2, 2);
+        g.addEdge(1, 3, 5);
+        g.addEdge(2, 3, 2);
+        return g;
+    }
+
     public static DiGraph getDiGraphWeightedNeg1() {
         DiGraph g = new DiGraph(5);
         g.addEdge(0, 1, 6);
@@ -75,6 +88,18 @@ public class GraphUtils {
 
         g.addEdge(4, 0, 2);
         g.addEdge(4, 3, 7);
+        return g;
+    }
+
+    public static DiGraph getTopoOrderGraph1() {
+        DiGraph g = new DiGraph(6);
+        g.addEdge(2, 3);
+        g.addEdge(3, 1);
+        g.addEdge(4, 0);
+        g.addEdge(4, 1);
+        g.addEdge(5, 0);
+        g.addEdge(5, 2);
+
         return g;
     }
 }

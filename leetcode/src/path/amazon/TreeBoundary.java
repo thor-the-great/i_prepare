@@ -56,7 +56,7 @@ import java.util.List;
  */
 public class TreeBoundary {
     /**
-     * Solution based on following:
+     * Sol2 based on following:
      * - first get left boundary
      * - get tree leaves to the left
      * - get tree leaves to the right

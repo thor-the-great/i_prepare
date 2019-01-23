@@ -92,11 +92,11 @@ public class DiGraph {
     }
 
     public class Edge {
-        public int u, v;
+        public int from, to;
         public int weight;
         Edge(int u, int v, int w) {
-            this.u = u;
-            this.v = v;
+            this.from = u;
+            this.to = v;
             this.weight = w;
         }
     }

@@ -1476,7 +1476,7 @@ public class SolutionDailyCodingAugust2018 {
         float[] minDist = new float[n];
         Arrays.fill(minDist, Float.MAX_VALUE);
         minDist[0] = 0;
-        //doing bellman-ford v - 1 times
+        //doing bellman-ford to - 1 times
         for (int i = 0; i < n - 1; i++) {
             for (int k = 0; k < n; k++) {
                 for (int m = 0; m < n; m++) {

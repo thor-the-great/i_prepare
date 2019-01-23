@@ -20,18 +20,18 @@ import java.util.Random;
  * Example 1:
  *
  * Input:
- * ["Solution","pickIndex"]
+ * ["Sol2","pickIndex"]
  * [[[1]],[]]
  * Output: [null,0]
  * Example 2:
  *
  * Input:
- * ["Solution","pickIndex","pickIndex","pickIndex","pickIndex","pickIndex"]
+ * ["Sol2","pickIndex","pickIndex","pickIndex","pickIndex","pickIndex"]
  * [[[1,3]],[],[],[],[],[]]
  * Output: [null,0,1,1,1,0]
  * Explanation of Input Syntax:
  *
- * The input is two lists: the subroutines called and their arguments. Solution's constructor has one argument, the
+ * The input is two lists: the subroutines called and their arguments. Sol2's constructor has one argument, the
  * array w. pickIndex has no arguments. Arguments are always wrapped with a list, even if there aren't any.
  */
 public class RandomPickWeight {

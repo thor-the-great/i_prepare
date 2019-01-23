@@ -125,6 +125,6 @@ enum Orientation {
         if (this == left) return "<";
         else if (this == right) return ">";
         else if (this == up) return "^";
-        else return "v";
+        else return "to";
     }
 }

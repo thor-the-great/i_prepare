@@ -69,9 +69,9 @@ public class RouterBetweenNodes {
     public static void main(String[] args) {
         /**
          * Construct graph 0->1->2->3->10
-         *                 |  |  ^  v
+         *                 |  |  ^  to
          *                 |  |  |  7->8->9
-         *                 |  v  |  ^
+         *                 |  to  |  ^
          *                  ->4->5->6
          */
         DiGraph diGraph = new DiGraph(11);
