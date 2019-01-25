@@ -333,6 +333,36 @@ public class SolutionDailyCodingJanuary2019 {
         return false;
     }
 
+    /**
+     * This problem was asked by Google.
+     *
+     * Given an array of elements, return the length of the longest subarray where all its elements are distinct.
+     *
+     * For example, given the array [5, 1, 3, 5, 2, 3, 4, 1], return 5 as the longest subarray of distinct elements is
+     * [5, 2, 3, 4, 1].
+     *
+     * @param arr
+     * @return
+     */
+    public int longestSubarrayOfDistinct(int[] arr) {
+        Map <Integer, Integer> m = new HashMap();
+        int head = 0, tail = 0;
+        int res = 0;
+
+        for (; tail < arr.length; tail++) {
+            if (m.containsKey(arr[tail])) {
+                res = Math.max(res, tail - head);
+                int duplIdx = m.get(arr[tail]);
+                for (; head <= duplIdx; head++) {
+                    m.remove(arr[head]);
+                }
+            }
+            m.put(arr[tail], tail);
+        }
+        res = Math.max(res, tail - head);
+        return res;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingJanuary2019 obj = new SolutionDailyCodingJanuary2019();
 
@@ -432,5 +462,15 @@ public class SolutionDailyCodingJanuary2019 {
         g.addEdge(1, 3);
         g.addEdge(5, 6);
         System.out.println(obj.checkGraphMinConnected(g));//false
+
+        System.out.println("--- length of longest sub-array of distinct elements ---");
+
+        System.out.println(obj.longestSubarrayOfDistinct(new int[] {5, 1, 3, 5, 2, 3, 4, 1}));//5
+
+        System.out.println(obj.longestSubarrayOfDistinct(new int[] {10, 12, 11}));//3
+
+        System.out.println(obj.longestSubarrayOfDistinct(new int[] {14, 12, 11, 20}));//4
+
+        System.out.println(obj.longestSubarrayOfDistinct(new int[] {4, 5, 1, 12, 3, 5, 2, 10, 4, 1, 7, 8, 6}));//10
     }
 }

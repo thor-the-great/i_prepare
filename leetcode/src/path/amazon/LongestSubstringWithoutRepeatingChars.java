@@ -1,5 +1,6 @@
 package path.amazon;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +28,33 @@ import java.util.Map;
 public class LongestSubstringWithoutRepeatingChars {
 
     public int lengthOfLongestSubstring(String s) {
+        int N = s.length();
+        if (N <= 1)
+            return N;
+        int[] indexes = new int[128];
+        Arrays.fill(indexes, -1);
+
+        int head = 0, tail = 0;
+        int res = 0;
+
+        for (; tail < N; tail++) {
+            int idx = s.charAt(tail);
+            if (indexes[idx] != -1) {
+                res = Math.max(res, tail - head);
+                int duplIdx = indexes[idx];
+                for (; head <= duplIdx; head++) {
+                    indexes[s.charAt(head)] = -1;
+                }
+            }
+            indexes[idx] = tail;
+        }
+
+        res = Math.max(res, tail - head);
+
+        return res;
+    }
+
+    public int lengthOfLongestSubstringMapSlower(String s) {
         Map<Character, Integer> map = new HashMap();
         int max = 0;
         int i = 0;
@@ -51,4 +79,6 @@ public class LongestSubstringWithoutRepeatingChars {
         max = Math.max(max, map.size());
         return max;
     }
+
+
 }
