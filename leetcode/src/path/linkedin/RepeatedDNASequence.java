@@ -21,7 +21,8 @@ import java.util.*;
 public class RepeatedDNASequence {
     public List<String> findRepeatedDnaSequences(String s) {
         //return findRepeatedDnaSequencesStringSets(s);
-        return findRepeatedDnaSequencesBits(s);
+        //return findRepeatedDnaSequencesBits(s);
+        return findRepeatedDnaSequencesBitsOpt(s);
     }
 
     public List<String> findRepeatedDnaSequencesBits(String s) {
@@ -73,6 +74,44 @@ public class RepeatedDNASequence {
                 visited.add(str);
         }
         res.addAll(repeated);
+        return res;
+    }
+
+    public List<String> findRepeatedDnaSequencesBitsOpt(String s) {
+        List<String> res = new LinkedList<>();
+        int N = s.length();
+        if (N < 10)
+            return res;
+        Map<Integer, Boolean> words = new HashMap<>();
+        Map<Character, Integer> map = new HashMap<>();
+        map.put('A', 0);
+        map.put('C', 1);
+        map.put('G', 2);
+        map.put('T', 3);
+        int l = 10;
+        int mask = 0;
+        for (int j =0; j < l; j++) {
+            int code = map.get(s.charAt(j));
+            mask = mask << 2;
+            mask += code;
+        }
+        words.put(mask, false);
+        int resMask = 0b00111111111111111111;
+        for (int i = 10; i < N; i++) {
+            //remove bits for oldest char
+            mask = mask & resMask;
+            int code = map.get(s.charAt(i));
+            mask = mask << 2;
+            mask += code;
+            if (!words.containsKey(mask))
+                words.put(mask, false);
+            else {
+                if (!words.get(mask)) {
+                    words.put(mask, true);
+                    res.add(s.substring(i - l + 1, i + 1));
+                }
+            }
+        }
         return res;
     }
 
