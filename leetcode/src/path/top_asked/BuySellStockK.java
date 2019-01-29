@@ -171,5 +171,9 @@ public class BuySellStockK {
         p = new int[]{1, 3, 1, 4, 1, 5, 7, 8};
         k = 20;
         System.out.println(obj.maxProfit(k, p));
+
+        p = new int[]{1, 2};
+        k = 2;
+        System.out.println(obj.maxProfit(k, p));
     }
 }
