@@ -363,6 +363,66 @@ public class SolutionDailyCodingJanuary2019 {
         return res;
     }
 
+    /**
+     * This problem was asked by Google.
+     *
+     * Let A be an N by M matrix in which every row and every column is sorted.
+     *
+     * Given i1, j1, i2, and j2, compute the number of elements of M smaller than M[i1, j1] and larger than M[i2, j2].
+     *
+     * For example, given the following matrix:
+     *
+     * [[1, 3, 7, 10, 15, 20],
+     *  [2, 6, 9, 14, 22, 25],
+     *  [3, 8, 10, 15, 25, 30],
+     *  [10, 11, 12, 23, 30, 35],
+     *  [20, 25, 30, 35, 40, 45]]
+     *
+     * And i1 = 1, j1 = 1, i2 = 3, j2 = 3, return 15 as there are 15 numbers in the matrix smaller than 6 or greater
+     * than 23.
+     *
+     * @param matrix
+     * @param r1
+     * @param c1
+     * @param r2
+     * @param c2
+     * @return
+     */
+    public int numOfElementsBetween(int[][] matrix, int r1, int c1, int r2, int c2) {
+        int rows = matrix.length;
+        if (rows == 0)
+            return 0;
+        int cols = matrix[0].length;
+
+        int ls = matrix[r1][c1];
+        int gt = matrix[r2][c2];
+
+        int count = 0;
+        for (int[] row : matrix) {
+            if (row[0] < ls) {
+                int lsP = Arrays.binarySearch(row, ls);
+                if (lsP >= 0)
+                    count += lsP;
+                else {
+                    lsP = -lsP - 1;
+                    count += lsP;
+                }
+            }
+            if (row[cols - 1] > gt) {
+                int gtP = Arrays.binarySearch(row, gt);
+                if (gtP >= 0)
+                    count += (cols - gtP - 1);
+                else {
+                    gtP = -gtP - 1;
+                    if (gtP < cols) {
+                        count += (cols - gtP);
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingJanuary2019 obj = new SolutionDailyCodingJanuary2019();
 
@@ -472,5 +532,17 @@ public class SolutionDailyCodingJanuary2019 {
         System.out.println(obj.longestSubarrayOfDistinct(new int[] {14, 12, 11, 20}));//4
 
         System.out.println(obj.longestSubarrayOfDistinct(new int[] {4, 5, 1, 12, 3, 5, 2, 10, 4, 1, 7, 8, 6}));//10
+
+        System.out.println("--- num of min max elements in a sorted rows/cols matrix ---");
+        int[][] matrix;
+
+        matrix = new int[][] {
+                {1, 3, 7, 10, 15, 20},
+                {2, 6, 9, 14, 22, 25},
+                {3, 8, 10, 15, 25, 30},
+                {10, 11, 12, 23, 30, 35},
+                {20, 25, 30, 35, 40, 45}
+        };
+        System.out.println(obj.numOfElementsBetween(matrix, 1,1,3,3));
     }
 }
