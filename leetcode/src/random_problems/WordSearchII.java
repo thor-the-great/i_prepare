@@ -3,74 +3,103 @@ package random_problems;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 212. Word Search II
+ * Hard
+ *
+ * Given a 2D board and a list of words from the dictionary, find all words in the board.
+ *
+ * Each word must be constructed from letters of sequentially adjacent cell, where "adjacent" cells are those
+ * horizontally or vertically neighboring. The same letter cell may not be used more than once in a word.
+ *
+ * Example:
+ *
+ * Input:
+ * words = ["oath","pea","eat","rain"] and board =
+ * [
+ *   ['o','a','a','n'],
+ *   ['e','t','a','e'],
+ *   ['i','h','k','r'],
+ *   ['i','f','l','v']
+ * ]
+ *
+ * Output: ["eat","oath"]
+ * Note:
+ * You may assume that all inputs are consist of lowercase letters a-z.
+ *
+ */
 public class WordSearchII {
-    char[][] m;
-    int rows = 0, cols = 0;
-    List<String> res = new ArrayList();
+    int rows;
+    int cols;
+    List<String> res;
 
     public List<String> findWords(char[][] board, String[] words) {
-        m = board;
-        res.clear();
-        rows = m.length;
+        res = new ArrayList();
+        rows = board.length;
         if (rows == 0)
-            return new ArrayList();
-        cols = m[0].length;
-        Trie trie = buildTrie(words);
+            return res;
 
-        for (int r = 0; r < rows; r++) {
+        cols = board[0].length;
+
+        //build trie
+        Trie root = new Trie();
+        for (String w : words) {
+            Trie n = root;
+            for (char ch : w.toCharArray()) {
+                int idx = ch  - 'a';
+                if (n.next[idx] == null)
+                    n.next[idx] = new Trie();
+
+                n = n.next[idx];
+            }
+            n.word = w;
+        }
+
+        for (int r =  0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
-                dfs(r, c, trie);
+                dfs(r, c, root, board);
             }
         }
+
         return res;
     }
 
-    void dfs(int r, int c, Trie t) {
-        int nextIndex = m[r][c] - 'a';
-        if (t.children[nextIndex] == null)
-            return;
-        t = t.children[nextIndex];
-        if (t.word != null) {
-            res.add(t.word);
-            t.word = null;
-        }
-        int cell = r * cols + c;
-        char savedChar = m[r][c];
-        m[r][c] = '$';
-        if (r > 0 && m[r - 1][c] != '$') {
-            dfs(r - 1, c, t);
-        }
-        if (r < rows - 1 && m[r + 1][c] != '$') {
-            dfs(r + 1, c, t);
-        }
-        if (c > 0 && m[r][c - 1] != '$') {
-            dfs(r, c - 1, t);
-        }
-        if (c < cols - 1 && m[r][c + 1] != '$') {
-            dfs(r, c + 1, t);
-        }
-        m[r][c] = savedChar;
-    }
-
-    Trie buildTrie(String[] words) {
-        Trie root = new Trie();
-        for (String word : words) {
-            Trie n = root;
-            for (int i = 0; i < word.length(); i++) {
-                int j = word.charAt(i) - 'a';
-                if (n.children[j] == null) {
-                    n.children[j] = new Trie();
-                }
-                n = n.children[j];
+    void dfs(int r, int c, Trie t, char[][] board) {
+        char ch = board[r][c];
+        if (ch == '.') return;
+        t = t.next[ch - 'a'];
+        if (t != null) {
+            if (t.word != null) {
+                res.add(t.word);
+                t.word = null;
             }
-            n.word = word;
+
+            char backup = ch;
+            board[r][c] = '.';
+
+            if (r > 0) {
+                dfs(r - 1, c, t, board);
+            }
+            if (c > 0)
+                dfs(r, c - 1, t, board);
+
+            if (r < rows - 1)
+                dfs(r + 1, c, t, board);
+
+            if (c < cols - 1)
+                dfs(r, c + 1, t, board);
+
+            board[r][c] = backup;
         }
-        return root;
     }
 
     class Trie {
-        Trie[] children = new Trie[26];
         String word;
+        Trie[] next;
+
+        Trie() {
+            next = new Trie[26];
+        }
     }
 
     public static void main(String[] args) {
