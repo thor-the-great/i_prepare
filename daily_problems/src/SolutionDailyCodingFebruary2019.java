@@ -45,6 +45,23 @@ public class SolutionDailyCodingFebruary2019 {
         return dp[0];
     }
 
+    /**
+     * This problem was asked by Palantir.
+     *
+     * Write a program that checks whether an integer is a palindrome. For example, 121 is a palindrome, as well as 888.
+     * 678 is not a palindrome. Do not convert the integer into a string.
+     */
+    boolean isPalindrome(int num) {
+        if (num < 0) return false;
+        int reverted = 0;
+        int t = num;
+        while (t > 0) {
+            reverted = reverted * 10 + t % 10;
+            t /= 10;
+        }
+        return num == reverted;
+    }
+
 
     public static void main(String[] args) {
         SolutionDailyCodingFebruary2019 obj = new SolutionDailyCodingFebruary2019();
@@ -56,5 +73,12 @@ public class SolutionDailyCodingFebruary2019 {
         triangle.add(Arrays.asList(new Integer[]{6, 5, 7}));
         triangle.add(Arrays.asList(new Integer[]{4, 1, 8, 3}));
         System.out.println("Max path in triangle: " + obj.maxPathInTriangle(triangle));
+
+        System.out.println("--- is number a palindrome ---");
+        System.out.println(obj.isPalindrome(-5));//false
+        System.out.println(obj.isPalindrome(10));//false
+        System.out.println(obj.isPalindrome(3443));//true
+        System.out.println(obj.isPalindrome(12523));//false
+        System.out.println(obj.isPalindrome(12721));//true
     }
 }
