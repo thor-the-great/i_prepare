@@ -61,7 +61,34 @@ public class SolutionDailyCodingFebruary2019 {
         }
         return num == reverted;
     }
+    
+    /**
+     *This problem was asked by YouTube.
 
+Write a program that computes the length of the longest common subsequence of 
+three given strings. For example, given "epidemiologist", "refrigeration", and 
+"supercalifragilisticexpialodocious", it should return 5, since the longest
+common subsequence is "eieio".
+     */
+    public int longestCommonSubsequenceOfTree(String[] strings) {
+        return 0;
+    }
+
+    private int lcs(String s1, String s2) {
+        int N = s1.length();
+        int M = s2.length();
+        int[][] dp = new int[N + 1][M + 1];
+        for (int i = 1; i < N; i++) {
+            for (int j = 1; j < M; j++) {
+                if (s1.charAt(i - 1) == s2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+        return dp[N][M]; 
+    }
 
     public static void main(String[] args) {
         SolutionDailyCodingFebruary2019 obj = new SolutionDailyCodingFebruary2019();
@@ -80,5 +107,9 @@ public class SolutionDailyCodingFebruary2019 {
         System.out.println(obj.isPalindrome(3443));//true
         System.out.println(obj.isPalindrome(12523));//false
         System.out.println(obj.isPalindrome(12721));//true
+
+        System.out.println("--- longest common subsequence ---");
+        System.out.println(obj.lcs("german", "thegerms"));
+        System.out.pritnln(obj.lcs("knife", "laptop"));
     }
 }

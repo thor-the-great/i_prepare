@@ -58,7 +58,7 @@ public class MajorityElementII {
         }
 
         int N = nums.length;
-        
+
         List<Integer> res = new ArrayList();
         if (count1 > N/3)
             res.add(cand1);
