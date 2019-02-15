@@ -109,6 +109,64 @@ public class SolutionDailyCodingFebruary2019 {
         return dp[N][M]; 
     }
 
+    /**
+     * This problem was asked by Apple.
+     *
+     * A Collatz sequence in mathematics can be defined as follows. Starting with any positive integer:
+     *
+     * if n is even, the next number in the sequence is n / 2
+     * if n is odd, the next number in the sequence is 3n + 1
+     * It is conjectured that every such sequence eventually reaches the number 1. Test this conjecture.
+     *
+     * Bonus: What input n <= 1000000 gives the longest sequence?
+     * @param n
+     * @return
+     */
+    public int checkCollatz(long n) {
+        Set<Long> s = new HashSet<>();
+        int c = 0;
+        while (!s.contains(n) && n != 1) {
+            if (n % 2 == 0)
+                n /=2;
+            else
+                n = 3*n + 1;
+            c++;
+        }
+
+        return n == 1 ? c : -1;
+    }
+
+    public long[] longestCollatz(long n) {
+        Map<Long, Long> m = new HashMap<>();
+        long maxNum = -1;
+        long maxSeq = -1;
+        for (long i = 1; i <= n; i++) {
+            long num = i;
+            Set<Long> s = new HashSet<>();
+            long c = 0;
+            while (!s.contains(n) && num != 1) {
+                if (m.containsKey(num)) {
+                    c += m.get(num);
+                    num = 1;
+                    break;
+                }
+                if (num % 2 == 0)
+                    num /=2;
+                else
+                    num = 3*num + 1;
+                c++;
+            }
+            if (num == 1) {
+                m.put(i, c);
+                if (c > maxSeq) {
+                    maxSeq = c;
+                    maxNum = i;
+                }
+            }
+        }
+        return new long[] {maxNum, maxSeq};
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingFebruary2019 obj = new SolutionDailyCodingFebruary2019();
 
@@ -138,5 +196,18 @@ public class SolutionDailyCodingFebruary2019 {
 
         System.out.println(obj.longestCommonSubsequenceOfTree(
                 new String[] {"laptop", "linux", "display"}));
+
+        System.out.println("--- check Collatz sequence ---");
+        System.out.println(obj.checkCollatz(3));
+        System.out.println(obj.checkCollatz(4));
+        System.out.println(obj.checkCollatz(9));
+        System.out.println(obj.checkCollatz(27));
+        //System.out.println(obj.checkCollatz(837799));
+
+        long maxNum = 1000000;
+        long start = System.currentTimeMillis();
+        long[] maxes = obj.longestCollatz(maxNum);
+        long elapsed =  System.currentTimeMillis() - start;
+        System.out.println("For " + maxNum + " the number " + maxes[0] + " has max sequence of " + maxes[1] + ", elapsed time " + elapsed);
     }
 }
