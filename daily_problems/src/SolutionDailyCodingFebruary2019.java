@@ -63,23 +63,42 @@ public class SolutionDailyCodingFebruary2019 {
     }
     
     /**
-     *This problem was asked by YouTube.
-
-Write a program that computes the length of the longest common subsequence of 
-three given strings. For example, given "epidemiologist", "refrigeration", and 
-"supercalifragilisticexpialodocious", it should return 5, since the longest
-common subsequence is "eieio".
+     * This problem was asked by YouTube.
+     *
+     * Write a program that computes the length of the longest common subsequence of
+     * three given strings. For example, given "epidemiologist", "refrigeration", and
+     * "supercalifragilisticexpialodocious", it should return 5, since the longest
+     * common subsequence is "eieio".
+     *
      */
     public int longestCommonSubsequenceOfTree(String[] strings) {
-        return 0;
+        int N0 = strings[0].length();
+        int N1 = strings[1].length();
+        int N2 = strings[2].length();
+
+        int[][][] dp = new int[N0 + 1][N1 + 1][N2 + 1];
+        for (int i0 = 1; i0 <= N0; i0++) {
+            for (int i1 = 1; i1 <= N1; i1++) {
+                for (int i2 = 1; i2 <= N2; i2++) {
+                    if (strings[0].charAt(i0 - 1) == strings[1].charAt(i1 - 1)
+                            && strings[1].charAt(i1 - 1) == strings[2].charAt(i2 - 1)) {
+                        dp[i0][i1][i2] = dp[i0 - 1][i1 - 1][i2 - 1] + 1;
+                    } else {
+                        dp[i0][i1][i2] = Math.max(dp[i0 - 1][i1][i2],
+                                Math.max(dp[i0][i1 - 1][i2], dp[i0][i1][i2 - 1]));
+                    }
+                }
+            }
+        }
+        return dp[N0][N1][N2];
     }
 
     private int lcs(String s1, String s2) {
         int N = s1.length();
         int M = s2.length();
         int[][] dp = new int[N + 1][M + 1];
-        for (int i = 1; i < N; i++) {
-            for (int j = 1; j < M; j++) {
+        for (int i = 1; i <= N; i++) {
+            for (int j = 1; j <= M; j++) {
                 if (s1.charAt(i - 1) == s2.charAt(j - 1)) {
                     dp[i][j] = dp[i - 1][j - 1] + 1;
                 } else {
@@ -110,6 +129,14 @@ common subsequence is "eieio".
 
         System.out.println("--- longest common subsequence ---");
         System.out.println(obj.lcs("german", "thegerms"));
-        System.out.pritnln(obj.lcs("knife", "laptop"));
+        System.out.println(obj.lcs("knife", "laptop"));
+        System.out.println(obj.lcs("epidemiologist", "refrigeration"));
+
+        System.out.println("--- longest common subsequence of 3 strings ---");
+        System.out.println(obj.longestCommonSubsequenceOfTree(
+                new String[] {"epidemiologist", "refrigeration", "supercalifragilisticexpialodocious"}));
+
+        System.out.println(obj.longestCommonSubsequenceOfTree(
+                new String[] {"laptop", "linux", "display"}));
     }
 }
