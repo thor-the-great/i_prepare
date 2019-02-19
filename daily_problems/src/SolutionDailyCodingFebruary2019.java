@@ -167,6 +167,82 @@ public class SolutionDailyCodingFebruary2019 {
         return new long[] {maxNum, maxSeq};
     }
 
+    /**
+     * This problem was asked by Microsoft.
+     *
+     * Given a string and a pattern, find the starting indices of all occurrences of the pattern in the string.
+     * For example, given the string "abracadabra" and the pattern "abr", you should return [0, 7].
+     *
+     * @param s
+     * @param p
+     * @return
+     */
+    int[] findPatternIndexes(String s, String p) {
+        List<Integer> res = new ArrayList();
+
+        int[] kmpTable = generateKMPTable(p);
+
+        int idx = 0;
+        boolean match;
+        while (idx <= s.length() - p.length()) {
+            match = true;
+            for (int j = 0; j < kmpTable.length; j++) {
+                if (p.charAt(j) != s.charAt(j + idx)) {
+                    match = false;
+                    idx += (j == 0) ? 1 : (j - kmpTable[j - 1]);
+                    break;
+                }
+            }
+            if (match) {
+                res.add(idx);
+                idx += p.length();
+            }
+        }
+
+        int[] resArray = new int[res.size()];
+        int i = 0;
+        for(int n : res) {
+            resArray[i++] = n;
+        }
+        return resArray;
+    }
+
+    private int[] generateKMPTable(String p) {
+        int[] kmpTable = new int[p.length()];
+        int prev;
+        for (int i = 1; i < p.length(); i++) {
+            prev = kmpTable[i - 1];
+            while(prev > 0 && p.charAt(prev) != p.charAt(i)) {
+                prev = kmpTable[prev - 1];
+            }
+
+            if (p.charAt(prev) == p.charAt(i)) {
+                kmpTable[i] = prev + 1;
+            }
+        }
+        return kmpTable;
+    }
+
+    /**
+     * This problem was asked by Stripe.
+     *
+     * Given an integer n, return the length of the longest consecutive run of 1s in its binary representation.
+     *
+     * For example, given 156, you should return 3.
+     *
+     * @return
+     */
+    public int longestConsequtiveSequenceOfOnesBitwise(int num) {
+        int res = 0;
+
+        while (num > 0) {
+            num &= (num << 1);
+            res++;
+        }
+
+        return res;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingFebruary2019 obj = new SolutionDailyCodingFebruary2019();
 
@@ -208,6 +284,24 @@ public class SolutionDailyCodingFebruary2019 {
         long start = System.currentTimeMillis();
         long[] maxes = obj.longestCollatz(maxNum);
         long elapsed =  System.currentTimeMillis() - start;
-        System.out.println("For " + maxNum + " the number " + maxes[0] + " has max sequence of " + maxes[1] + ", elapsed time " + elapsed);
+        System.out.println("For " + maxNum + " the number " + maxes[0] + " has max sequence of " + maxes[1]
+                + ", elapsed time " + elapsed);
+
+        System.out.println("---  find the starting indices of all occurrences of the pattern in the string ---");
+        int[] substringIndexes;
+        substringIndexes = obj.findPatternIndexes("abracadabra", "abr");
+        Arrays.stream(substringIndexes).forEach(idx->System.out.print(idx +" ")); System.out.print("\n");
+
+        substringIndexes = obj.findPatternIndexes("laptop", "key");
+        Arrays.stream(substringIndexes).forEach(idx->System.out.print(idx +" ")); System.out.print("\n");
+
+        substringIndexes = obj.findPatternIndexes("hotdog is not for dog", "dog");
+        Arrays.stream(substringIndexes).forEach(idx->System.out.print(idx +" ")); System.out.print("\n");
+
+
+        System.out.println("--- longest consecutive run of 1s in its binary representation ---");
+        System.out.println(obj.longestConsequtiveSequenceOfOnesBitwise(156)); //3
+
+        System.out.println(obj.longestConsequtiveSequenceOfOnesBitwise(222)); //4
     }
 }
