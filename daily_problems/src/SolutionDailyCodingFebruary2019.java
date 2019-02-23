@@ -312,6 +312,56 @@ public class SolutionDailyCodingFebruary2019 {
         bottomViewHelper(m, n.right, d + 1);
     }
 
+    /**
+     * This problem was asked by Oracle.
+     *
+     * We say a number is sparse if there are no adjacent ones in its binary representation. For example, 21 (10101)
+     * is sparse, but 22 (10110) is not. For a given input N, find the smallest sparse number greater than or equal
+     * to N.
+     *
+     * Do this in faster than O(N log N) time.
+     *
+     * @param num
+     * @return
+     */
+    public int nextSmallestSparseNum(int num) {
+        /**
+         * 1) Find binary of the given number and store it in a
+         *    boolean array.
+         * 2) Initialize last_finalized bit position as 0.
+         * 3) Start traversing the binary from least significant bit.
+         *     a) If we get two adjacent 1's such that next (or third)
+         *        bit is not 1, then
+         *           (i)  Make all bits after this 1 to last finalized
+         *                bit (including last finalized) as 0.
+         *           (ii) Update last finalized bit as next bit.
+         */
+        int[] bits = new int[32];
+        int sizeOfBin = -1;
+        while (num != 0) {
+            bits[++sizeOfBin] = (num & 1);
+            num>>=1;
+        }
+        sizeOfBin++;
+        int lastFinal = 0;
+        for (int i = 1; i < sizeOfBin; i++) {
+            if (bits[i] == 1 && bits[i - 1] == 1 && bits[i + 1] != 1) {
+                bits[i + 1] = 1;
+
+                for (int j = i; j >= lastFinal; j--)
+                    bits[j] = 0;
+
+                lastFinal = i + 1;
+            }
+        }
+
+        int res = 0;
+        for (int i =0; i <= sizeOfBin; i++) {
+            res += bits[i] *(1<<i);
+        }
+        return res;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingFebruary2019 obj = new SolutionDailyCodingFebruary2019();
 
@@ -389,5 +439,27 @@ public class SolutionDailyCodingFebruary2019 {
 
         System.out.println("--- bottom view of a tree ---");
         System.out.println(obj.bottomViewOfBinaryTree(binaryTree1));
+
+        System.out.println("--- find the smallest sparse number greater than or equal to N ---");
+        int num, sparce;
+        num = 6;
+        sparce = obj.nextSmallestSparseNum(num);
+        System.out.println("for number " + Integer.toBinaryString(num) +" next sparse is " + sparce + " ("
+                + Integer.toBinaryString(sparce) +")");
+
+        num = 4;
+        sparce = obj.nextSmallestSparseNum(num);
+        System.out.println("for number " + Integer.toBinaryString(num) +" next sparse is " + sparce + " ("
+                + Integer.toBinaryString(sparce) +")");
+
+        num = 38;
+        sparce = obj.nextSmallestSparseNum(num);
+        System.out.println("for number " + Integer.toBinaryString(num) +" next sparse is " + sparce + " ("
+                + Integer.toBinaryString(sparce) +")");
+
+        num = 44;
+        sparce = obj.nextSmallestSparseNum(num);
+        System.out.println("for number " + Integer.toBinaryString(num) +" next sparse is " + sparce + " ("
+                + Integer.toBinaryString(sparce) +")");
     }
 }
