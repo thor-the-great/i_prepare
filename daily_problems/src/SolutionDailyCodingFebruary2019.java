@@ -1,5 +1,6 @@
 import cracking.trees_graphs.DiGraph;
 import diff_problems.TreeNode;
+import graphs.GraphUtils;
 import trees.TreeUtils;
 import utils.StringUtils;
 
@@ -107,6 +108,30 @@ public class SolutionDailyCodingFebruary2019 {
             }
         }
         return dp[N][M]; 
+    }
+    
+    /**
+     * This problem was asked by Dropbox.
+
+    Spreadsheets often use this alphabetical encoding for its columns: 
+    "A", "B", "C", ..., "AA", "AB", ..., "ZZ", "AAA", "AAB", ....
+
+    Given a column number, return its alphabetical column id. For example, 
+    given 1, return "A". Given 27, return "AA".
+     */
+    public String getAlphaNumberById(int num) {
+        char[] chars = new char[26];
+        for (int i = 0; i < 26; i++) {
+            chars[i] = (char) ('A' + i);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while (num > 0) {
+            int idx = num % 26;
+            sb.append(chars[idx - 1]);
+            num /= 26;
+        } 
+        return sb.toString();
     }
 
     /**
@@ -362,6 +387,34 @@ public class SolutionDailyCodingFebruary2019 {
         return res;
     }
 
+    /**
+     * This problem was asked by Yahoo.
+     *
+     * Write an algorithm that computes the reversal of a directed graph. For example, if a graph consists of
+     * A -> B -> C, it should become A <- B <- C.
+     *
+     * @param g
+     * @return
+     */
+    public DiGraph reverseDiGraph(DiGraph g) {
+        if (g == null)
+            return null;
+
+        DiGraph revG = new DiGraph(g.getV());
+
+        for (int v = 0; v < g.getV(); v++) {
+            List<DiGraph.Edge> adjEdges = g.adjEdges(v);
+            if (adjEdges != null && !adjEdges.isEmpty()) {
+                for(DiGraph.Edge edge : adjEdges) {
+                    int u = edge.to;
+                    revG.addEdge(u, v);
+                }
+            }
+        }
+
+        return revG;
+    }
+
     public int getSevenish(int n) {
         if (n < 1)
             throw new RuntimeException("Invalid argument");
@@ -414,6 +467,15 @@ public class SolutionDailyCodingFebruary2019 {
         System.out.println(obj.longestCommonSubsequenceOfTree(
                 new String[] {"laptop", "linux", "display"}));
 
+        System.out.println("--- get char code by column number ---");
+        int num;
+        num = 1;
+        System.out.println(obj.getAlphaNumberById(num));
+        num = 27;
+        System.out.println(obj.getAlphaNumberById(num));
+        num = 1235;
+        System.out.println(obj.getAlphaNumberById(num));
+
         System.out.println("--- check Collatz sequence ---");
         System.out.println(obj.checkCollatz(3));
         System.out.println(obj.checkCollatz(4));
@@ -463,7 +525,7 @@ public class SolutionDailyCodingFebruary2019 {
         System.out.println(obj.bottomViewOfBinaryTree(binaryTree1));
 
         System.out.println("--- find the smallest sparse number greater than or equal to N ---");
-        int num, sparce;
+        int sparce;
         num = 6;
         sparce = obj.nextSmallestSparseNum(num);
         System.out.println("for number " + Integer.toBinaryString(num) +" next sparse is " + sparce + " ("
@@ -491,5 +553,12 @@ public class SolutionDailyCodingFebruary2019 {
         System.out.println(obj.getSevenish(4));
         System.out.println(obj.getSevenish(5));
         System.out.println(obj.getSevenish(10));
+
+        System.out.println("--- reverse directed graph ---");
+        DiGraph g1 = GraphUtils.getDiGraphWeighted1();
+        System.out.println(g1);
+        DiGraph g1Rev = obj.reverseDiGraph(g1);
+        System.out.println("Reversed graph ");
+        System.out.println(g1Rev);
     }
 }

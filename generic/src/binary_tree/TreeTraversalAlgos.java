@@ -1,4 +1,5 @@
-import trees.BST;
+package binary_tree;
+
 import trees.BSTNode;
 
 import java.util.*;
