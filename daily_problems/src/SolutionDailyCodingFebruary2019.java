@@ -362,6 +362,28 @@ public class SolutionDailyCodingFebruary2019 {
         return res;
     }
 
+    public int getSevenish(int n) {
+        if (n < 1)
+            throw new RuntimeException("Invalid argument");
+
+        List<Integer> list = new ArrayList();
+
+        int power = 0;
+        while (list.size() < n) {
+            power =  power == 0 ? 1 : power*7;
+            List<Integer> tmp = new ArrayList();
+            tmp.add(power);
+            for (int t : list) {
+                if (list.size() + tmp.size() == n)
+                    return tmp.get(tmp.size() - 1);
+                tmp.add(t + power);
+            }
+            list.addAll(tmp);
+        }
+
+        return list.get(list.size() - 1);
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingFebruary2019 obj = new SolutionDailyCodingFebruary2019();
 
@@ -461,5 +483,13 @@ public class SolutionDailyCodingFebruary2019 {
         sparce = obj.nextSmallestSparseNum(num);
         System.out.println("for number " + Integer.toBinaryString(num) +" next sparse is " + sparce + " ("
                 + Integer.toBinaryString(sparce) +")");
+
+        System.out.println("--- get N-th sevenish number ---");
+        System.out.println(obj.getSevenish(1));
+        System.out.println(obj.getSevenish(2));
+        System.out.println(obj.getSevenish(3));
+        System.out.println(obj.getSevenish(4));
+        System.out.println(obj.getSevenish(5));
+        System.out.println(obj.getSevenish(10));
     }
 }
