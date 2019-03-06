@@ -36,6 +36,44 @@ public class SolutionDailyCodingMarch2019 {
         return res;
     }
 
+    /**
+     * Absolute Value Sort
+     * Given an array of integers arr, write a function absSort(arr), that sorts the array according to the absolute
+     * values of the numbers in arr. If two numbers have the same absolute value, sort them according to sign, where
+     * the negative numbers come before the positive numbers.
+     *
+     * Examples:
+     *
+     * input:  arr = [2, -7, -2, -2, 0]
+     * output: [0, -2, -2, 2, -7]
+     *
+     * @param arr
+     * @return
+     */
+    public int[] absSort(int[] arr) {
+
+        for (int i = 0; i < arr.length - 1; i++) {
+            int tmp = i;
+            for (int j = i; j < arr.length; j++) {
+                if (check(arr[j], arr[tmp]))
+                    tmp = j;
+            }
+            int t = arr[tmp];
+            arr[tmp] = arr[i];
+            arr[i] = t;
+        }
+        return arr;
+    }
+
+    boolean check(int a, int b) {
+        int abs1 = Math.abs(a);
+        int abs2 = Math.abs(b);
+        if (abs1 == abs2)
+            return a < b;
+        else
+            return abs1 < abs2;
+    }
+
 
     public static void main(String[] args) {
         SolutionDailyCodingMarch2019 obj = new SolutionDailyCodingMarch2019();

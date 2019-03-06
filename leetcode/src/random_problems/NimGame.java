@@ -23,7 +23,7 @@ package random_problems;
 public class NimGame {
 
     /**
-     * Sit with paper and put down variants - only those that are mod 4 == 0 you can't win.  
+     * Sit with paper and put down variants - only those that are mod 4 == 0 you can't win.
      * @param n
      * @return
      */
