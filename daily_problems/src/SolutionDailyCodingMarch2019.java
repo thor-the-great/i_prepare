@@ -51,6 +51,22 @@ public class SolutionDailyCodingMarch2019 {
      * @return
      */
     public int[] absSort(int[] arr) {
+    /**
+     * This problem was asked by Bloomberg.
+     *
+     * There are N prisoners standing in a circle, waiting to be executed. The executions are carried out starting
+     * with the kth person, and removing every successive kth person going clockwise until there is no one left.
+     *
+     * Given N and k, write an algorithm to determine where a prisoner should stand in order to be the last survivor.
+     *
+     * For example, if N = 5 and k = 2, the order of executions would be [2, 4, 1, 5, 3], so you should return 3.
+     *
+     * Bonus: Find an O(log N) solution if k = 2.
+     * @return
+     */
+    public int positionToExecuteLast(int N, int k) {
+        if (N == 1)
+            return 1;
 
         for (int i = 0; i < arr.length - 1; i++) {
             int tmp = i;
@@ -75,6 +91,32 @@ public class SolutionDailyCodingMarch2019 {
     }
 
 
+        return ((positionToExecuteLast(N - 1, k) + k - 1 )% N) + 1 ;
+    }
+
+    /**
+     * This problem was asked by Bloomberg.
+     *
+     * There are N prisoners standing in a circle, waiting to be executed. The executions are carried out starting
+     * with the kth person, and removing every successive kth person going clockwise until there is no one left.
+     *
+     * Given N and k, write an algorithm to determine where a prisoner should stand in order to be the last survivor.
+     *
+     * For example, if N = 5 and k = 2, the order of executions would be [2, 4, 1, 5, 3], so you should return 3.
+     *
+     * Bonus: Find an O(log N) solution if k = 2.
+     * @return
+     */
+    public int positionToExecuteLastTwo(int N) {
+        if (N == 1)
+            return 1;
+
+        if (N % 2 == 0)
+            return 2*positionToExecuteLastTwo(N / 2) - 1;
+        else
+            return 2*positionToExecuteLastTwo(N / 2) + 1;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingMarch2019 obj = new SolutionDailyCodingMarch2019();
 
@@ -94,5 +136,13 @@ public class SolutionDailyCodingMarch2019 {
 
         arr = new int[] {1, 2, 5, 10, 20, 40};
         System.out.println(obj.smallestNonSum(arr));//4
+
+        System.out.println("--- position to be executed last ---");
+        System.out.println(obj.positionToExecuteLast(5, 2)); //3
+
+        System.out.println(obj.positionToExecuteLast(7, 3)); //4
+
+        System.out.println(obj.positionToExecuteLastTwo(5));//3
+        System.out.println(obj.positionToExecuteLastTwo(6));//5
     }
 }
