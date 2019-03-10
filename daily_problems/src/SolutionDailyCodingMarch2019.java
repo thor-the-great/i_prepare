@@ -263,6 +263,29 @@ public class SolutionDailyCodingMarch2019 {
         return dp[eggs][flrs];
     }
 
+    /**
+     * This problem was asked by Apple.
+     *
+     * Implement the function fib(n), which returns the nth number in the Fibonacci sequence, using only O(1) space.
+     * @param N
+     * @return
+     */
+    public int fibonacci(int N) {
+        int p0 = 0;
+        if (N == 0)
+            return p0;
+        int p1 = 1;
+        if (N == 1)
+            return p1;
+        int res = 0;
+        for (int i = 3; i <= N; i++) {
+            res = p0 + p1;
+            p0 = p1;
+            p1 = res;
+        }
+        return res;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingMarch2019 obj = new SolutionDailyCodingMarch2019();
 
@@ -295,5 +318,9 @@ public class SolutionDailyCodingMarch2019 {
         System.out.println(obj.eggDrop(1, 5));//5
         System.out.println(obj.eggDrop(2, 12));//5
         System.out.println(obj.eggDrop(2, 36));//5
+
+        System.out.println("--- N-th fibonacci number in constant space ---");
+        System.out.println(obj.fibonacci(6));
+        System.out.println(obj.fibonacci(20));
     }
 }
