@@ -1,6 +1,8 @@
 import cracking.trees_graphs.DiGraph;
 import diff_problems.TreeNode;
 import graphs.GraphUtils;
+import utils.ArrayUtil;
+import utils.StringUtils;
 
 import java.util.*;
 
@@ -286,6 +288,49 @@ public class SolutionDailyCodingMarch2019 {
         return res;
     }
 
+    /**
+     * This problem was asked by Facebook.
+     *
+     * Given an array of numbers of length N, find both the minimum and maximum using less than 2 * (N - 2) comparisons
+     * @param arr
+     * @return
+     */
+    public int[] getMinMaxInLessComparisions(int[] arr) {
+        //idea - divide and conq approach. Divide array in halves, then get min/max of the half and then
+        //get min and max of each half.
+        //Base cases - if n = 1 - element is min and max itself, if n == 2 - do one comparision to define
+        //min and max
+        return minMaxHelper(arr, 0, arr.length - 1);
+    }
+
+    int[] minMaxHelper(int[] arr, int l, int r) {
+        if (l == r)
+            return new int[] {arr[l], arr[l]};
+
+        if (r - l == 1) {
+            if (arr[l] > arr[r])
+                return new int[] {arr[r], arr[l]};
+            else
+                return new int[] {arr[l], arr[r]};
+        }
+
+        int mid = l + (r - l) /2;
+        int[] minMaxLeft = minMaxHelper(arr, l, mid);
+        int[] minMaxRight = minMaxHelper(arr, mid + 1, r);
+
+        int[] res = new int[2];
+        if (minMaxLeft[0] < minMaxRight[0])
+            res[0] = minMaxLeft[0];
+        else
+            res[0] = minMaxRight[0];
+
+        if (minMaxLeft[1] > minMaxRight[1])
+            res[1] = minMaxLeft[1];
+        else
+            res[1] = minMaxRight[1];
+        return res;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingMarch2019 obj = new SolutionDailyCodingMarch2019();
 
@@ -322,5 +367,12 @@ public class SolutionDailyCodingMarch2019 {
         System.out.println("--- N-th fibonacci number in constant space ---");
         System.out.println(obj.fibonacci(6));
         System.out.println(obj.fibonacci(20));
+
+        System.out.println("--- Find min and max in array with minimum comparision (less than 2N - 2 )---");
+
+        arr = ArrayUtil.getRandomIntArray(10, 100);
+        System.out.println(StringUtils.intArrayToString(arr));
+        int[] minMaxArr = obj.getMinMaxInLessComparisions(arr);
+        System.out.println("Min and max are : " + minMaxArr[0] +", " + minMaxArr[1]);
     }
 }
