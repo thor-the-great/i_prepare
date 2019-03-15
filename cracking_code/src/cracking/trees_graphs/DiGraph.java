@@ -99,6 +99,13 @@ public class DiGraph {
             this.to = v;
             this.weight = w;
         }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("( ").append(from).append(" -> ").append(to).append(", ").append(weight).append(" )");
+            return sb.toString();
+        }
     }
 
     public static void main(String[] args) {
