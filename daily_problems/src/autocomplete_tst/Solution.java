@@ -112,7 +112,7 @@ class TST {
     Collection<String> getStringsByPreffix(String preffix) {
         int startCharInt = preffix.charAt(0) - 97;
         Node prefNode = root[startCharInt];
-        //Node prefNode = get(preffix, 1, root[startCharInt]);
+        //NaryTreeNode prefNode = get(preffix, 1, root[startCharInt]);
         if (prefNode == null)
             return new ArrayList<>();
         List<String> result = new ArrayList<>();

@@ -1,6 +1,6 @@
 package narry_tree;
 
-import util.Node;
+import util.NaryTreeNode;
 
 import java.util.*;
 
@@ -20,39 +20,39 @@ public class NaryTreeTraversals {
      * Recursive solution is trivial, could you do it iteratively?
      *
      */
-    public List<Integer> preorder(Node root) {
+    public List<Integer> preorder(NaryTreeNode root) {
         List<Integer> list = new ArrayList();
         if (root == null)
             return list;
 
-        Stack<Node> s = new Stack();
+        Stack<NaryTreeNode> s = new Stack();
         s.push(root);
         while(!s.isEmpty()) {
-            Node n = s.pop();
+            NaryTreeNode n = s.pop();
             list.add(n.val);
 
             Collections.reverse(n.children);
 
-            for(Node ch : n.children)
+            for(NaryTreeNode ch : n.children)
                 s.push(ch);
         }
 
         return list;
     }
 
-    public List<Integer> postorder(Node root) {
+    public List<Integer> postorder(NaryTreeNode root) {
         LinkedList<Integer> res = new LinkedList();
         if (root == null)
             return res;
 
-        Stack<Node> s = new Stack();
+        Stack<NaryTreeNode> s = new Stack();
         s.push(root);
 
         while(!s.isEmpty()) {
-            Node n = s.pop();
+            NaryTreeNode n = s.pop();
             res.addFirst(n.val);
 
-            for (Node child : n.children) {
+            for (NaryTreeNode child : n.children) {
                 s.push(child);
             }
         }
@@ -62,7 +62,7 @@ public class NaryTreeTraversals {
 
     List<List<Integer>> res;
 
-    public List<List<Integer>> levelOrder(Node root) {
+    public List<List<Integer>> levelOrder(NaryTreeNode root) {
         res = new LinkedList();
 
         if (root == null)
@@ -73,13 +73,13 @@ public class NaryTreeTraversals {
         return res;
     }
 
-    void helper(int level, Node n) {
+    void helper(int level, NaryTreeNode n) {
         if (res.size() - 1 < level) {
             res.add(new ArrayList());
         }
         res.get(level).add(n.val);
 
-        for (Node child : n.children) {
+        for (NaryTreeNode child : n.children) {
             helper(level + 1, child);
         }
     }

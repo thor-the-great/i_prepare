@@ -1,6 +1,7 @@
 import cracking.trees_graphs.DiGraph;
 import diff_problems.TreeNode;
 import graphs.GraphUtils;
+import util.NaryTreeNode;
 import utils.ArrayUtil;
 import utils.StringUtils;
 
@@ -331,6 +332,73 @@ public class SolutionDailyCodingMarch2019 {
         return res;
     }
 
+    /**
+     * This problem was asked by Amazon.
+     *
+     * A tree is symmetric if its data and shape remain unchanged when it is reflected about the root node.
+     * The following tree is an example:
+     *
+     *         4
+     *       / | \
+     *     3   5   3
+     *   /           \
+     * 9              9
+     * Given a k-ary tree, determine whether it is symmetric.
+     * @param n
+     * @return
+     */
+    public boolean isSymmetrical(NaryTreeNode n) {
+        if (n == null)
+            return true;
+        List<NaryTreeNode> children = n.children;
+        if (children != null && !children.isEmpty()) {
+            int l = 0, r = children.size() - 1;
+            while (l <= r) {
+                NaryTreeNode left = children.get(l);
+                NaryTreeNode right = children.get(r);
+
+                if (!helper(left, right))
+                    return false;
+
+                l++;
+                r--;
+            }
+        }
+
+        return true;
+    }
+
+    boolean helper(NaryTreeNode n1, NaryTreeNode n2) {
+        if (n1 == null && n2 == null)
+            return true;
+
+        if (n1 == null || n2 == null)
+            return false;
+
+        if (n1.val != n2.val)
+            return false;
+
+        List<NaryTreeNode> children1 = n1.children;
+        List<NaryTreeNode> children2 = n2.children;
+
+        if (children1 == null && children2 == null)
+            return true;
+
+        if (children1 == null || children2 == null)
+            return false;
+
+        if (children1.size() != children2.size())
+            return false;
+
+        int N = children1.size();
+        for (int i = 0; i < N; i++) {
+            if (!helper(children1.get(i), children2.get(N - 1 - i)))
+                return false;
+        }
+
+        return true;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingMarch2019 obj = new SolutionDailyCodingMarch2019();
 
@@ -374,5 +442,27 @@ public class SolutionDailyCodingMarch2019 {
         System.out.println(StringUtils.intArrayToString(arr));
         int[] minMaxArr = obj.getMinMaxInLessComparisions(arr);
         System.out.println("Min and max are : " + minMaxArr[0] +", " + minMaxArr[1]);
+
+        System.out.println("--- check in nary tree is symmetrical ---");
+        NaryTreeNode root1Nary = new NaryTreeNode(3);
+        root1Nary.children = Arrays.asList(new NaryTreeNode[] {
+                new NaryTreeNode(5), new NaryTreeNode(7), new NaryTreeNode(5)});
+        System.out.println(obj.isSymmetrical(root1Nary));
+
+        NaryTreeNode root2Nary = new NaryTreeNode(3);
+        root2Nary.children = Arrays.asList(new NaryTreeNode[] {
+                new NaryTreeNode(5), new NaryTreeNode(7), new NaryTreeNode(8)});
+        System.out.println(obj.isSymmetrical(root2Nary));
+
+        NaryTreeNode root3Nary = new NaryTreeNode(3);
+        root3Nary.children = Arrays.asList(new NaryTreeNode[] {
+                new NaryTreeNode(5, Arrays.asList(new NaryTreeNode[] {
+                        new NaryTreeNode(2), null
+                })),
+                new NaryTreeNode(7),
+                new NaryTreeNode(5, Arrays.asList(new NaryTreeNode[] {
+                        null, new NaryTreeNode(2)
+                }))});
+        System.out.println(obj.isSymmetrical(root3Nary));
     }
 }

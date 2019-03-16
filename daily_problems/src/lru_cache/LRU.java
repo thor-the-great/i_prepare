@@ -26,7 +26,7 @@ class Node {
     }
 }
 public class LRU {
-    //idea is to use custom DS - combined Map<Key, Node> and doubly linked list of Nodes where Node has key and value.
+    //idea is to use custom DS - combined Map<Key, NaryTreeNode> and doubly linked list of Nodes where NaryTreeNode has key and value.
     //keep head and tail of list, so most recent element is in head and very last element is in tail
     //
     //having map gives us O(1) for lookup by key and add/remove. Having linked list gives us O(1) for head/end lookup

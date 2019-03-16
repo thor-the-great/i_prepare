@@ -3,7 +3,7 @@ package path.linkedin;
 import diff_problems.TreeNode;
 
 /**
- * 671. Second Minimum Node In a Binary Tree
+ * 671. Second Minimum NaryTreeNode In a Binary Tree
  * Easy
  *
  * Given a non-empty special binary tree consisting of nodes with the non-negative value, where each node in this tree has exactly two or zero sub-node. If the node has two sub-nodes, then this node's value is the smaller value among its two sub-nodes.

@@ -3,7 +3,7 @@ package binary_tree;
 import diff_problems.TreeNode;
 
 /**
- * 450. Delete Node in a BST
+ * 450. Delete NaryTreeNode in a BST
  * Medium
  *
  * Given a root node reference of a BST and a key, delete the node with the given key in the BST. Return the root node

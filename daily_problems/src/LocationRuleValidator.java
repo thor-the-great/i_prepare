@@ -11,7 +11,7 @@ public class LocationRuleValidator {
     }
 
     public boolean validate(String[] rules) {
-        //map will be our graph and will hold all Node (vertexes)
+        //map will be our graph and will hold all NaryTreeNode (vertexes)
         Map<Character, Node> graph = new HashMap();
         for (String rule : rules) {
             //split rules into to, direction and from parts

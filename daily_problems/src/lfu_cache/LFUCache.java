@@ -3,7 +3,7 @@ package lfu_cache;
 import java.util.*;
 
 public class LFUCache {
-    //map stores key and Node(value, current_frequency_of_usage). After each get current_frequency_of_usage will be updated
+    //map stores key and NaryTreeNode(value, current_frequency_of_usage). After each get current_frequency_of_usage will be updated
     Map<Integer, Node> keyValue = new HashMap();
     //oh, this is interesting. This is custom extension of HashMap<Integer, LinkedHashMap<Integer, Integer>>
     //key Integer - frequency of usage
