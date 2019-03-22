@@ -32,5 +32,7 @@ public class FirstMissingPositive {
     public static void main(String[] args) {
         FirstMissingPositive obj = new FirstMissingPositive();
         System.out.println(obj.firstMissingPositive(new int[] {3, 6, -1, 1, -3, 3}));
+
+        System.out.println(obj.firstMissingPositive(new int[] {3, 6, -1, 1, -3, 2000, 3}));
     }
 }

@@ -78,6 +78,20 @@ public class SolutionDailyCodingMarch2019 {
             return abs1 < abs2;
     }
 
+    public Integer[] absSortComp(Integer[] arr) {
+
+        Comparator<Integer> comp = (i1, i2) -> {
+                if (Math.abs(i1) != Math.abs(i2))
+                    return Math.abs(i1)-Math.abs(i2);
+                else
+                    return i1 - i2;
+        };
+
+        Arrays.sort(arr, comp);
+
+        return arr;
+    }
+
     /**
      * This problem was asked by Bloomberg.
      *
@@ -399,6 +413,61 @@ public class SolutionDailyCodingMarch2019 {
         return true;
     }
 
+    /**
+     * This problem was asked by Etsy.
+     *
+     * Given an array of numbers N and an integer k, your task is to split N into k partitions such that the maximum
+     * sum of any partition is minimized. Return this sum.
+     *
+     * For example, given N = [5, 1, 2, 7, 3, 4] and k = 3, you should return 8, since the optimal partition is
+     * [5, 1, 2], [7], [3, 4].
+     *
+     * @param arr
+     * @param K
+     * @return
+     */
+    public int minPartitionSum(int[] arr, int K) {
+        int N = arr.length;
+        if (N == 0 || K == 0)
+            return 0;
+
+        int sum = 0;
+        for (int n : arr)
+            sum += n;
+
+        if (K == 1)
+            return sum;
+
+        int l = sum / K;
+        int r = sum;
+
+        while ( l < r) {
+            int m = l + (r - l) / 2;
+
+            int cur = 0;
+            int buckets = 1;
+            boolean tooSmall = false;
+            for (int n : arr) {
+                if (n > m) {
+                    tooSmall = true;
+                    break;
+                }
+                if (cur  + n > m) {
+                    buckets++;
+                    cur = 0;
+                }
+                cur += n;
+            }
+
+            if (buckets > K || tooSmall)
+                l = m + 1;
+            else
+                r = m;
+        }
+
+        return l;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingMarch2019 obj = new SolutionDailyCodingMarch2019();
 
@@ -464,5 +533,27 @@ public class SolutionDailyCodingMarch2019 {
                         null, new NaryTreeNode(2)
                 }))});
         System.out.println(obj.isSymmetrical(root3Nary));
+
+        System.out.println("--- minimize max sum of each of K partition of array arr ---");
+        arr = new int[] {5, 1, 4, 2, 7, 5};
+        System.out.println(obj.minPartitionSum(arr, 3));
+        arr = new int[] {5, 1, 2, 7, 3, 4};
+        System.out.println(obj.minPartitionSum(arr, 3));
+        arr = new int[] {1, 2, 15, 7, 5, 14, 3, 4};
+        System.out.println(obj.minPartitionSum(arr, 3));
+        arr = new int[] {5, 1, 4, 2, 7, 5};
+        System.out.println(obj.minPartitionSum(arr, 2));
+        arr = new int[] {5, 1, 4, 2, 7, 5};
+        System.out.println(obj.minPartitionSum(arr, 1));
+
+        Integer[] arrInt = new Integer[] {
+                Integer.valueOf(5),
+                Integer.valueOf(-2),
+                Integer.valueOf(4),
+                Integer.valueOf(-4),
+                Integer.valueOf(10)
+        };
+
+
     }
 }
