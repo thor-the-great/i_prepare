@@ -468,6 +468,81 @@ public class SolutionDailyCodingMarch2019 {
         return l;
     }
 
+    /**
+     * This problem was asked by Dropbox.
+     *
+     * Given a list of words, determine whether the words can be chained to form a circle. A word X can be placed in
+     * front of another word Y in a circle if the last character of X is same as the first character of Y.
+     *
+     * For example, the words ['chair', 'height', 'racket', touch', 'tunic'] can form the following circle:
+     * chair --> racket --> touch --> height --> tunic --> chair.
+     *
+     * @param arr
+     * @return
+     */
+    public boolean chainToCircle(String[] arr) {
+
+        /**
+         * Idea: criteria for condition to be true: if we create DAG from characters, vertexes are first and
+         * last ones, link will be based on word, from first to last letter
+         * - if in degree equals out degree for every character
+         * - we can visit all and every vertex start from any vertex (simple DFS, count size of visited)
+         */
+        Map<Character, int[]> inOut = new HashMap<>();
+        Map<Character, List<Character>> graph = new HashMap<>();
+
+        for (String s : arr) {
+            char start = s.charAt(0);
+            char end = s.charAt(s.length() - 1);
+
+            if (!inOut.containsKey(start))
+                inOut.put(start, new int[2]);
+
+            inOut.get(start)[1]++;
+
+            if (!inOut.containsKey(end))
+                inOut.put(end, new int[2]);
+
+            inOut.get(end)[0]++;
+
+            if(!graph.containsKey(start))
+                graph.put(start, new ArrayList<>());
+            if (!graph.get(start).contains(end))
+                graph.get(start).add(end);
+
+            if(!graph.containsKey(end))
+                graph.put(end, new ArrayList<>());
+
+        }
+
+        Set<Character> vertexes = inOut.keySet();
+
+        for(char ch : vertexes) {
+            int[] inOutPair = inOut.get(ch);
+            if (inOutPair[0] != inOutPair[1])
+                return false;
+        }
+
+        Set<Character> visited = new HashSet<>();
+        Stack<Character> stack = new Stack<>();
+        stack.push(arr[0].charAt(0));
+
+        while(!stack.isEmpty()) {
+            char next = stack.pop();
+            if (!visited.contains(next)) {
+                visited.add(next);
+                List<Character> adjs = graph.get(next);
+                if (adjs != null && !adjs.isEmpty()) {
+                    for (char adj : adjs) {
+                        stack.push(adj);
+                    }
+                }
+            }
+        }
+
+        return vertexes.size() == visited.size();
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingMarch2019 obj = new SolutionDailyCodingMarch2019();
 
@@ -554,6 +629,42 @@ public class SolutionDailyCodingMarch2019 {
                 Integer.valueOf(10)
         };
 
+        System.out.println("--- chain a circle from words based on start and end letters ---");
+        String[] words;
+        words = new String[] {
+            "geek", "king"
+        };
+        System.out.println(obj.chainToCircle(words));
+
+        words = new String[] {
+                "geek", "kind", "dumb"
+        };
+        System.out.println(obj.chainToCircle(words));
+
+        words = new String[] {
+                "aab", "bfcfc", "cgba"
+        };
+        System.out.println(obj.chainToCircle(words));
+
+        words = new String[] {
+                "aa", "bb"
+        };
+        System.out.println(obj.chainToCircle(words));
+
+        words = new String[] {
+                "aaa"
+        };
+        System.out.println(obj.chainToCircle(words));
+
+        words = new String[] {
+                "awb", "bwd", "dwg", "dwf", "fera"
+        };
+        System.out.println(obj.chainToCircle(words));
+
+        words = new String[] {
+                "aab", "bac", "aaa", "cda"
+        };
+        System.out.println(obj.chainToCircle(words));
 
     }
 }
