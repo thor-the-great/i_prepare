@@ -1,6 +1,7 @@
 import cracking.trees_graphs.DiGraph;
 import diff_problems.TreeNode;
 import graphs.GraphUtils;
+import trees.BSTNode;
 import util.NaryTreeNode;
 import utils.ArrayUtil;
 import utils.StringUtils;
@@ -543,6 +544,36 @@ public class SolutionDailyCodingMarch2019 {
         return vertexes.size() == visited.size();
     }
 
+    /**
+     * This problem was asked by PayPal.
+     *
+     * Given a binary tree, determine whether or not it is height-balanced. A height-balanced binary tree can be
+     * defined as one in which the heights of the two subtrees of any node never differ by more than one.
+     * @param node
+     * @return
+     */
+    public boolean isHeightBalanced(TreeNode node) {
+        /**
+         * Idea - iterate over every node, start from bottom, incrementing by 1
+         * if different more than 1 - return -1 - meaning it's not balanced
+         */
+        int res = helper(node);
+        return res != -1;
+    }
+
+    private int helper(TreeNode node) {
+        if (node == null)
+            return 0;
+
+        int l = helper(node.left);
+        int r = helper(node.right);
+
+        if (l == -1 || r == -1 || Math.abs(l - r) > 1)
+            return -1;
+
+        return Math.max(l, r) + 1;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingMarch2019 obj = new SolutionDailyCodingMarch2019();
 
@@ -666,5 +697,29 @@ public class SolutionDailyCodingMarch2019 {
         };
         System.out.println(obj.chainToCircle(words));
 
+        System.out.println("--- check if binary tree is height balanced ---");
+        TreeNode binaryTree1 = new TreeNode(5,
+                new TreeNode(3,
+                        new TreeNode(1,
+                                new TreeNode(0), null),
+                        new TreeNode(4)),
+                new TreeNode(7,
+                        new TreeNode(6),
+                        new TreeNode(9,
+                                new TreeNode(8), null))
+        );
+        System.out.println(obj.isHeightBalanced(binaryTree1));
+
+        binaryTree1 = new TreeNode(5,
+                new TreeNode(3,
+                        new TreeNode(1,
+                                new TreeNode(0), null),
+                        new TreeNode(4)),
+                new TreeNode(7,
+                        null,
+                        new TreeNode(9,
+                                new TreeNode(8), null))
+        );
+        System.out.println(obj.isHeightBalanced(binaryTree1));
     }
 }

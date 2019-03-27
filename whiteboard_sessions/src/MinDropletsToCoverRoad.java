@@ -62,7 +62,7 @@ public class MinDropletsToCoverRoad {
                 {9, 12},
                 {2, 5},
                 {7, 2},
-                {30, 5},
+                {30, 2},
                 {5, 5},
                 {24, 4},
                 {15, 5},
@@ -71,6 +71,6 @@ public class MinDropletsToCoverRoad {
                 {35, 1}
         };
 
-        System.out.println(obj.minDroplets(39, drops));
+        System.out.println(obj.minDroplets(32, drops));
     }
 }

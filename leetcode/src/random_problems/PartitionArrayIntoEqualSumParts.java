@@ -39,31 +39,32 @@ public class PartitionArrayIntoEqualSumParts {
     /**
      * Idea: exact sum of the segment is the overall sum / 3. Get that segment sum and start scanning array elements
      * one by one. Once we reach segment sum - increment number of segments, reset current to 0.
-     * 
+     *
      * @param A
      * @return
      */
     public boolean canThreePartsEqualSum(int[] A) {
         int sum = 0;
-
+        //calculate overall sum
         for (int n : A)
             sum += n;
-
+        //check if it's divisible by 3
         if (sum % 3 != 0)
             return false;
-
+        //exact sum of each segment
         sum /= 3;
 
-        int cur = 0;
-        int res = 0;
+        int curSum = 0;
+        int numOfSegments = 0;
         for (int i = 0; i < A.length; i++) {
-            cur += A[i];
-            if (cur == sum) {
-                res++;
-                cur = 0;
+            curSum += A[i];
+            //check if we can form a segment
+            if (curSum == sum && numOfSegments <= 1) {
+                numOfSegments++;
+                curSum = 0;
             }
         }
-
-        return res == 3;
+        //if we have 2 segments formed greedily and sum of leftover is also 1/3 of overall sum
+        return (numOfSegments == 2 && curSum == sum);
     }
 }
