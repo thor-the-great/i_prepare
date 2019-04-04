@@ -76,6 +76,35 @@ public class GraphUtils {
         return g;
     }
 
+    public static DiGraph getDiGraphWeighted7() {
+        DiGraph g = new DiGraph(4);
+        g.addEdge(0, 0, 1);
+        g.addEdge(0, 1, 1);
+        g.addEdge(0, 3, 1);
+
+        g.addEdge(1, 1, 1);
+        g.addEdge(1, 2, 1);
+
+        g.addEdge(2, 2, 1);
+
+        g.addEdge(3, 3, 1);
+        return g;
+    }
+
+    public static DiGraph getDiGraphWeighted8() {
+        DiGraph g = new DiGraph(4);
+        g.addEdge(0, 1, 1);
+        g.addEdge(0, 2, 1);
+
+        g.addEdge(1, 2, 1);
+
+        g.addEdge(2, 0, 1);
+        g.addEdge(2, 3, 1);
+
+        g.addEdge(3, 3, 1);
+        return g;
+    }
+
     public static DiGraph getDiGraphWeightedNeg1() {
         DiGraph g = new DiGraph(5);
         g.addEdge(0, 1, 6);

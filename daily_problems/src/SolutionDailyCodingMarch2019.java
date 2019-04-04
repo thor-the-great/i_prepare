@@ -1,7 +1,10 @@
 import cracking.trees_graphs.DiGraph;
 import diff_problems.TreeNode;
 import graphs.GraphUtils;
+import path.google.TrappedRainWater;
+import sun.reflect.generics.tree.Tree;
 import trees.BSTNode;
+import trees.TreeUtils;
 import util.NaryTreeNode;
 import utils.ArrayUtil;
 import utils.StringUtils;
@@ -574,6 +577,161 @@ public class SolutionDailyCodingMarch2019 {
         return Math.max(l, r) + 1;
     }
 
+    /**
+     * This problem was asked by Palantir.
+     *
+     * The ancient Egyptians used to express fractions as a sum of several terms where each numerator is one.
+     * For example, 4 / 13 can be represented as 1 / 4 + 1 / 18 + 1 / 468.
+     *
+     * Create an algorithm to turn an ordinary fraction a / b, where a < b, into an Egyptian fraction.
+     *
+     * @param nr
+     * @param dr
+     * @return
+     */
+    public String toEgyptianFraction(int nr, int dr) {
+        /**
+         * Idea - do the recursive approach, check if modulo nr/dr is 0, if not - find the biggest possible invariant,
+         * subtract from initial fraction and call recursively on the leftover
+         */
+        System.out.println("Finding Egyptian fraction for " + nr +"/" +dr);
+        StringBuilder sb = new StringBuilder();
+
+        helper(nr, dr, sb);
+        return sb.toString();
+    }
+
+    void helper(int nr, int dr, StringBuilder sb) {
+
+        if (nr == 0 || dr == 0)
+            return;
+
+        if (nr == 1) {
+            sb.append(nr).append("/").append(dr).append(" ");
+            return;
+        }
+
+        if (nr >= dr) {
+            sb.append(nr/dr).append(" ");
+            helper(nr % dr, dr, sb);
+            return;
+        }
+
+        if ( dr % nr == 0) {
+            sb.append("1/").append(dr/nr);
+            return;
+        }
+
+        int newDr = 1 + (dr / nr);
+
+        sb.append("1/").append(newDr).append(" ");
+        helper( (nr*newDr) - dr, dr*newDr, sb);
+    }
+
+    /**
+     * This problem was asked by PayPal.
+     *
+     * Given a string and a number of lines k, print the string in zigzag form. In zigzag, characters are printed
+     * out diagonally from top left to bottom right until reaching the kth line, then back up to top right, and so on.
+     *
+     * For example, given the sentence "thisisazigzag" and k = 4, you should print:
+     *
+     * t     a     g
+     *  h   s z   a
+     *   i i   i z
+     *    s     g
+     * @param s
+     * @param k
+     * @return
+     */
+    List<String> zigZag(String s, int k) {
+        /**
+         * Idea - iterate in chunks of k size, each iteration changes from top-down to bottom-up. On each step save
+         * last element of previously visited chunk, then skip it on the next iteration. For the result - create
+         * array of k empty char arrays, initiallize with ' '. Set proper character from String at correct position
+         */
+        if (s == null || s.length() == 0)
+            return new ArrayList();
+
+        int N = s.length();
+        k = Math.min(N, k);
+        char[][] arr = new char[k][N];
+        for (int kk = 0; kk < k; kk++) {
+            for (int i = 0; i < N; i++) {
+                arr[kk][i] = ' ';
+            }
+        }
+
+
+        int prev = -1;
+        boolean down = true;
+        for (int i = 0; i < N; i += (k - 1)) {
+            int j = i;
+            int kk;
+            if (down) {
+                kk = 0;
+                for (; j < i + k  && j < N; j++) {
+                    if (j == prev) {
+                        kk++;
+                    } else {
+                        arr[kk++][j] = s.charAt(j);
+                    }
+                }
+            } else {
+                kk = k - 1;
+                for (; j < i + k  && j < N; j++) {
+                    if (j == prev) {
+                        kk--;
+                    } else {
+                        arr[kk--][j] = s.charAt(j);
+                    }
+                }
+            }
+            prev = j - 1;
+            down = !down;
+        }
+
+        List<String> res = new ArrayList();
+        for (char[] chrArr : arr) {
+            String str = new String(chrArr);
+            res.add(str);
+        }
+        return res;
+    }
+
+    TreeNode toFullBinaryTree(TreeNode root) {
+        TreeNode fakeRoot = new TreeNode(-1);
+
+        helper(root, fakeRoot, true);
+        return fakeRoot.left;
+    }
+
+    void helper(TreeNode node, TreeNode parentNode, boolean isLeft) {
+        if (node.left == null && node.right == null) {
+            TreeNode newNode = new TreeNode(node.val);
+            if (isLeft)
+                parentNode.left = newNode;
+            else
+                parentNode.right = newNode;
+            return;
+        }
+        if (node.left == null) {
+            helper(node.right, parentNode, isLeft);
+        }
+        else if (node.right == null) {
+            helper(node.left, parentNode, isLeft);
+        } else {
+            TreeNode newNode = new TreeNode(node.val);
+            if (isLeft)
+                parentNode.left = newNode;
+            else
+                parentNode.right = newNode;
+
+            helper(node.left, newNode, true);
+            helper(node.right, newNode, false);
+        }
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingMarch2019 obj = new SolutionDailyCodingMarch2019();
 
@@ -721,5 +879,68 @@ public class SolutionDailyCodingMarch2019 {
                                 new TreeNode(8), null))
         );
         System.out.println(obj.isHeightBalanced(binaryTree1));
+
+        System.out.println("--- print number as Egyptian fraction ---");
+        System.out.println(obj.toEgyptianFraction(4, 13));
+
+        System.out.println(obj.toEgyptianFraction(2, 3));
+
+        System.out.println(obj.toEgyptianFraction(5, 3));
+
+        System.out.println(obj.toEgyptianFraction(0, 3));
+
+        System.out.println(obj.toEgyptianFraction(8, 4));
+
+        System.out.println("--- string as zigzag in k lines ---");
+        String zigZagStr = "thisisazigzag";
+        List<String> zigZag = obj.zigZag(zigZagStr, 4);
+        System.out.println("Zig zag view of string " + zigZagStr);
+        zigZag.forEach(s->System.out.println(s));
+
+        zigZagStr = "thisisazigzag";
+        zigZag = obj.zigZag(zigZagStr, 3);
+        System.out.println("Zig zag view of string " + zigZagStr);
+        zigZag.forEach(s->System.out.println(s));
+
+        zigZagStr = "kittyispretty";
+        zigZag = obj.zigZag(zigZagStr, 6);
+        System.out.println("Zig zag view of string " + zigZagStr);
+        zigZag.forEach(s->System.out.println(s));
+
+        zigZagStr = "bag";
+        zigZag = obj.zigZag(zigZagStr, 6);
+        System.out.println("Zig zag view of string " + zigZagStr);
+        zigZag.forEach(s->System.out.println(s));
+
+        System.out.println("--- convert binary tree to full binary tree ---");
+        binaryTree1 = new TreeNode(1,
+                new TreeNode(2,
+                        null,
+                        new TreeNode(4,
+                                new TreeNode(7),
+                                null
+                                )),
+                new TreeNode(3,
+                        new TreeNode(5),
+                        new TreeNode(6))
+        );
+        TreeNode fullBT = obj.toFullBinaryTree(binaryTree1);
+        System.out.println(TreeUtils.binaryTreeToString(fullBT));
+
+        binaryTree1 = new TreeNode(0,
+                new TreeNode(1,
+                        new TreeNode(3,
+                                null,
+                                new TreeNode(5)),
+                        null
+                        ),
+                new TreeNode(2,
+                        null,
+                        new TreeNode(4,
+                                new TreeNode(6),
+                                new TreeNode(7)))
+        );
+        fullBT = obj.toFullBinaryTree(binaryTree1);
+        System.out.println(TreeUtils.binaryTreeToString(fullBT));
     }
 }

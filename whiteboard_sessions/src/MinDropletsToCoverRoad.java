@@ -35,7 +35,7 @@ public class MinDropletsToCoverRoad {
                 m.remove(lessStart);
             }
 
-            //no let's find out about the end
+            //now let's find out about the end
             int nextStart = start;
             Integer moreStart = m.ceilingKey(nextStart);
             while (moreStart != null && moreStart < endToMerge) {
