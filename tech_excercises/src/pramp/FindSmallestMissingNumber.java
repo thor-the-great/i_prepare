@@ -15,17 +15,17 @@ public class FindSmallestMissingNumber {
             if (idx >= N)
                 continue;
 
-            if (idx == 0)
+            if (arr[idx] == 0)
                 zeroIdx = i;
             if (arr[idx] > 0)
                 arr[idx] = -arr[idx];
         }
 
-        System.out.println(Arrays.toString(arr));
+        //System.out.println(Arrays.toString(arr));
         int res = N;
         for (int i = 0; i < N; i++) {
             int num = arr[i];
-            if (num == 0 && zeroIdx == -1) {
+            if (num == 0 && zeroIdx < 0) {
                 res = i;
                 break;
             }
@@ -42,5 +42,9 @@ public class FindSmallestMissingNumber {
         System.out.println(getDifferentNumber(new int[] {1,3,0,2}));
 
         System.out.println(getDifferentNumber(new int[] {1,6,7,3,2,0}));
+
+        System.out.println(getDifferentNumber(new int[] {1,6,7,3,0,2}));
+
+        System.out.println(getDifferentNumber(new int[] {6, 5, 1, 9, 2, 0, 11}));
     }
 }

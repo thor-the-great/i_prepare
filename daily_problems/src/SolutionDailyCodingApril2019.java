@@ -204,6 +204,89 @@ public class SolutionDailyCodingApril2019 {
         return res;
     }
 
+    /**
+     * This problem was asked by Two Sigma.
+     *
+     * Ghost is a two-person word game where players alternate appending letters to a word. The first person who
+     * spells out a word, or creates a prefix for which there is no possible continuation, loses. Here is a sample
+     * game:
+     *
+     * Player 1: g
+     * Player 2: h
+     * Player 1: o
+     * Player 2: s
+     * Player 1: t [loses]
+     * Given a dictionary of words, determine the letters the first player should start with, such that with optimal
+     * play they cannot lose.
+     *
+     * For example, if the dictionary is ["cat", "calf", "dog", "bear"], the only winning start letter would be b.
+     * @param dict
+     * @return
+     */
+    public List<Character> optimalGhostGame(String[] dict) {
+        List<Character> res = new ArrayList<>();
+        if (dict == null || dict.length == 0)
+            return  res;
+
+        Map<Character, List<Integer>> m = new HashMap<>();
+        for (String w : dict) {
+            char fc = w.charAt(0);
+            int len = w.length();
+            if (!m.containsKey(fc)) {
+                m.put(fc, new ArrayList<>());
+            }
+            m.get(fc).add(len);
+        }
+
+        for(Character ch : m.keySet()) {
+            List<Integer> lens = m.get(ch);
+            boolean isOk = true;
+            for (int len : lens) {
+                if (len % 2 == 1) {
+                    isOk = false;
+                    break;
+                }
+            }
+            if (isOk)
+                res.add(ch);
+        }
+
+        return res;
+    }
+
+    /**
+     * This problem was asked by Pinterest.
+     *
+     * The sequence [0, 1, ..., N] has been jumbled, and the only clue you have for its order is an array
+     * representing whether each number is larger or smaller than the last. Given this information, reconstruct an
+     * array that is consistent with it. For example, given [None, +, +, -, +], you could return [1, 2, 3, 0, 4].
+     *
+     * @param relations
+     * @return
+     */
+    public int[] restoreArray(char[] relations) {
+        //Idea: scan and count number of '-'. Every '-' means we need to start + number from +1.
+        //then for + increment and for '-' because it could be '+', '+' and '-', '-'
+        int N = relations.length;
+        int[] res = new int[N];
+        int minCount = 0;
+        for (int i = 0; i < N; i++) {
+            if (relations[i] == '-') {
+                minCount++;
+            }
+        }
+        int min = minCount - 1;
+        int plus = minCount;
+
+        for (int i = 0; i < N; i++) {
+            if (relations[i] == '-') {
+                res[i] = min--;
+            } else
+                res[i] = plus++;
+        }
+
+        return res;
+    }
 
     public static void main(String[] args) {
         SolutionDailyCodingApril2019 obj = new SolutionDailyCodingApril2019();
@@ -268,5 +351,39 @@ public class SolutionDailyCodingApril2019 {
 
         zigZagTraversal.forEach(i-> System.out.print(i + ", "));
         System.out.print("\n");
+
+        System.out.println("--- optimal strategy for ghost game ---");
+        List<Character> optimal;
+        String[] dict;
+        dict = new String[] {
+                "cat", "calf", "dog", "bear"
+        };
+        optimal = obj.optimalGhostGame(dict);
+        System.out.println("Words : " + Arrays.toString(dict));
+        System.out.print("Optimal letters : " ); optimal.forEach(l->System.out.print(l + ", "));
+        System.out.print("\n");
+
+        dict = new String[] {
+                "cat", "calf", "dog", "bear", "am", "arm", "fade"
+        };
+        optimal = obj.optimalGhostGame(dict);
+        System.out.println("Words : " + Arrays.toString(dict));
+        System.out.print("Optimal letters : " ); optimal.forEach(l->System.out.print(l + ", "));
+        System.out.print("\n");
+
+        System.out.println("--- restore array by the set of relations between every two elements ---");
+        char[] relation;
+        int[] restored;
+        relation = new char[] {
+                ' ', '+', '+', '-', '+'
+        };
+        restored = obj.restoreArray(relation);
+        System.out.println("Relations : " + Arrays.toString(relation) + "; Restored : " + Arrays.toString(restored));
+
+        relation = new char[] {
+                ' ', '-', '+', '+', '+', '-', '-', '+'
+        };
+        restored = obj.restoreArray(relation);
+        System.out.println("Relations : " + Arrays.toString(relation) + "; Restored : " + Arrays.toString(restored));
     }
 }
