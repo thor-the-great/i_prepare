@@ -29,56 +29,78 @@ import java.util.*;
  */
 public class EvaluateDivisions {
 
-    Map<String, List<String>> vertexes = new HashMap();
-    Map<String, List<Double>> edges = new HashMap();
+    Map<String, List<Double>> edges;
+    Map<String, List<String>> vertexes;
 
     public double[] calcEquation(String[][] equations, double[] values, String[][] queries) {
-        vertexes.clear();
-        edges.clear();
-        //build graph - vertexes contains links between variables and edges - result of division
-        for (int i = 0; i < equations.length; i++) {
-            String[] eq = equations[i];
-            double val = values[i];
-            vertexes.putIfAbsent(eq[0], new ArrayList());
-            vertexes.get(eq[0]).add(eq[1]);
-            vertexes.putIfAbsent(eq[1], new ArrayList());
-            vertexes.get(eq[1]).add(eq[0]);
+        int N = equations.length;
+        if ( N == 0)
+            return new double[0];
 
-            edges.putIfAbsent(eq[0], new ArrayList());
-            edges.get(eq[0]).add(val);
-            edges.putIfAbsent(eq[1], new ArrayList());
-            edges.get(eq[1]).add(1/val);
+        edges = new HashMap();
+        vertexes = new HashMap();
+
+        for (int i = 0; i < N; i++) {
+            String[] eq = equations[i];
+            addVertex(eq[0], eq[1]);
+            addVertex(eq[1], eq[0]);
+
+            double val = values[i];
+            addEdge(eq[0], val);
+            addEdge(eq[1], 1/val);
         }
 
-        double[] res = new double[queries.length];
         Set<String> visited = new HashSet();
-        for (int i = 0; i < queries.length; i++) {
+        int Q = queries.length;
+        double[] res = new double[Q];
+        for (int q = 0; q < Q; q++) {
+            String[] query = queries[q];
             visited.clear();
-            String[] q = queries[i];
-            double sol = dfs(q[0], q[1], visited, 1.0);
-            res[i] = sol == 0.0 ? -1.0 : sol;
+            double x = dfs(query[0], query[1], visited, 1.0);
+            res[q] = x == 0.0 ? -1.0 : x;
         }
         return res;
     }
 
-    double dfs(String a, String b, Set<String> visited, double valueSoFar) {
-        if (visited.contains(a) || !vertexes.containsKey(a))
+    double dfs(String cur, String to, Set<String> visited, double val) {
+        if (visited.contains(cur)  || !vertexes.containsKey(to))
             return 0.0;
-        if (a.equals(b)) return valueSoFar;
-        visited.add(a);
 
-        List<String> adjVertexes = vertexes.get(a);
-        List<Double> adjValues = edges.get(a);
-        double res = 0.0;
-        for (int i =0; i < adjVertexes.size(); i++) {
-            String nextV = adjVertexes.get(i);
-            double nextValue = adjValues.get(i);
-            res = dfs(nextV, b, visited, valueSoFar * nextValue);
-            if (res != 0.0)
-                return res;
+        if (cur.equals(to))
+            return val;
+
+        visited.add(cur);
+        List<String> adjVs = vertexes.get(cur);
+        if (adjVs != null && !adjVs.isEmpty()) {
+            Iterator<Double> edgesIt = edges.get(cur).iterator();
+            for (String adjV : adjVs) {
+                double valEdge = edgesIt.next();
+                double res = dfs(adjV, to, visited, val * valEdge);
+                if (res != 0.0)
+                    return res;
+            }
         }
-        visited.remove(a);
         return 0.0;
+    }
+
+    void addVertex(String from, String to) {
+        if (vertexes.containsKey(from)) {
+            vertexes.get(from).add(to);
+        } else {
+            List<String> adj = new ArrayList();
+            adj.add(to);
+            vertexes.put(from, adj);
+        }
+    }
+
+    void addEdge(String from, double val) {
+        if (edges.containsKey(from)) {
+            edges.get(from).add(val);
+        } else {
+            List<Double> adj = new ArrayList();
+            adj.add(val);
+            edges.put(from, adj);
+        }
     }
 
     public static void main(String[] args) {

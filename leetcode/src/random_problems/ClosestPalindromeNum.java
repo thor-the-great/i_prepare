@@ -23,7 +23,7 @@ public class ClosestPalindromeNum {
      * We first need to find the higher palindrome and lower palidrome respectively. and return the one who has the
      * least different with the input number.
      *
-     * For the higher palindrome, the low limit is number + 1 while for the lower palindrome, the high limit is
+     * For the higher palindrome, the low MOD is number + 1 while for the lower palindrome, the high MOD is
      * number - 1.
      *
      * One global solution to find a palindrome is to copy first half part of the array to the last half part, we

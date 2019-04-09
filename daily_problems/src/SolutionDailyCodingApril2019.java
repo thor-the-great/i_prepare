@@ -288,6 +288,62 @@ public class SolutionDailyCodingApril2019 {
         return res;
     }
 
+    Map<Character, String> huffmanCoding(String sentence) {
+        Map<Character, String> res = new HashMap<>();
+
+        Map<Character, Integer> freq = new HashMap<>();
+        for (char ch : sentence.toCharArray()) {
+            if (Character.isLetter(ch)) {
+                ch = Character.toLowerCase(ch);
+                freq.put(ch, freq.getOrDefault(ch, 0) + 1);
+            }
+        }
+        Comparator<HTNode> comp = (n1, n2)->{
+            return n1.freq - n2.freq;
+        };
+        PriorityQueue<HTNode> pq = new PriorityQueue(comp);
+        for (char ch : freq.keySet()) {
+            HTNode node = new HTNode();
+            node.ch = ch;
+            node.freq = freq.get(ch);
+            pq.add(node);
+        }
+        HTNode root = null;
+        while(pq.size() > 1) {
+            HTNode min = pq.poll();
+            HTNode nextMin = pq.poll();
+            HTNode compaund = new HTNode();
+            compaund.freq = min.freq + nextMin.freq;
+            compaund.left = min;
+            compaund.right = nextMin;
+            compaund.ch = '-';
+            root = compaund;
+            pq.add(compaund);
+        }
+
+        traverseTree(root, "", res);
+
+        return res;
+    }
+
+    void traverseTree(HTNode n, String code, Map<Character, String> res) {
+        if (n.left == null && n.right == null)
+            res.put(n.ch, code);
+
+        if (n.left != null)
+            traverseTree(n.left,  code + "0", res);
+
+        if (n.right != null)
+            traverseTree(n.right,  code + "1", res);
+    }
+
+    class HTNode {
+        char ch;
+        int freq;
+        HTNode left;
+        HTNode right;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingApril2019 obj = new SolutionDailyCodingApril2019();
 
@@ -385,5 +441,23 @@ public class SolutionDailyCodingApril2019 {
         };
         restored = obj.restoreArray(relation);
         System.out.println("Relations : " + Arrays.toString(relation) + "; Restored : " + Arrays.toString(restored));
+
+        System.out.println("--- create huffman coding tree ---");
+        String sentence;
+        Map<Character, String> huffmanCode;
+
+        sentence = "catscca";
+        huffmanCode = obj.huffmanCoding(sentence);
+        System.out.println("Encoding sentence : " + sentence);
+        for(Character ch : huffmanCode.keySet()) {
+            System.out.println("" + ch +" - " + huffmanCode.get(ch));
+        }
+
+        sentence = "aaaabbbcaa";
+        System.out.println("Encoding sentence : " + sentence);
+        huffmanCode = obj.huffmanCoding(sentence);
+        for(Character ch : huffmanCode.keySet()) {
+            System.out.println("" + ch +" - " + huffmanCode.get(ch));
+        }
     }
 }
