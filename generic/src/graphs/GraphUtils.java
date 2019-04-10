@@ -1,6 +1,7 @@
 package graphs;
 
 import cracking.trees_graphs.DiGraph;
+import cracking.trees_graphs.SimpleGraph;
 
 public class GraphUtils {
 
@@ -102,6 +103,51 @@ public class GraphUtils {
         g.addEdge(2, 3, 1);
 
         g.addEdge(3, 3, 1);
+        return g;
+    }
+
+    public static SimpleGraph getUnGraph1() {
+        SimpleGraph g = new SimpleGraph(4);
+        g.addEdge(0, 1);
+        g.addEdge(0, 2);
+
+        g.addEdge(1, 2);
+
+        g.addEdge(2, 3);
+
+        return g;
+    }
+
+    public static SimpleGraph getUnGraph2() {
+        SimpleGraph g = new SimpleGraph(8);
+        g.addEdge(0, 1);
+        g.addEdge(0, 2);
+
+        g.addEdge(1, 2);
+
+        g.addEdge(2, 3);
+
+        g.addEdge(3, 4);
+        g.addEdge(3, 5);
+
+        g.addEdge(4, 6);
+        g.addEdge(5, 6);
+
+        g.addEdge(6, 7);
+
+        return g;
+    }
+
+    public static SimpleGraph getUnGraph3() {
+        SimpleGraph g = new SimpleGraph(4);
+        g.addEdge(0, 1);
+        g.addEdge(0, 2);
+        g.addEdge(0, 3);
+
+        g.addEdge(1, 2);
+
+        g.addEdge(2, 3);
+
         return g;
     }
 

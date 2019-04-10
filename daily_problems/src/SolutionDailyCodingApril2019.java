@@ -344,6 +344,57 @@ public class SolutionDailyCodingApril2019 {
         HTNode right;
     }
 
+    char[] SEPARATORS = new char[] {',',';',':'};
+    char[] TERMINALS = new char[] {'.','?','!','‽'};
+
+    String sentence;
+    boolean isValid = false;
+
+    public String validSentence(String s) {
+        sentence = s;
+
+        Set<Character> validChars = new HashSet<>();
+        for (char ch : SEPARATORS)
+            validChars.add(ch);
+        for (char ch : TERMINALS)
+            validChars.add(ch);
+
+        boolean isValid = true;
+        //int p = 0; p < s.length(); p++
+        int p = 0;
+        while(p < s.length() && isValid) {
+            char ch = sentence.charAt(p);
+            //first char in a sentence
+            if (p == 0) {
+                if (!(Character.isLetter(ch) && Character.isUpperCase(ch))) {
+                    isValid = false;
+                }
+            } else if (p == 1) {
+                if (!((Character.isLetter(ch) && Character.isLowerCase(ch)) || ch == ' ')) {
+                    isValid = false;
+                }
+            } else if (p == s.length() - 1) {
+                if (ch != '.') {
+                    isValid = false;
+                }
+            } else if (ch == ' ') {
+                //check if previous character was not a space
+                if (s.charAt(p - 1) == ' ') {
+                    isValid = false;
+                }
+            } else {
+                if (((Character.isLetter(ch) && Character.isLowerCase(ch)) ||
+                    validChars.contains(ch))) {
+                    isValid = true;
+                } else
+                    isValid = false;
+            }
+            p++;
+        }
+
+        return isValid ? sentence : "-";
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingApril2019 obj = new SolutionDailyCodingApril2019();
 
@@ -459,5 +510,12 @@ public class SolutionDailyCodingApril2019 {
         for(Character ch : huffmanCode.keySet()) {
             System.out.println("" + ch +" - " + huffmanCode.get(ch));
         }
+
+        System.out.println("--- Valid sentence checker ---");
+        System.out.println(obj.validSentence("This is valid."));
+        System.out.println(obj.validSentence("This is not valid"));
+        System.out.println(obj.validSentence("This is Not valid."));
+        System.out.println(obj.validSentence("THis is not valid."));
+        System.out.println(obj.validSentence("Valid."));
     }
 }
