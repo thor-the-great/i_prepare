@@ -1,4 +1,5 @@
 import diff_problems.TreeNode;
+import jdk.internal.org.objectweb.asm.commons.RemappingAnnotationAdapter;
 import linked_list.ListNode;
 import linked_list.StringUtils;
 import path.google.TrappedRainWater;
@@ -8,6 +9,7 @@ import util.NaryTreeNode;
 import utils.ArrayUtil;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class SolutionDailyCodingApril2019 {
 
@@ -395,6 +397,338 @@ public class SolutionDailyCodingApril2019 {
         return isValid ? sentence : "-";
     }
 
+    int[] fairSalary(int[] performances) {
+        int[] res = new int[performances.length];
+
+        List<Range> ranges = new ArrayList<>();
+        int prev = performances[0];
+        boolean asc = performances[1] > performances[0];
+
+        int p = 1;
+        int start = 0;
+        while (p < performances.length) {
+            int num = performances[p];
+            if ((asc && num < prev) || (!asc && num > prev)) {
+                if (p - start > 1) {
+                    Range range = new Range();
+                    range.asc = asc;
+                    range.len = p - start;
+                    ranges.add(range);
+                    start = p;
+                    asc = !asc;
+                } else {
+                    asc = !asc;
+                }
+            }
+            prev = num;
+            p++;
+        }
+
+        Range lastRange = new Range();
+        lastRange.len = performances.length - start;
+        lastRange.asc = asc;
+
+        ranges.add(lastRange);
+
+        int i = 0;
+        for (Range r : ranges) {
+            if (r.asc) {
+                for (int j = 1; j <= r.len; j++) {
+                    res[i++] = j;
+                }
+            } else {
+                for (int j = r.len; j >=1; j--) {
+                    res[i++] = j;
+                }
+            }
+        }
+
+        return res;
+    }
+
+    class Range {
+        boolean asc;
+        int len;
+    }
+
+    /**
+     * This problem was asked by Pivotal.
+     *
+     * A step word is formed by taking a given word, adding a letter, and anagramming the result. For example,
+     * starting with the word "APPLE", you can add an "A" and anagram to get "APPEAL".
+     *
+     * Given a dictionary of words and an input word, create a function that returns all valid step words.
+     *
+     * @param word
+     * @param dict
+     * @return
+     */
+    List<String> validStepWords(String word, String[] dict) {
+        //idea - build one map with chars and it counts for the word. Then for every word in the dictionary build
+        //similar map, then compare two maps, removing keys from dict map in case quantities are similar. At the end
+        //the only char left must be only one with qty 1. If it's not the case - this is not a step word
+        Map<Character, Integer> wordMap = getWordCharsMap(word);
+        List<String> res = new ArrayList<>();
+
+        for (String dictWord : dict) {
+            Map<Character, Integer> dictWordMap = getWordCharsMap(dictWord);
+            for (char wordCh : wordMap.keySet()) {
+                if (!dictWordMap.containsKey(wordCh))
+                    break;
+
+                int count1 = wordMap.get(wordCh);
+                int count2 = dictWordMap.get(wordCh);
+                if (count1 == count2)
+                    dictWordMap.remove(wordCh);
+                else
+                    dictWordMap.put(wordCh, count2 - count1);
+            }
+
+            if (dictWordMap.size() != 1)
+                continue;
+            char extraCh = dictWordMap.keySet().iterator().next();
+            if (dictWordMap.get(extraCh) == 1)
+                res.add(dictWord);
+        }
+
+        return res;
+    }
+
+    Map<Character, Integer> getWordCharsMap(String s) {
+        Map<Character, Integer> m = new HashMap();
+        for (char ch : s.toCharArray()) {
+            m.put(ch, m.getOrDefault(ch, 0) + 1);
+        }
+        return m;
+    }
+
+    /**
+     * This problem was asked by Oracle.
+     *
+     * You are presented with an 8 by 8 matrix representing the positions of pieces on a chess board. The only pieces
+     * on the board are the black king and various white pieces. Given this matrix, determine whether the king is in
+     * check.
+     *
+     * For details on how each piece moves, see here.
+     *
+     * For example, given the following matrix:
+     *
+     * ...K....
+     * ........
+     * .B......
+     * ......P.
+     * .......R
+     * ..N.....
+     * ........
+     * .....Q..
+     * You should return True, since the bishop is attacking the king diagonally.
+     */
+    enum ChessPieces {
+        
+        K, P , R, B, N, Q;
+    }
+
+    public boolean isKingInCheck(char[][] board) {
+        int rows = 8;
+        int cols = 8;
+
+        int[][] n_moves = new int[][] {
+                {-2, -1}, {-1, -2}, {-2, 1}, {-1, 2}, {2, 1}, {1, 2}, {2, -1}, {1, -2}
+        };
+
+        int[][] r_moves = new int[][] {
+                {1, 0}, {-1, 0}, {0, 1}, {0, -1}
+        };
+
+        int[][] b_moves = new int[][] {
+                {-1, -1}, {-1, 1}, {1, 1}, {1, -1}
+        };
+
+        int[][] q_moves = new int[][] {
+                {-1, -1}, {-1, 1}, {1, 1}, {1, -1}, {1, 0}, {-1, 0}, {0, 1}, {0, -1}
+        };
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                char p = board[r][c];
+                if (p == '.')
+                    continue;
+                switch (p) {
+                    case 'P' : {
+                        if ((isValid(r - 1, c - 1) && board[r - 1][c - 1] == 'K') ||
+                                (isValid(r - 1, c + 1) && board[r - 1][c + 1] == 'K')) {
+                            return true;
+                        }
+                        break;
+                    }
+                    case 'N' : {
+                        for (int[] move : n_moves) {
+                            int nextR = r + move[0];
+                            int nextC = c + move[1];
+
+                            if (isValid(nextR, nextC) && board[nextR][nextC] == 'K')
+                                return true;
+                        }
+                        break;
+                    }
+                    case 'R' : {
+                        for (int[] move : r_moves) {
+                            int nextR = move[0] + r;
+                            int nextC = move[1] + c;
+                            while (isValid(nextR, nextC)) {
+                                char nextCell = board[nextR][nextC];
+                                if (nextCell == 'K')
+                                    return true;
+                                if (nextCell != '.')
+                                    break;
+                                nextR += move[0];
+                                nextC += move[1];
+                            }
+                        }
+                        break;
+                    }
+                    case 'B' : {
+                        for (int[] move : b_moves) {
+                            int nextR = move[0] + r;
+                            int nextC = move[1] + c;
+                            while (isValid(nextR, nextC)) {
+                                char nextCell = board[nextR][nextC];
+                                if (nextCell == 'K')
+                                    return true;
+                                if (nextCell != '.')
+                                    break;
+                                nextR += move[0];
+                                nextC += move[1];
+                            }
+                        }
+                        break;
+                    }
+                    case 'Q' : {
+                        for (int[] move : q_moves) {
+                            int nextR = move[0] + r;
+                            int nextC = move[1] + c;
+                            while (isValid(nextR, nextC)) {
+                                char nextCell = board[nextR][nextC];
+                                if (nextCell == 'K')
+                                    return true;
+                                if (nextCell != '.')
+                                    break;
+                                nextR += move[0];
+                                nextC += move[1];
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    boolean isValid(int r, int c) {
+        if (r < 0 || r >= 8 || c < 0 || c >= 8)
+            return false;
+        return true;
+    }
+
+    /**
+     * This problem was asked by Indeed.
+     *
+     * Given a 32-bit positive integer N, determine whether it is a power of four in faster than O(log N) time.
+     *
+     * @param num
+     * @return
+     */
+    public boolean is4Power(int num) {
+        /**
+         * Idea - in binary form power of 4 will be in form: 1<00..00> where number of zeros is even.
+         * So first we are checking if there is only one higher bit set (by doing n - 1 and then OR)
+         * then count number of 0-es - it must be even
+         */
+        if (num <= 0)
+            return false;
+
+        //check if only one higher bit set.
+        if ((num & (num - 1)) == 0) {
+            int count = 0;
+            while (num > 1) {
+                num >>= 1;
+                count++;
+            }
+            return count % 2 == 0;
+        }
+        return false;
+    }
+
+    /**
+     * This problem was asked by Microsoft.
+     *
+     * You are given an string representing the initial conditions of some dominoes. Each element can take one of
+     * three values:
+     *
+     * L, meaning the domino has just been pushed to the left,
+     * R, meaning the domino has just been pushed to the right, or
+     * ., meaning the domino is standing still.
+     * Determine the orientation of each tile when the dominoes stop falling. Note that if a domino receives a force
+     * from the left and right side simultaneously, it will remain upright.
+     *
+     * For example, given the string .L.R....L, you should return LL.RRRLLL.
+     *
+     * Given the string ..R...L.L, you should return ..RR.LLLL.
+     * @param dominos
+     * @return
+     */
+    public char[] dominoFalling(char[] dominos) {
+        int N = dominos.length;
+        if (N <= 1)
+            return dominos;
+
+        int prev = -1;
+        for (int p = 0; p < N; p++) {
+            char d = dominos[p];
+            switch (d) {
+                case 'L' : {
+                    if (prev == -1) {
+                        fillArraySingle(0, p - 1, 'L', dominos);
+                    } else {
+                        if (dominos[prev] == 'L')
+                            fillArraySingle(prev + 1, p - 1, 'L', dominos);
+                        else {
+                            fillArrayTwo(prev + 1, p - 1, 'R', 'L', dominos);
+                        }
+                    }
+                    prev = p;
+                    break;
+                }
+                case 'R' : {
+                    if (prev != -1 && dominos[prev] == 'R')
+                        fillArraySingle(prev + 1, p - 1, 'R', dominos);
+                    prev = p;
+                    break;
+                }
+            }
+        }
+
+        if (prev != -1 && dominos[prev] == 'R')
+            fillArraySingle(prev + 1, N - 1, 'R', dominos);
+
+        return dominos;
+    }
+
+    private void fillArraySingle(int start, int end, char val, char[] dominos) {
+        for (int i = start; i <= end; i++)
+            dominos[i] = val;
+    }
+
+    private void fillArrayTwo(int start, int end, char l, char r, char[] dominos) {
+        while(start < end) {
+            dominos[start++] = l;
+            dominos[end--] = r;
+        }
+        if (start == end)
+            dominos[start] = '.';
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingApril2019 obj = new SolutionDailyCodingApril2019();
 
@@ -517,5 +851,64 @@ public class SolutionDailyCodingApril2019 {
         System.out.println(obj.validSentence("This is Not valid."));
         System.out.println(obj.validSentence("THis is not valid."));
         System.out.println(obj.validSentence("Valid."));
+
+        System.out.println("--- fair salary ---");
+        int[] sal = obj.fairSalary(new int[] {10, 40, 200, 1000, 60, 30});
+        System.out.println(Arrays.toString(sal));
+
+        sal = obj.fairSalary(new int[] {10, 40, 200, 1000, 60, 30, 50, 10, 5});
+        System.out.println(Arrays.toString(sal));
+
+        sal = obj.fairSalary(new int[] {10, 40, 20, 10, 60, 50});
+        System.out.println(Arrays.toString(sal));
+
+        sal = obj.fairSalary(new int[] {10, 40, 200, 1000, 60, 30, 50, 10, 15});
+        System.out.println(Arrays.toString(sal));
+
+        System.out.println("--- get all valid step words ---");
+        String[] stepWordsDict;
+        String word;
+        List<String> stepWords;
+
+        word = "apple";
+        stepWordsDict = new String[] {
+          "appeal", "break", "apply", "note", "thinks", "crazy", "lappez"
+        };
+
+        stepWords = obj.validStepWords(word, stepWordsDict);
+        stepWords.forEach(w->System.out.print(w +" "));
+
+        System.out.println("--- check if king is in check ---");
+        System.out.println(obj.isKingInCheck(
+            new char [][] {
+                {'.', '.', '.', '.', '.', '.', '.', '.'},
+                {'.', 'B', '.', 'P', '.', '.', '.', '.'},
+                {'.', 'N', 'P', '.', '.', '.', 'B', '.'},
+                {'.', '.', '.', '.', '.', 'P', '.', '.'},
+                {'.', 'Q', '.', '.', 'K', '.', '.', '.'},
+                {'.', '.', '.', '.', '.', '.', '.', 'R'},
+                {'.', '.', '.', '.', '.', '.', 'N', '.'},
+                {'.', '.', '.', '.', '.', '.', '.', '.'}
+            }
+        ));
+
+        System.out.println("--- check if int is power of 4 faster than logn ---");
+        Random rand = new Random();
+        rand.ints(2500, 0, 10000)
+                .forEach(i-> {
+                    if (obj.is4Power(i)) System.out.println(i);
+                });
+
+        System.out.println("--- calculate domino state after push ---");
+        char[] dominos;
+
+        dominos = new char[] {'.', 'L', '.', 'R', '.', '.', '.', '.', 'L'};
+        System.out.println("Initial dominos : " + Arrays.toString(dominos) + ", after : " + Arrays.toString(obj.dominoFalling(dominos)));
+
+        dominos = new char[] {'.', '.', 'R', '.', '.', '.', 'L', '.', 'L'};
+        System.out.println("Initial dominos : " + Arrays.toString(dominos) + ", after : " + Arrays.toString(obj.dominoFalling(dominos)));
+
+        dominos = new char[] {'R', '.', 'R', '.', '.', '.', 'L', 'R', 'L'};
+        System.out.println("Initial dominos : " + Arrays.toString(dominos) + ", after : " + Arrays.toString(obj.dominoFalling(dominos)));
     }
 }
