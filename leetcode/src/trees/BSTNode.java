@@ -5,6 +5,10 @@ public class BSTNode {
     public BSTNode right;
     public BSTNode left;
 
+    public BSTNode(int val) {
+        this.val = val;
+    }
+
     public BSTNode(int val, BSTNode left, BSTNode right) {
         this.val = val;
         this.right = right;

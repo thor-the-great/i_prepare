@@ -63,14 +63,16 @@ public class StringUtils {
                 l = level;
             }
             sb.append(n).append(", ");
-            if (n.left != null) {
-                q.add(n.left);
-                levels.add(level + 1);
+
+            if (n == null || (n.left == null && n.right == null)) {
+                continue;
             }
-            if (n.right != null) {
-                q.add(n.right);
-                levels.add(level + 1);
-            }
+
+            q.add(n.left);
+            levels.add(level + 1);
+
+            q.add(n.right);
+            levels.add(level + 1);
         }
         return sb.toString();
     }

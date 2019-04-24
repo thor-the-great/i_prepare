@@ -4,6 +4,7 @@ import linked_list.ListNode;
 import linked_list.StringUtils;
 import path.google.TrappedRainWater;
 import sun.reflect.generics.tree.Tree;
+import trees.BSTNode;
 import trees.TreeUtils;
 import util.NaryTreeNode;
 import utils.ArrayUtil;
@@ -729,6 +730,47 @@ public class SolutionDailyCodingApril2019 {
             dominos[start] = '.';
     }
 
+    /**
+     * This problem was asked by Amazon.
+     *
+     * Given an integer N, construct all possible binary search trees with N nodes.
+     * @param N
+     * @return
+     */
+    public List<BSTNode> allBTOfNNodes(int N) {
+
+        if (N == 0)
+            return new LinkedList<>();
+
+        return helper(N);
+    }
+
+    List<BSTNode> helper(int count) {
+        List<BSTNode> res = new LinkedList<>();
+
+        if (count == 0) {
+            res.add(null);
+            return res;
+        }
+
+        int newCount = count - 1;
+        for (int i = 0; i <= newCount; i++) {
+            List<BSTNode> leftST = helper(i);
+            List<BSTNode> rightST = helper(newCount - i);
+
+            for (BSTNode left : leftST) {
+                for (BSTNode right : rightST) {
+                    BSTNode root = new BSTNode(count);
+                    root.left = left;
+                    root.right = right;
+                    res.add(root);
+                }
+            }
+        }
+
+        return res;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingApril2019 obj = new SolutionDailyCodingApril2019();
 
@@ -910,5 +952,16 @@ public class SolutionDailyCodingApril2019 {
 
         dominos = new char[] {'R', '.', 'R', '.', '.', '.', 'L', 'R', 'L'};
         System.out.println("Initial dominos : " + Arrays.toString(dominos) + ", after : " + Arrays.toString(obj.dominoFalling(dominos)));
+
+        System.out.println("--- construct all possible BT of N nodes ---");
+        List<BSTNode> possibleBT = obj.allBTOfNNodes(3);
+        possibleBT.forEach(
+                root-> System.out.println("Next binary tree : " + utils.StringUtils.binaryTreeToString(root))
+        );
+
+        possibleBT = obj.allBTOfNNodes(2);
+        possibleBT.forEach(
+                root-> System.out.println("Next binary tree : " + utils.StringUtils.binaryTreeToString(root))
+        );
     }
 }

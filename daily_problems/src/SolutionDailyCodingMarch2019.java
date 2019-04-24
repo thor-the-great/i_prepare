@@ -732,6 +732,79 @@ public class SolutionDailyCodingMarch2019 {
         }
     }
 
+    /**
+     * This problem was asked by Twitter.
+     *
+     * A network consists of nodes labeled 0 to N. You are given a list of edges (a, b, t), describing the time t it
+     * takes for a message to be sent from node a to node b. Whenever a node receives a message, it immediately passes
+     * the message on to a neighboring node, if possible.
+     *
+     * Assuming all nodes are connected, determine how long it will take for every node to receive a message that
+     * begins at node 0.
+     *
+     * For example, given N = 5, and the following edges:
+     *
+     * edges = [
+     *     (0, 1, 5),
+     *     (0, 2, 3),
+     *     (0, 5, 4),
+     *     (1, 3, 8),
+     *     (2, 3, 1),
+     *     (3, 5, 10),
+     *     (3, 4, 5)
+     * ]
+     * You should return 9, because propagating the message from 0 -> 2 -> 3 -> 4 will take that much time.
+     * @param N
+     * @param edges
+     * @return
+     */
+    int timeForMessage(int N, int[][] edges) {
+        /**
+         * Do the dijkstra from vertex 0, find the max from the distances we found.
+         * Dijkstra based on minheap (PQ)
+         */
+        Comparator<int[]> comp = Comparator.comparingInt((int[] e) -> e[2]);
+
+        Map<Integer, List<int[]>> g = new HashMap<>();
+        for(int[] e : edges) {
+            if (!g.containsKey(e[0])) {
+                List<int[]> l = new ArrayList<>();
+                l.add(e);
+                g.put(e[0], l);
+            } else {
+                g.get(e[0]).add(e);
+            }
+        }
+
+        PriorityQueue<int[]> pq = new PriorityQueue<>(comp);
+
+        int[] distTo = new int[N + 1];
+        Arrays.fill(distTo, Integer.MAX_VALUE);
+        distTo[0] = 0;
+        pq.add(new int[]{0, 0, 0});
+
+        while(!pq.isEmpty()) {
+            int[] edge = pq.poll();
+            int v = edge[1];
+
+            List<int[]> adj = g.get(v);
+            if (adj != null) {
+                for (int[] e : adj) {
+                    int from = e[0];
+                    int to = e[1];
+                    int w = e[2];
+                    if (distTo[to] > distTo[from] + w) {
+                        distTo[to] = distTo[from] + w;
+                        pq.add(e);
+                    }
+                }
+            }
+        }
+
+        int max = Arrays.stream(distTo).max().getAsInt();
+        return max;
+    }
+
     public static void main(String[] args) {
         SolutionDailyCodingMarch2019 obj = new SolutionDailyCodingMarch2019();
 
@@ -942,5 +1015,39 @@ public class SolutionDailyCodingMarch2019 {
         );
         fullBT = obj.toFullBinaryTree(binaryTree1);
         System.out.println(TreeUtils.binaryTreeToString(fullBT));
+
+        System.out.println("--- max time to deliver message from node 0 to any other node ---");
+
+        int[][] network;
+        int N;
+
+        network = new int[][] {
+                {0, 1, 5},
+                {0, 2, 3},
+                {0, 5, 4},
+                {1, 3, 8},
+                {2, 3, 1},
+                {3, 5, 10},
+                {3, 4, 5}
+        };
+        N = 5;
+        System.out.println(obj.timeForMessage(N, network));
+
+        network = new int[][] {
+                {0, 1, 2},
+                {0, 2, 8},
+                {0, 5, 6},
+                {1, 3, 3},
+                {1, 4, 6},
+                {2, 3, 6},
+                {2, 5, 4},
+                {3, 5, 7},
+                {3, 4, 9},
+                {3, 6, 5},
+                {4, 6, 2},
+                {5, 6, 5},
+        };
+        N = 6;
+        System.out.println(obj.timeForMessage(N, network));
     }
 }
