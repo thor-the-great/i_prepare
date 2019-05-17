@@ -1,7 +1,5 @@
 package singleton_2inst;
 
-import com.sun.deploy.util.SyncAccess;
-
 import java.util.stream.IntStream;
 
 public class Singleton {
