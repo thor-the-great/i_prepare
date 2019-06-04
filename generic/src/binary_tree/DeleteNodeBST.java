@@ -1,6 +1,6 @@
 package binary_tree;
 
-import diff_problems.TreeNode;
+import trees.TreeNode;
 
 /**
  * 450. Delete NaryTreeNode in a BST

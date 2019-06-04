@@ -1,8 +1,5 @@
 package graphs;
 
-import cracking.trees_graphs.DiGraph;
-import cracking.trees_graphs.SimpleGraph;
-
 public class GraphUtils {
 
     public static DiGraph getDiGraphWeighted1() {

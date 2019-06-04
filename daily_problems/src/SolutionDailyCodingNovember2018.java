@@ -8,9 +8,9 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 import java.util.stream.IntStream;
-import diff_problems.TreeNode;
-import linked_list.ListNode;
-import linked_list.ListUtils;
+import trees.TreeNode;
+import list.ListNode;
+import list.ListUtils;
 import utils.StringUtils;
 
 public class SolutionDailyCodingNovember2018 {
@@ -1287,7 +1287,7 @@ public class SolutionDailyCodingNovember2018 {
         ListNode l1 = new ListNode(2, new ListNode(4, new ListNode(8)));
         ListNode l2 = new ListNode(4, new ListNode(7, new ListNode(3, new ListNode(2))));
         ListNode addRes = obj.addNumbers(l1, l2);
-        System.out.println("result of addition : " + linked_list.StringUtils.singlyListNodeToString(addRes));
+        System.out.println("result of addition : " + list.StringUtils.singlyListNodeToString(addRes));
 
         System.out.println("--- towers of hanoi -----");
         List<String> steps;

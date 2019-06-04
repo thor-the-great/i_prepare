@@ -1,8 +1,7 @@
 package path.google;
 
-import linked_list.ListNode;
-import linked_list.StringUtils;
-import path.top_asked.ReverseBits;
+import list.ListNode;
+import list.StringUtils;
 
 /**
  * 25. Reverse Nodes in k-Group

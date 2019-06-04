@@ -1,5 +1,7 @@
 package linked_list;
 
+import list.ListNode;
+
 /**
  * 369. Plus One Linked List
  * Medium

@@ -1,6 +1,6 @@
 package path.linkedin;
 
-import diff_problems.TreeNode;
+import trees.TreeNode;
 
 /**
  * 671. Second Minimum NaryTreeNode In a Binary Tree

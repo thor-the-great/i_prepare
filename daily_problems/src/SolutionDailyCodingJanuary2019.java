@@ -1,5 +1,5 @@
-import cracking.trees_graphs.DiGraph;
-import diff_problems.TreeNode;
+import graphs.DiGraph;
+import trees.TreeNode;
 import trees.TreeUtils;
 import utils.StringUtils;
 

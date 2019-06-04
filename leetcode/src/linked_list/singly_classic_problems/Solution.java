@@ -1,6 +1,6 @@
 package linked_list.singly_classic_problems;
 
-import linked_list.ListNode;
+import list.ListNode;
 
 public class Solution {
 
