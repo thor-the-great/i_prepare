@@ -9,7 +9,7 @@ import java.util.List;
  * Medium
  *
  * Share
- * Given a string containing only digits, restore it by returning all possible valid IP address combinations.
+ * Given a string containing only digits, restore it by returning all possible valid IP address set.
  *
  * Example:
  *
