@@ -2,6 +2,7 @@ package diff_problems;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import trees.TreeNode;
 
 /**
  * Definition for a binary tree node.

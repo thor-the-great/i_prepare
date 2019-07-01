@@ -1,6 +1,7 @@
 package cracking.trees_graphs;
 
 import java.util.*;
+import graphs.SimpleGraph;
 
 /**
  * Bidirectional BFS search of path in graph. Shortest path in O(k^(q/2)) time

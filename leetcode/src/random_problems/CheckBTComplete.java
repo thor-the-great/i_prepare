@@ -1,6 +1,6 @@
 package random_problems;
 
-import diff_problems.TreeNode;
+import trees.TreeNode;
 
 /**
  * 958. Check Completeness of a Binary Tree

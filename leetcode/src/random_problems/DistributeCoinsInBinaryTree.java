@@ -1,6 +1,6 @@
 package random_problems;
 
-import diff_problems.TreeNode;
+import trees.TreeNode;
 
 /**
  * 979. Distribute Coins in Binary Tree

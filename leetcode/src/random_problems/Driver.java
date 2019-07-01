@@ -1,7 +1,7 @@
 package random_problems;
 
-import linked_list.ListNode;
-import linked_list.StringUtils;
+import list.ListNode;
+import list.StringUtils;
 
 import java.util.*;
 

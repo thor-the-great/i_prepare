@@ -1,6 +1,6 @@
 package random_problems;
 
-import diff_problems.TreeNode;
+import trees.TreeNode;
 
 /**
  * 108. Convert Sorted Array to Binary Search Tree

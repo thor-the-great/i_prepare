@@ -1,7 +1,5 @@
 package trees;
 
-import diff_problems.TreeNode;
-
 import java.util.Stack;
 
 public class ValidateBST {

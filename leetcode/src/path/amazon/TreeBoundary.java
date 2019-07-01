@@ -1,6 +1,6 @@
 package path.amazon;
 
-import diff_problems.TreeNode;
+import trees.TreeNode;
 
 import java.util.LinkedList;
 import java.util.List;

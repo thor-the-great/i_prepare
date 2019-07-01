@@ -1,6 +1,6 @@
 package narry_tree;
 
-import util.NaryTreeNode;
+import trees.NaryTreeNode;
 
 import java.util.*;
 

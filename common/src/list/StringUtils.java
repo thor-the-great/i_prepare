@@ -1,20 +1,9 @@
-package linked_list;
+package list;
 
 import java.util.List;
+import list.ListNode;
 
 public class StringUtils {
-
-    /*public static String listToString(List<Integer> a) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        for(int i =0;i < a.size(); i++) {
-            sb.append(a.get(i));
-            if (i < a.size() - 1)
-                sb.append(", ");
-        }
-        sb.append("]");
-        return sb.toString();
-    }*/
 
     public static String listToString(List<Object> a) {
         StringBuilder sb = new StringBuilder();

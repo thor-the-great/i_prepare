@@ -1,78 +1,51 @@
 package random_problems;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-/**
- * 271. Encode and Decode Strings
- * Medium
- *
- * Design an algorithm to encode a list of strings to a string. The encoded string is then sent over the network and
- * is decoded back to the original list of strings.
- *
- * Machine 1 (sender) has the function:
- *
- * string encode(vector<string> strs) {
- *   // ... your code
- *   return encoded_string;
- * }
- * Machine 2 (receiver) has the function:
- * vector<string> decode(string s) {
- *   //... your code
- *   return strs;
- * }
- * So Machine 1 does:
- *
- * string encoded_string = encode(strs);
- * and Machine 2 does:
- *
- * vector<string> strs2 = decode(encoded_string);
- * strs2 in Machine 2 should be the same as strs in Machine 1.
- *
- * Implement the encode and decode methods.
- *
- * Note:
- *
- * The string may contain any possible characters out of 256 valid ascii characters. Your algorithm should be
- * generalized enough to work on any possible characters.
- * Do not use class member/global/static variables to store states. Your encode and decode algorithms should be
- * stateless.
- * Do not rely on any library method such as eval or serialize methods. You should implement your own encode/decode
- * algorithm.
- *
- */
 public class Codec {
+  Map<String, String> idToUrlMap = new HashMap();
+  Map<String, String> urlToIdMap = new HashMap();
 
-    // Encodes a list of strings to a single string.
-    public String encode(List<String> strs) {
-        StringBuilder sb = new StringBuilder();
-        for (String s : strs) {
-            sb.append(s.length()).append('$').append(s);
-        }
-        return sb.toString();
-    }
+  long count = 0;
 
-    // Decodes a single string to a list of strings.
-    public List<String> decode(String s) {
-        List<String> res = new LinkedList();
-        int i = 0;
-        while (i < s.length()) {
-            int divIdx = s.indexOf('$', i);
-            int strLength = Integer.parseInt(s.substring(i, divIdx));
-            int endIdx = divIdx + 1 + strLength;
-            String str = s.substring(divIdx + 1, endIdx );
-            res.add(str);
-            i = endIdx;
-        }
-        return res;
-    }
+  char[] map = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+  String preffix = "http://tinyurl.com/";
 
-    public static void main(String[] args) {
-        Codec obj = new Codec();
-        String encoded = obj.encode(Arrays.asList(new String[] {"Hello", "World"}));
-        System.out.println(encoded);
-        List<String> dec = obj.decode(encoded);
-        dec.forEach(s->System.out.println(s +", "));
+  public Codec() {
+    idToUrlMap.clear();
+    urlToIdMap.clear();
+  }
+
+  // Encodes a URL to a shortened URL.
+  public String encode(String longUrl) {
+    if (urlToIdMap.containsKey(longUrl))
+      return preffix + urlToIdMap.get(longUrl);
+
+    String tinyUrl = encodeIdToStr(++count);
+    urlToIdMap.put(longUrl, tinyUrl);
+    idToUrlMap.put(tinyUrl, longUrl);
+    return preffix + tinyUrl;
+  }
+
+  // Decodes a shortened URL to its original URL.
+  public String decode(String shortUrl) {
+    return idToUrlMap.get(shortUrl.substring(preffix.length()));
+  }
+
+
+  String encodeIdToStr(long id) {
+    StringBuilder sb = new StringBuilder();
+    while(id > 0) {
+      int idx = (int)(id%62);
+      sb.append(map[idx]);
+      id = id/62;
     }
+    return sb.toString();
+  }
+
+  public static void main(String[] args) {
+    Codec obj = new Codec();
+    //System.out.println(obj.encoder.withoutPadding().encodeToString("this is test string that I need to encode".getBytes()));
+  }
 }

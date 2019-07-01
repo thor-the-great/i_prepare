@@ -1,6 +1,6 @@
 package path.linkedin;
 
-import linked_list.StringUtils;
+import list.StringUtils;
 
 import java.util.LinkedList;
 import java.util.List;

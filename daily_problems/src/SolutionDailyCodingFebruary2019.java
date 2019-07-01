@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import cracking.trees_graphs.DiGraph;
-import diff_problems.TreeNode;
+import graphs.DiGraph;
+import trees.TreeNode;
 import graphs.GraphUtils;
 
 public class SolutionDailyCodingFebruary2019 {

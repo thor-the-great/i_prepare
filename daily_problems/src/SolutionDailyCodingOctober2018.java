@@ -13,8 +13,8 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 import java.util.stream.IntStream;
-import linked_list.ListNode;
-import linked_list.StringUtils;
+import list.ListNode;
+import list.StringUtils;
 import trees.BSTNode;
 
 public class SolutionDailyCodingOctober2018 {

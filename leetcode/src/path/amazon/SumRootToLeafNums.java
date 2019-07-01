@@ -1,6 +1,6 @@
 package path.amazon;
 
-import diff_problems.TreeNode;
+import trees.TreeNode;
 
 /**
  * Sum Root to Leaf Numbers

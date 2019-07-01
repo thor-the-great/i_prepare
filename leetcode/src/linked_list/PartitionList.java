@@ -1,5 +1,7 @@
 package linked_list;
 
+import list.ListNode;
+
 /**
  * 86. Partition List
  * Medium

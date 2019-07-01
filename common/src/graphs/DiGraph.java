@@ -1,4 +1,4 @@
-package cracking.trees_graphs;
+package graphs;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -7,31 +7,50 @@ import java.util.List;
 /**
  * Created by thor on 1/8/17.
  */
-public class SimpleGraph {
+public class DiGraph {
     List<Integer>[] vertices;
-    List<Edge> edges;
+    List<Edge>[] edges;
     int E;
 
-    public SimpleGraph(int V) {
+    public DiGraph(int V) {
         vertices = new ArrayList[V];
         for(int i = 0 ; i < V; i++) {
-            vertices[i] = new ArrayList<Integer>();
+            vertices[i] = new ArrayList<>();
         }
-        edges = new LinkedList();
+        edges = new ArrayList[V];
+        for(int i = 0 ; i < V; i++) {
+            edges[i] = new ArrayList<>();
+        }
     }
 
     public void addEdge(int v, int v2) {
+        addEdge(v, v2, 1);
+    }
+
+    public void addEdge(int v, int v2, int w) {
         checkVertexNumber(v);
         checkVertexNumber(v2);
         vertices[v].add(v2);
-        vertices[v2].add(v);
+        edges[v].add(new Edge(v, v2, w));
         E++;
-        this.edges.add(new Edge(v, v2));
     }
 
     public List<Integer> adj(int v) {
         checkVertexNumber(v);
         return  vertices[v];
+    }
+
+    public List<Edge> adjEdges(int v) {
+        checkVertexNumber(v);
+        return  edges[v];
+    }
+
+    public List<Edge> adjAllEdges() {
+        List<Edge> allEdges = new LinkedList<>();
+        for (int i = 0; i < getV(); i++) {
+            allEdges.addAll(edges[i]);
+        }
+        return allEdges;
     }
 
     private void checkVertexNumber(int v) {
@@ -48,14 +67,14 @@ public class SimpleGraph {
         return E;
     }
 
-    public List<Edge> getEdges() {
-        return this.edges;
+    public List<Edge>[] getEdges() {
+        return edges;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Graph has " + getV() + " vertices and " + getE() + " edges\n");
+        sb.append("Directed graph has " + getV() + " vertices and " + getE() + " edges\n");
         int vertexCounter = 0;
         for (List<Integer> adj: vertices) {
             if (adj.size() > 0 ) {
@@ -72,8 +91,25 @@ public class SimpleGraph {
         return sb.toString();
     }
 
+    public class Edge {
+        public int from, to;
+        public int weight;
+        Edge(int u, int v, int w) {
+            this.from = u;
+            this.to = v;
+            this.weight = w;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("( ").append(from).append(" -> ").append(to).append(", ").append(weight).append(" )");
+            return sb.toString();
+        }
+    }
+
     public static void main(String[] args) {
-        SimpleGraph G = new SimpleGraph(6);
+        DiGraph G = new DiGraph(6);
         G.addEdge(0,1);
         G.addEdge(0,4);
         G.addEdge(0,5);
@@ -84,13 +120,5 @@ public class SimpleGraph {
         G.addEdge(3,4);
 
         System.out.print(G);
-    }
-
-    public class Edge {
-        public int u, v;
-        Edge(int u, int v) {
-            this.u = u;
-            this.v = v;
-        }
     }
 }

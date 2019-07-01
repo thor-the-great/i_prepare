@@ -1,6 +1,6 @@
 package binary_tree;
 
-import diff_problems.TreeNode;
+import trees.TreeNode;
 
 /**
  * 250. Count Univalue Subtrees

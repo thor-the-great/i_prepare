@@ -1,6 +1,6 @@
 package random_problems;
 
-import diff_problems.TreeNode;
+import trees.TreeNode;
 
 /**
  * 1022. Sum of Root To Leaf Binary Numbers

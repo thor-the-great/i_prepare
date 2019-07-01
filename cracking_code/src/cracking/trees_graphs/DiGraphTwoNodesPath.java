@@ -1,6 +1,7 @@
 package cracking.trees_graphs;
 
 import java.util.*;
+import graphs.DiGraph;
 
 /**
  * Created by thor on 1/8/17.
