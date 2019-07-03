@@ -47,4 +47,9 @@ public class PathInZigZagLabeledTree {
 
         return r;
     }
+
+    public static void main(String[] args) {
+        PathInZigZagLabeledTree obj = new PathInZigZagLabeledTree();
+        System.out.println(obj.pathInZigZagTree(43));
+    }
 }
