@@ -10,9 +10,9 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
-import diff_problems.TreeNode;
-import linked_list.ListNode;
-import linked_list.StringUtils;
+import trees.TreeNode;
+import list.ListNode;
+import list.StringUtils;
 import trees.BSTNode;
 
 public class SolutionDailyCodingApril2019 {

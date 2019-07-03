@@ -1,6 +1,6 @@
 package path.google;
 
-import linked_list.ListNode;
+import list.ListNode;
 
 /**
  * 708. Insert into a Cyclic Sorted List

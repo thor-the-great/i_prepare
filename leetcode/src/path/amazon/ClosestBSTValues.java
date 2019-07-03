@@ -1,6 +1,6 @@
 package path.amazon;
 
-import diff_problems.TreeNode;
+import trees.TreeNode;
 
 public class ClosestBSTValues {
     public int closestValue(TreeNode root, double target) {

@@ -1,6 +1,6 @@
 package random_problems;
 
-import diff_problems.TreeNode;
+import trees.TreeNode;
 
 /**
  * 124. Binary Tree Maximum Path Sum

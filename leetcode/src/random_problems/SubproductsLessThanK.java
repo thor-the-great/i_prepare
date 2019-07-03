@@ -25,7 +25,7 @@ package random_problems;
 public class SubproductsLessThanK {
 
     /**
-     * Idea - use two pointers. Move right one one position, then move left unless prod < k. Then number of combinations
+     * Idea - use two pointers. Move right one one position, then move left unless prod < k. Then number of set
      * is r - l + 1. Move the right pointer unless we reach N length.
      * @param nums
      * @param k

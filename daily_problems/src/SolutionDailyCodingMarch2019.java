@@ -10,9 +10,9 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
-import diff_problems.TreeNode;
+import trees.TreeNode;
 import trees.TreeUtils;
-import util.NaryTreeNode;
+import trees.NaryTreeNode;
 import utils.ArrayUtil;
 import utils.StringUtils;
 

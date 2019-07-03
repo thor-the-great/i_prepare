@@ -1,6 +1,6 @@
 package path.amazon;
 
-import diff_problems.TreeNode;
+import trees.TreeNode;
 
 /**
  * Given two non-empty binary trees s and t, check whether tree t has exactly the same structure and node values with

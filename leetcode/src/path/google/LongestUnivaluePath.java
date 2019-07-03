@@ -1,6 +1,6 @@
 package path.google;
 
-import diff_problems.TreeNode;
+import trees.TreeNode;
 
 /**
  * Longest Univalue Path

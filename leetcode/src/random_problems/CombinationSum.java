@@ -6,7 +6,7 @@ import java.util.Arrays;
  * 377. Combination Sum IV
  * Medium
  *
- * Given an integer array with all positive numbers and no duplicates, find the number of possible combinations that
+ * Given an integer array with all positive numbers and no duplicates, find the number of possible set that
  * add up to a positive integer target.
  *
  * Example:
@@ -23,7 +23,7 @@ import java.util.Arrays;
  * (2, 2)
  * (3, 1)
  *
- * Note that different sequences are counted as different combinations.
+ * Note that different sequences are counted as different set.
  *
  * Therefore the output is 7.
  *
@@ -42,7 +42,7 @@ public class CombinationSum {
     /**
      * Idea: this is bottom-up approach - to make target sum we'll need to start from 0 (which is possible to have
      * with 1 combination - just don't take anything else.
-     * Then we iterate over possible sums, adding up combinations we can take to get it. Initially everything is
+     * Then we iterate over possible sums, adding up set we can take to get it. Initially everything is
      * initialized with 0.
      *
      *

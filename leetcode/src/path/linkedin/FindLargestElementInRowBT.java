@@ -1,6 +1,6 @@
 package path.linkedin;
 
-import diff_problems.TreeNode;
+import trees.TreeNode;
 
 import java.util.ArrayList;
 import java.util.List;
