@@ -3,6 +3,8 @@ package random_problems;
 import java.util.Stack;
 
 /**
+ * 1106. Parsing A Boolean Expression
+ *
  * Return the result of evaluating a given boolean expression, represented as a string.
  *
  * An expression can either be:
@@ -42,40 +44,44 @@ import java.util.Stack;
  */
 public class ParsingBooleanExpression {
   /**
-   * Idea - use 2 stacks. One saves the global state, the second handles current expression, between
-   * one pair of ( and ).
+   * Idea - use stack to save global state. One saves the global state. Current expression, between
+   * one pair of ( and ), is parsed at the event of the ')'.
    * @param expression
    * @return
    */
   public boolean parseBoolExpr(String expression) {
     Stack<Character> state = new Stack();
-    Stack<Character> small = new Stack();
-
-    for (char ch : expression.toCharArray()) {
+    int N = expression.length();
+    for (int i = 0; i < N; i++) {
+      char ch = expression.charAt(i);
       if (ch == ')') {
         //handle end of expression
-        small.clear();
+        boolean hasTrue = false;
+        boolean hasFalse = false;
         while(state.peek() != '(') {
-          small.push(state.pop());
+          char next = state.pop();
+          if (next == 't')
+            hasTrue = true;
+          else
+            hasFalse = true;
         }
         //'('
         state.pop();
         //action
         char oper = state.pop();
         if (oper == '&') {
-          char next = small.contains('f') ? 'f' : 't';
-          state.push(next);
+          state.push(hasFalse ? 'f' : 't');
         } else if (oper == '|') {
-          char next = small.contains('t') ? 't' : 'f';
-          state.push(next);
+          state.push(hasTrue ? 't' : 'f');
         } else {
-          state.push(small.pop() == 't' ? 'f' : 't');
+          state.push(hasTrue ? 'f' : 't');
         }
 
       } else if (ch != ',') {
         state.push(ch);
       }
     }
+
     return state.pop() == 't';
   }
 }
