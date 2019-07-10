@@ -2,10 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/algoexpert/algoexpert.iml" filepath="$PROJECT_DIR$/algoexpert/algoexpert.iml" />
       <module fileurl="file://$PROJECT_DIR$/common/common.iml" filepath="$PROJECT_DIR$/common/common.iml" />
       <module fileurl="file://$PROJECT_DIR$/cracking_code/cracking_code.iml" filepath="$PROJECT_DIR$/cracking_code/cracking_code.iml" />
       <module fileurl="file://$PROJECT_DIR$/daily_problems/daily_problems.iml" filepath="$PROJECT_DIR$/daily_problems/daily_problems.iml" />
       <module fileurl="file://$PROJECT_DIR$/generic/generic.iml" filepath="$PROJECT_DIR$/generic/generic.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hackerrank/hackerrank.iml" filepath="$PROJECT_DIR$/hackerrank/hackerrank.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/i_prepare.iml" filepath="$PROJECT_DIR$/.idea/i_prepare.iml" />
       <module fileurl="file://$PROJECT_DIR$/leetcode/leetcode.iml" filepath="$PROJECT_DIR$/leetcode/leetcode.iml" />
     </modules>
