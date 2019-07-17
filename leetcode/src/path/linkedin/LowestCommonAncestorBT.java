@@ -51,6 +51,29 @@ public class LowestCommonAncestorBT {
      * @return
      */
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        return lcaMethod1(root, p, q);
+    }
+
+    public TreeNode lcaMethod1(TreeNode root, TreeNode p, TreeNode q) {
+        //base case - if node is null it can't be a lca, so return null
+        if (root == null)
+            return null;
+        //if node is one of p, q - we returning node, the top code will be notified that one node
+        //has been found
+        if (root.val == p.val || root.val == q.val)
+            return root;
+        //start recursion for both left and right children. Both return the matched node or the
+        //lca. Anything that is not null is ok
+        TreeNode left = lowestCommonAncestor(root.left, p, q);
+        TreeNode right = lowestCommonAncestor(root.right, p, q);
+        //if both are not null - we found our lca, this is the node itself, so return it
+        if (left != null && right != null)
+            return root;
+        //if left or right is null - keep looking, pass one that is not null back to the caller
+        return left == null ? right : left;
+    }
+
+    private TreeNode lcaMethod2(TreeNode root, TreeNode p, TreeNode q) {
         this.p = p;
         this.q = q;
         helper(root);
