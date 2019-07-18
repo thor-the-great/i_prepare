@@ -26,7 +26,7 @@ public class MergeIntervals {
    * Sort by the start first. Then iterate and compare current end with the next start. If start is
    * earlier (smaller) - we can merge this interval, otherwise - add the current one to the result
    * and keep next as a new current
-   * 
+   *
    * @param intervalsList
    * @return
    */
