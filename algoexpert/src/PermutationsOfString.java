@@ -21,7 +21,7 @@ public class PermutationsOfString {
         ArrayList<String> subResults = getPermutations(subS);
         for (String subResult : subResults) {
             for (int i = 0; i <= subResult.length(); i++) {
-                String res = subResult.substring(0, i) + f + subResult.substring(i, subResult.length());
+                String res = subResult.substring(0, i) + f + subResult.substring(i);
                 list.add(res);
             }
         }

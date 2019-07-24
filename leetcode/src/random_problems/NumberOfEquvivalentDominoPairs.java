@@ -31,17 +31,16 @@ public class NumberOfEquvivalentDominoPairs {
      * @return
      */
     public int numEquivDominoPairs(int[][] dominoes) {
+        //we need to acceess indexes from 0 to 99. max number of dominoes is 9
         int[] counts = new int[100];
-
         int res = 0;
         //check every pair of dominoes
         for (int[] d : dominoes) {
             //get upper and down number, make upper always smaller
-            int up = d[0] - 1;
-            int down = d[1] - 1;
+            int up = d[0], down = d[1];
             if (down < up) {
-                up = d[1] - 1;
-                down = d[0] - 1;
+                int t =  up;
+                up = down; down = t;
             }
             int idx = up * 10 + down;
             //increment number of times we've seen exactly this pair
