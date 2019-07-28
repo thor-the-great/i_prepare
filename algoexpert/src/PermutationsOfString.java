@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Find all permutations of the string
@@ -6,27 +7,31 @@ import java.util.ArrayList;
 public class PermutationsOfString {
 
 
-    public static ArrayList<String> getPermutations(String s) {
-        if ( s == null)
-            return null;
+    public static ArrayList<String> getCombPerms(String s) {
 
-        ArrayList<String> list = new ArrayList();
-        if ("".equals(s)) {
-            list.add("");
-            return list;
+        if (s == null)
+            return null;
+        ArrayList<String> res = new ArrayList<String>();
+        if (s.length() <= 1) {
+            res.add(s);
+            return res;
         }
 
-        char f = s.charAt(0);
-        String subS = s.substring(1);
-        ArrayList<String> subResults = getPermutations(subS);
-        for (String subResult : subResults) {
-            for (int i = 0; i <= subResult.length(); i++) {
-                String res = subResult.substring(0, i) + f + subResult.substring(i);
-                list.add(res);
+        String start = "" + s.charAt(0);
+        String right = s.substring(1);
+        res.add(start);
+        ArrayList<String> subWords = getCombPerms(right);
+        for (String subStr : subWords) {
+            for (int i = 0; i <= subStr.length(); i++) {
+                res.add(subStr.substring(0, i) + start + subStr.substring(i));
             }
         }
+        res.addAll(subWords);
+        return res;
+    }
 
-
-        return list;
+    public static void main(String[] args) {
+        List<String> perms = getCombPerms("abc");
+        perms.forEach(i->System.out.print(i +" "));
     }
 }
