@@ -1,12 +1,38 @@
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.Scanner;
 
 public class Thingy {
 
     Thingy() {
 
+    }
+
+    void getPrimes() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter limit : ");
+        int N = sc.nextInt();
+
+        if ( N <= 1)
+            System.out.println("Not possible");
+
+        boolean[] flags = new boolean[N + 1];
+        for (int i = 2; i*i <= N; i++) {
+            boolean flag = flags[i];
+            if (!flag) {
+                for (int j = 2*i; j <= N; j = j + i) {
+                    flags[j] = true;
+                }
+            }
+        }
+
+        for (int i = 2; i <= N; i++) {
+            boolean flag = flags[i];
+            if (!flag) {
+                System.out.print(i + " ");
+            }
+        }
     }
 
     public String doThing() {
@@ -48,6 +74,7 @@ public class Thingy {
 
     public static void main(String[] args) {
         Thingy obj = new Thingy();
-        System.out.println(obj.doThing());
+        //System.out.println(obj.doThing());
+        obj.getPrimes();
     }
 }
