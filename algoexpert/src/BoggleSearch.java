@@ -1,6 +1,3 @@
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * Boggle Search New
  *     Multi Dimensional Arrays DFS Search Algorithms Recursion
@@ -25,7 +22,7 @@ public class BoggleSearch {
 
         for(int r = 0; r < board.length; r++) {
             for (int c = 0; c < board[0].length; c++) {
-                if (helper(board, r, c, word, "", new HashSet()))
+                if (helper(board, r, c, word, ""))
                     return true;
             }
         }
@@ -33,7 +30,7 @@ public class BoggleSearch {
         return false;
     }
 
-    static boolean helper(char[][] board, int r, int c, String word, String cur, Set<String> seen) {
+    static boolean helper(char[][] board, int r, int c, String word, String cur) {
         if (cur.length() >= word.length())
             return false;
 
@@ -47,20 +44,20 @@ public class BoggleSearch {
         board[r][c] = '&';
 
         if (r > 0) {
-            if (helper(board, r - 1, c, word, cur, seen))
+            if (helper(board, r - 1, c, word, cur))
                 return true;
         }
         if (c > 0) {
-            if (helper(board, r, c - 1, word, cur, seen))
+            if (helper(board, r, c - 1, word, cur))
                 return true;
         }
 
         if (r < board.length - 1) {
-            if (helper(board, r + 1, c, word, cur, seen))
+            if (helper(board, r + 1, c, word, cur))
                 return true;
         }
         if (c < board[0].length - 1) {
-            if (helper(board, r, c + 1, word, cur, seen))
+            if (helper(board, r, c + 1, word, cur))
                 return true;
         }
         board[r][c] = t;
