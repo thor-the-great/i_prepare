@@ -22,7 +22,7 @@ import trees.TreeNode;
 public class FindMaxSumLevel {
 
   /**
-   * Do the level order traversal using 1 queue. Use nulls as delimiter between levels. 
+   * Do the level order traversal using 1 queue. Use nulls as delimiter between levels.
    * @param root
    * @return
    */
