@@ -55,10 +55,11 @@ public class RemoveConsecutiveZeroSumNodes {
         ListNode node = fake;
 
         Map<Integer, ListNode> m = new HashMap();
+        //prefix sum
         int cur = 0;
-
         while(node != null) {
             cur += node.val;
+            //if we had this sum before - the subsequence found
             if (m.containsKey(cur)) {
                 ListNode prev = m.get(cur);
                 node = prev.next;
