@@ -7,3 +7,5 @@ leetcode/.idea/modules.xml
 leetcode/leetcode.iml
 leetcode/.idea/workspace.xml
 leetcode/.idea/misc.xml
+
+leetcode/out/production/generic/META-INF/generic\.kotlin_module

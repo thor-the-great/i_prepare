@@ -18,6 +18,21 @@ public class WaysMakingChange {
     return helper(coins, 0, amount, new HashMap());
   }
 
+  public static int makeChangeUpBottom(int[] coins, int amount) {
+    if (amount < 0)
+      return 0;
+
+    int[] dp = new int[amount + 1];
+    dp[0] = 1;
+
+    for (int c = 0; c < coins.length; c++) {
+      for (int a = coins[c]; a <= amount; a++) {
+        dp[a] += dp[a - coins[c]];
+      }
+    }
+    return dp[amount];
+  }
+
   static int helper(int[] coins, int idx, int amount, Map<String, Integer> m) {
     if (amount == 0)
       return 1;
