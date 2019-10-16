@@ -27,4 +27,15 @@ public class ReverseLinkedListInPairs {
 
         return next;
     }
+
+    public ListNode reverseInPairs2(ListNode head) {
+        if (head == null || head.next == null)
+            return head;
+        ListNode next = head.next;
+        ListNode nnext = next.next;
+        next.next = head;
+        head.next = nnext;
+        head.next = reverseInPairs(nnext);
+        return next;
+    }
 }
