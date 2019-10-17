@@ -42,4 +42,45 @@ public class SplitArrayEqualSum {
 
         return helper(arr, idx + 1, cur, target) || helper(arr, idx + 1, cur + arr[idx], target);
     }
+
+    /**
+     * Similar to knapsack problem, 0/1 Knapsack pattern
+     * @param arr
+     * @return
+     */
+    public static boolean splitArrayDP(int[] arr) {
+        if (arr == null || arr.length < 2)
+            return false;
+        int sum = 0;
+        for (int n : arr)
+            sum += n;
+
+        if (sum % 2 == 1)
+            return false;
+
+        sum /= 2;
+
+        int N = arr.length;
+        boolean[][] dp = new boolean[N][1 + sum];
+
+        for (int i = 0; i < N; i++) {
+            dp[i][0] = true;
+        }
+
+        dp[0][arr[0]] = true;
+
+        for (int n = 1; n < N; n++) {
+            for (int s = 1; s <= sum; s++) {
+                if (dp[n - 1][s])
+                    dp[n][s] = dp[n - 1][s];
+                else {
+                    if (s >= arr[n]) {
+                        dp[n][s] = dp[n - 1][s - arr[n]];
+                    }
+                }
+            }
+        }
+
+        return dp[N - 1][sum];
+    }
 }
