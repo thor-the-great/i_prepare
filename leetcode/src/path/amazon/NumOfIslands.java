@@ -14,8 +14,9 @@ public class NumOfIslands {
     }
 
     public int numIslands(char[][] grid) {
-        return bfsReuseGrid(grid);
+        //return bfsReuseGrid(grid);
         //return bfsSetVisitedPointObjects(grid);
+        return numIslandsUnionFindBased(grid);
     }
 
     int[][] dir = new int[][] {

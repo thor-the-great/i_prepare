@@ -1,7 +1,5 @@
 package random_problems;
 
-import java.util.Arrays;
-
 /**
  * 1007. Minimum Domino Rotations For Equal Row
  * Medium
@@ -43,46 +41,32 @@ import java.util.Arrays;
 public class MinimumDominoRotationsForEqualRow {
 
     /**
-     * Count identical nums excluding duplicates
+     * Check every value out of 1..6, check every option - four possible - either domino is set correctly, or swap required
+     * or it's not possible. Keep min count of every swap for the number
      * @param A
      * @param B
      * @return
      */
     public int minDominoRotations(int[] A, int[] B) {
         int N = A.length;
-        int[] countsA = new int[7];
-        int[] countsB = new int[7];
-
-        for (int i = 0; i < N; i++) {
-            countsA[A[i]]+=1;
-            if (B[i] != A[i])
-                countsB[B[i]]+=1;
-        }
-        int min = -1;
+        int res = Integer.MAX_VALUE;
         for (int i = 1; i <= 6; i++) {
-            if (countsA[i] + countsB[i] >= N) {
-                min = Math.min(countsA[i], countsB[i]);
-                break;
+            int c1 = 0, c2 = 0;
+            for (int n = 0; n < N; n++) {
+                if (A[n] != i && B[n] == i) {
+                    c1++;
+                } else if (A[n] == i && B[n] != i) {
+                    c2++;
+                } else if (A[n] == i && B[n] == i)
+                    continue;
+                else {
+                    c1 = Integer.MAX_VALUE; c2 = Integer.MAX_VALUE;
+                    break;
+                }
             }
+            res = Math.min(res, c1);
+            res = Math.min(res, c2);
         }
-
-        Arrays.fill(countsA, 0);
-        Arrays.fill(countsB, 0);
-
-        for (int i = 0; i < N; i++) {
-            countsB[B[i]]+=1;
-            if (A[i] != B[i])
-                countsA[A[i]]+=1;
-        }
-
-        for (int i = 1; i <= 6; i++) {
-            if (countsA[i] + countsB[i] >= N) {
-                min = Math.min(min,
-                        Math.min(countsA[i], countsB[i]));
-                break;
-            }
-        }
-
-        return min;
+        return res == Integer.MAX_VALUE ? -1 : res;
     }
 }
