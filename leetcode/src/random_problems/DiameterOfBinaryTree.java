@@ -33,26 +33,19 @@ public class DiameterOfBinaryTree {
      * @return
      */
     public int diameterOfBinaryTree(TreeNode root) {
-        if (root == null)
-            return 0;
-        res = 0;
-        res = Math.max(helper(root), res);
+        helper(root);
         return res;
     }
 
     int helper(TreeNode n) {
-        if (n.left == null && n.right == null)
+        if (n == null)
             return 0;
 
-        int leftPath = 0;
-        if (n.left != null)
-            leftPath = 1 + helper(n.left);
-        int rightPath = 0;
-        if (n.right != null)
-            rightPath = 1 + helper(n.right);
-        //count max path of this sub-tree
-        res = Math.max(res, leftPath + rightPath);
-        //pass max between left and right so parent can count it to it's path
-        return Math.max(leftPath, rightPath);
+        int l = helper(n.left);
+        int r = helper(n.right);
+
+        res = Math.max(res, l + r);
+
+        return Math.max(l, r) + 1;
     }
 }
