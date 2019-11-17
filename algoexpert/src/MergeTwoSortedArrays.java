@@ -40,4 +40,23 @@ public class MergeTwoSortedArrays {
 
     return res;
   }
+
+  public void merge(int[] nums1, int m, int[] nums2, int n) {
+    m--; n--;
+    for (int p = n + m + 1; p >= 0; p--) {
+      int el = 0;
+      if (m >=0 && n >= 0) {
+        if (nums1[m] > nums2[n]) {
+          el = nums1[m--];
+        } else {
+          el = nums2[n--];
+        }
+      } else if (m >= 0) {
+        el = nums1[m--];
+      } else {
+        el = nums2[n--];
+      }
+      nums1[p] = el;
+    }
+  }
 }
