@@ -37,34 +37,25 @@ public class MiddlePermutation {
         for (char ch : strng.toCharArray())
             list.add(ch);
 
-        Collections.sort(list);
+        Collections.sort(list, Comparator.reverseOrder());
         StringBuilder sb = new StringBuilder();
 
-        sb.append(list.get(getMidIdx(list.size())));
-        list.remove(getMidIdx(list.size()));
+        sb.append(list.get(list.size()/2));
+        list.remove(list.size()/2);
         //if we had even elements ( - 1) then add reversed ordered to result
         if (list.size() % 2 == 1) {
-            for (int i = list.size() - 1; i >= 0; i--) {
-                sb.append(list.get(i));
+            for (char ch : list) {
+                sb.append(ch);
             }
             //if odd - take mid one and do the same reversed order but with the rest
         } else {
-            int midIdx = getMidIdx(list.size());
-            sb.append(list.get(midIdx));
-            list.remove((int)midIdx);
-            for (int i = list.size() - 1; i >= 0; i--) {
-                sb.append(list.get(i));
+            sb.append(list.get(list.size()/2));
+            list.remove((int)list.size()/2);
+            for (char ch : list) {
+                sb.append(ch);
             }
         }
-
         return sb.toString();
-    }
-
-    static int getMidIdx(int len) {
-        if (len % 2 == 1)
-            return len / 2;
-        else
-            return (len/2) - 1 >= 0 ? (len/2) - 1 : 0;
     }
 
     public static void main(String[] args) {
