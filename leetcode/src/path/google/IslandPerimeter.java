@@ -35,26 +35,24 @@ public class IslandPerimeter {
      * @return
      */
     public int islandPerimeter(int[][] grid) {
-        int rows = grid.length;
-        if (rows == 0) return 0;
-        int cols = grid[0].length;
+        int res = 0;
+        int rows = grid.length, cols = grid[0].length;
 
-        int numOfLands = 0;
-        int numOfBorders = 0;
-
-        for (int r = 0; r < rows; r ++) {
-            for (int c =0; c < cols; c++) {
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
                 if (grid[r][c] == 1) {
-                    numOfLands++;
-                    if (r < rows - 1 && grid[r + 1][c] == 1) {
-                        numOfBorders++;
-                    }
-                    if (c < cols - 1 && grid[r][c + 1] == 1) {
-                        numOfBorders++;
-                    }
+                    if (r - 1 < 0 || grid[r - 1][c] == 0)
+                        res++;
+                    if (c - 1 < 0 || grid[r][c - 1] == 0)
+                        res++;
+                    if (r + 1 >= rows || grid[r + 1][c] == 0)
+                        res++;
+                    if (c + 1 >= cols || grid[r][c + 1] == 0)
+                        res++;
                 }
             }
         }
-        return (numOfLands * 4) - 2*numOfBorders;
+
+        return res;
     }
 }

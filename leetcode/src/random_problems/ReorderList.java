@@ -8,38 +8,45 @@ public class ReorderList {
     public void reorderList(ListNode head) {
         if (head == null || head.next == null)
             return;
+        //create fake head node to refer head later
+        ListNode fake = new ListNode(-1);
+        fake.next = head;
 
-        ListNode n = head;
-        ListNode slow = null;
-        while (n!= null ) {
+        //count number of nodes
+        int len = 0;
+        ListNode n = fake;
+        while (n != null) {
+            len++;
             n = n.next;
-            if (n != null)
-                n = n.next;
-            slow = slow == null ? head : slow.next;
         }
 
-        //unchain end of slow
-        ListNode tailStart = slow.next;
-        slow.next = null;
-
-        //revert tail part
-        ListNode prev = null;
-        while (tailStart != null) {
-            n = tailStart.next;
-            tailStart.next = prev;
-            prev = tailStart;
-            tailStart = n;
+        //pointer for the mid element, last in the first half
+        int mid = (len % 2 == 0) ? len / 2 : (len / 2) + 1;
+        n = fake;
+        while (mid > 0) {
+            n = n.next;
+            mid--;
         }
-        //now prev points to a ahead of reverted tail
-        //need to merge two lists
-        n = head;
-        ListNode nextN = null;
-        while (prev != null) {
-            nextN = n.next;
-            n.next = prev;
-            prev = prev.next;
-            n.next.next = nextN;
-            n = nextN;
+        //n points to mid. halfHead is head of mid, unlink the first half
+        ListNode halfHead = n.next;
+        n.next = null;
+        //reuse n as temp node
+        n = null;
+        //revert second half of the list
+        while (halfHead != null) {
+            ListNode next = halfHead.next;
+            halfHead.next = n;
+            n = halfHead;
+            halfHead = next;
+        }
+        //n points to the last node from second half now do the final reorder
+        ListNode nn = fake.next;
+        while (n != null) {
+            ListNode next = nn.next;
+            nn.next = n;
+            n = n.next;
+            nn.next.next = next;
+            nn = next;
         }
     }
 
