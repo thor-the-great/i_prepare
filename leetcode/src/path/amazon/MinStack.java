@@ -12,39 +12,28 @@ import java.util.Stack;
  *
  */
 public class MinStack {
-    // idea is to use stack and keep previous minimum before pushing new minimum. Current minimum never is in stack two
-    // times
-    int min;
     Stack<Integer> s;
 
     public MinStack() {
-        min = Integer.MAX_VALUE;
         s = new Stack();
     }
 
     public void push(int x) {
-        //keep previous minimum in stack, push new num as regular number, keep new minimum in min
-        if (x <= min) {
-            s.push(min);
-            min = x;
-        }
+        int min = s.isEmpty() ? x : s.peek();
         s.push(x);
+        s.push(Math.min(min, x));
     }
 
-    public int pop() {
-        //pop element and check if it's a min, if it is - pop next num - it must be a previous minimum
-        int popElement = s.pop();
-        if (min == popElement) {
-            min = s.pop();
-        }
-        return popElement;
-    }
-
-    public int getMin() {
-        return min;
+    public void pop() {
+        s.pop();
+        s.pop();
     }
 
     public int top() {
+        return s.get(s.size() - 2);
+    }
+
+    public int getMin() {
         return s.peek();
     }
 }
