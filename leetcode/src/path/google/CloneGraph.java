@@ -65,4 +65,56 @@ public class CloneGraph {
         }
         return cloneMap.get(node);
     }
+
+    public Node cloneGraph(Node node) {
+        if (node == null)
+            return null;
+
+        Map<Node, Node> m = new HashMap();
+        //do the BFS to create clone for each node
+        Queue<Node> q = new LinkedList();
+        q.add(node);
+        Set<Node> seen = new HashSet();
+
+        while(!q.isEmpty()) {
+            Node n = q.poll();
+            if (!seen.contains(n)) {
+                seen.add(n);
+                //put clone of the currently visited element
+                m.put(n, new Node(n.val, new ArrayList()));
+                for (Node neighbor : n.neighbors) {
+                    q.add(neighbor);
+                }
+            }
+        }
+        //reset our queue for the second iteration
+        q = new LinkedList();
+        q.add(node);
+        seen = new HashSet();
+        //do the BFS second time and fill the neighbors now
+        while(!q.isEmpty()) {
+            Node n = q.poll();
+            if (!seen.contains(n)) {
+                seen.add(n);
+                Node clone = m.get(n);
+                for (Node neighbor : n.neighbors) {
+                    q.add(neighbor);
+                    clone.neighbors.add(m.get(neighbor));
+                }
+            }
+        }
+        return m.get(node);
+    }
+}
+
+class Node {
+    public int val;
+    public List<Node> neighbors;
+
+    public Node() {}
+
+    public Node(int _val,List<Node> _neighbors) {
+        val = _val;
+        neighbors = _neighbors;
+    }
 }

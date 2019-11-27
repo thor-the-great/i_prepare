@@ -37,19 +37,29 @@ import trees.TreeNode;
  * Return false.
  */
 public class SubTreeOfAnotherTree {
+
+    /**
+     * For each t we can potentially have match (isEq) or not - in this case move to next of s and start over.
+     * IsEq must check if both nulls - true, if only one null - false, otherwise check if nodes are equals and
+     * call recursively for left and right of each tree.
+     * Traverse method must check current s and t for equals but move to s.left and s.right and start the check
+     * for each of those and t.
+     * @param s
+     * @param t
+     * @return
+     */
     public boolean isSubtree(TreeNode s, TreeNode t) {
-        return traverse(s, t);
+        return s!= null && (isEq(s, t) || isSubtree(s.left, t) || isSubtree(s.right, t));
     }
 
-    boolean traverse(TreeNode sT, TreeNode t) {
-        if (sT == null) return false;
-        return checkSubTrees(sT, t) || (traverse(sT.left, t) || traverse(sT.right, t));
-    }
+    boolean isEq(TreeNode s, TreeNode t) {
+        if (s == null && t == null)
+            return true;
 
-    boolean checkSubTrees(TreeNode sT, TreeNode t) {
-        if (sT == null && t == null) return true;
-        if (sT == null || t == null)
+        if (s == null || t == null)
             return false;
-        return sT.val == t.val && checkSubTrees(sT.left, t.left) && checkSubTrees(sT.right, t.right);
+
+
+        return (s.val == t.val) && isEq(s.left, t.left) && isEq(s.right, t.right);
     }
 }
