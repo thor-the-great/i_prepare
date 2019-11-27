@@ -58,4 +58,32 @@ public class GroupAnagramsFromStringArray {
         }
         return hash;
     }
+
+    public List<List<String>> groupAnagramsStringKey(String[] strs) {
+        if (strs.length == 0 )
+            return new ArrayList();
+
+        Map<String, List<String>> m = new HashMap();
+
+        for (String s : strs) {
+            int[] count = new int[26];
+            for (char ch : s.toCharArray())
+                count[ch - 'a']++;
+
+            StringBuilder sb = new StringBuilder();
+            for (int c : count) {
+                sb.append(c).append("-");
+            }
+            String key = sb.toString();
+            if (!m.containsKey(key)) {
+                m.put(key, new ArrayList());
+            }
+            m.get(key).add(s);
+        }
+
+        List<List<String>> res = new ArrayList();
+        for (List<String> words : m.values())
+            res.add(words);
+        return res;
+    }
 }
