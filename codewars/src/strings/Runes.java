@@ -1,8 +1,8 @@
 package strings;
 
-import org.junit.Test;
+import org.testng.annotations.AfterTest;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.AssertJUnit.assertEquals;
 
 /**
  * To give credit where credit is due: This problem was taken from the ACMICPC-Northwest Regional Programming Contest.
@@ -95,7 +95,7 @@ public class Runes {
 
 class RunesTest {
 
-    @Test
+    @AfterTest
     public void testSample() {
         assertEquals( "Answer for expression '1+1=?' " , 2 , Runes.solveExpression("1+1=?") );
         assertEquals( "Answer for expression '123*45?=5?088' " , 6 , Runes.solveExpression("123*45?=5?088") );

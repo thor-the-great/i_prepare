@@ -1,8 +1,8 @@
 package random_problems;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.PriorityQueue;
 
 /**
  * 1086. High Five
@@ -33,40 +33,35 @@ import java.util.List;
  */
 public class HighFive {
 
+    /**
+     * Use PQ to collect 5 best marks - if size > 5 poll the min element.
+     * After all marks are collected - count avg of elements from each PQ
+     * @param items
+     * @return
+     */
     public int[][] highFive(int[][] items) {
-        //collect all marks for every student
-        List<List<Integer>> m = new ArrayList();
+        List<PriorityQueue<Integer>> m = new ArrayList();
+        //collect marks for each student
         for (int[] item : items) {
-            int student = item[0];
-            if (m.size() < student) {
-                List<Integer> mark = new ArrayList();
-                mark.add(item[1]);
-                m.add(mark);
-            } else {
-                m.get(student - 1).add(item[1]);
+            if (m.size() < item[0]) {
+                m.add(new PriorityQueue<Integer>());
             }
+            PriorityQueue pq = m.get(item[0] - 1);
+            pq.offer(item[1]);
+            //if we have more than 5 marks - throw away the min one
+            if (pq.size() > 5)
+                pq.poll();
         }
-        //prepare result array
+
         int[][] res = new int[m.size()][2];
+        //for each pq (each student) calculate avg
         for (int i = 0; i < m.size(); i++) {
-            List<Integer> markList = m.get(i);
-            if (markList == null) continue;
-            int avg = 0;
-            //get the number of marks for one student
-            int size = markList.size();
-            //if we have more than 5 marks - get the high five, sort and take first 5
-            if (size > 5) {
-                Collections.sort(markList, Collections.reverseOrder());
-                for (int j = 0; j < 5; j++)
-                    avg+=markList.get(j);
-                avg/=5;
-            } else {
-                //if it's 5 or less - just take all marks
-                for (int j = 0; j < size; j++)
-                    avg+=markList.get(j);
-                avg/=size;
+            PriorityQueue<Integer> pq = m.get(i);
+            int c = pq.size(), sum = 0;
+            while (!pq.isEmpty()) {
+                sum += pq.poll();
             }
-            res[i] = new int[] {i + 1, avg};
+            res[i] = new int[]{i + 1, sum/c};
         }
         return res;
     }

@@ -23,7 +23,7 @@ import java.util.Map;
  * Note:
  * You may assume that word1 does not equal to word2, and word1 and word2 are both in the list.
  */
-public class ShortestWordDistance {
+public class ShortestWordDistance2 {
 
     class WordDistance {
 
