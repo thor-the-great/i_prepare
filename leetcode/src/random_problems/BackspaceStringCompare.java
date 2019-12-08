@@ -101,6 +101,42 @@ public class BackspaceStringCompare {
         return true;
     }
 
+    public boolean backspaceCompare2Pointers(String S, String T) {
+        int p1 = S.length() - 1, p2 = T.length() - 1;
+        int b1 = 0, b2 = 0;
+        while (p1 >= 0 || p2 >= 0) {
+
+            while (p1 >= 0) {
+                if (S.charAt(p1) == '#') {
+                    ++b1;
+                    --p1;
+                } else if (b1 > 0) {
+                    --b1;
+                    --p1;
+                } else break;
+            }
+
+            while (p2 >= 0) {
+                if (T.charAt(p2) == '#') {
+                    ++b2;
+                    --p2;
+                } else if (b2 > 0) {
+                    --b2;
+                    --p2;
+                } else break;
+            }
+
+            if (p1 >= 0 && p2 >= 0 && S.charAt(p1) != T.charAt(p2)) {
+                return false;
+            }
+            if ((p1 >= 0) != (p2 >= 0))
+                return false;
+            --p1; --p2;
+        }
+
+        return true;
+    }
+
     public static void main(String[] args) {
         BackspaceStringCompare obj = new BackspaceStringCompare();
         System.out.println(obj.backspaceCompare("abg##c","ad#f#c"));
