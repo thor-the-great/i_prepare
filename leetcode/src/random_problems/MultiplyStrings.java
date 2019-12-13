@@ -31,39 +31,27 @@ public class MultiplyStrings {
      * @return
      */
     public String multiply(String num1, String num2) {
-        int[] prod = new int[num1.length() + num2.length() ];
-        int[] c = new int[prod.length];
-        for (int n2 = num2.length() - 1; n2 >= 0; n2--) {
-            int d2 = num2.charAt(n2) - '0';
-            if (d2 != 0) {
-                for (int n1 = num1.length() - 1; n1 >= 0; n1--) {
-                    int d1 = num1.charAt(n1) - '0';
-                    int p = d1 * d2 + c[n1 + n2 + 1];
-                    c[n1 + n2 + 1] = 0;
-                    int newP = prod[n1 + n2 + 1] + (p % 10);
-                    if (newP > 9) {
-                        prod[n1 + n2 + 1] = newP % 10;
-                        c[n1 + n2] = newP / 10;
-                    } else {
-                        prod[n1 + n2 + 1] = newP;
-                    }
-                    c[n1 + n2] += p / 10;
-                }
+        int l1 = num1.length(), l2 = num2.length();
+        int[] res = new int[l1 + l2];
+
+        for (int i = l1 - 1; i >= 0; i--) {
+            int d1 = num1.charAt(i) - '0';
+            for (int j = l2 - 1; j >= 0; j--) {
+                int d2 = num2.charAt(j) - '0';
+                int prod = (d1 * d2);
+                int s = prod + res[i + j + 1];
+                res[i + j + 1] = s % 10;
+                res[i + j ] += s / 10;
             }
-            prod[n2] = c[n2];
-            c[n2] = 0;
         }
-        boolean nonNil = false;
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < prod.length; i ++) {
-            if (prod[i] == 0 && !nonNil)
-                continue;
-            else {
-                sb.append(prod[i]);
-                nonNil = true;
-            }
+
+        for (int i : res ) {
+            if (!(i == 0 && sb.length() == 0 ))
+                sb.append(i);
         }
-        return !nonNil ? "0" : sb.toString();
+
+        return sb.length() == 0 ? "0" : sb.toString();
     }
 
     public static void main(String[] args) {

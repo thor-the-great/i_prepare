@@ -3,15 +3,16 @@ package path.google;
 public class JumpGame {
 
     public boolean canJump_Greedy_Optimal(int[] nums) {
-        int N = nums.length;
-        int longest = 0, curr = 0;
-        for (int i =0; i < N; i++) {
-            longest = Math.max(nums[i] + i, longest);
-            if (i == curr) {
-                curr = longest;
-            }
+        if (nums.length == 1)
+            return true;
+
+        int N = nums.length, longest = 0;
+        for (int i = 0; i < N; i++) {
+            if (longest < i)
+                return false;
+            longest = Math.max(longest, i + nums[i]);
         }
-        return curr >= N -1;
+        return longest >= N - 1;
     }
 
     public boolean canJumpDP_Optimal(int[] nums) {

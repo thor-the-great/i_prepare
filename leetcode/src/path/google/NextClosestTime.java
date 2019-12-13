@@ -43,6 +43,48 @@ public class NextClosestTime {
         }
     }
 
+    public String nextClosestTimeCalculation(String time) {
+        String[] times = time.split(":");
+        int origTime = Integer.parseInt(times[0]) * 60 + Integer.parseInt(times[1]);
+        int dif = 24*60;
+        int res = origTime;
+        Set<Integer> allowed = new HashSet();
+
+        allowed.add(times[0].charAt(0) - '0');
+        allowed.add(times[0].charAt(1) - '0');
+        allowed.add(times[1].charAt(0) - '0');
+        allowed.add(times[1].charAt(1) - '0');
+
+        for (int h1 : allowed) {
+            for (int h2 : allowed) {
+                int h = 10*h1 + h2;
+                if (h < 24) {
+                    for (int m1 : allowed) {
+                        for (int m2 : allowed) {
+                            int m = 10 *m1 + m2;
+                            if (m  < 60) {
+                                int cur = h*60 + m;
+                                int elapsedCand = Math.floorMod(cur - origTime, 24 * 60);
+                                if (0 < elapsedCand && elapsedCand < dif) {
+                                    dif = elapsedCand;
+                                    res = cur;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        if (res / 60 < 10)
+            sb.append('0');
+        sb.append(res / 60).append(':');
+        if (res % 60 < 10)
+            sb.append('0');
+        sb.append(res % 60);
+        return sb.toString();
+    }
+
     public static void main(String[] args) {
         NextClosestTime obj = new NextClosestTime();
         System.out.println(obj.nextClosestTime("00:34"));
