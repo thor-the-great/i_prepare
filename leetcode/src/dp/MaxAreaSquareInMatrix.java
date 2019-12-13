@@ -23,6 +23,7 @@ public class MaxAreaSquareInMatrix {
   /**
    * Use DP for this - iterate and find min of squares based on previously checked ones. Save
    * length of the side. Keep second matrix to save lengths
+   *
    * @param matrix
    * @return
    */

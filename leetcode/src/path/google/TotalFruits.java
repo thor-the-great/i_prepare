@@ -66,35 +66,25 @@ public class TotalFruits {
      * @return
      */
     public int totalFruit(int[] tree) {
+        int res = 0, l = 0;
         Map<Integer, Integer> m = new HashMap();
-        int N = tree.length;
-        int max = 0;
-        int p = 0;
-        int res = 0;
-        for(int i= 0; i < N; i++) {
+        for (int i = 0; i < tree.length; i++) {
             int type = tree[i];
             if (m.containsKey(type)) {
                 m.put(type, m.get(type) + 1);
             } else {
-                if (m.size() == 2) {
-                    res = Math.max(res, max);
-                    while(m.size() == 2) {
-                        int t = tree[p];
-                        int c =  m.get(t);
-                        c--;
-                        max--;
-                        if (c == 0)
-                            m.remove(t);
-                        else
-                            m.put(t, c);
-                        p++;
+                while (m.size() == 2) {
+                    if (m.get(tree[l]) == 1)
+                        m.remove(tree[l]);
+                    else {
+                        m.put(tree[l], m.get(tree[l]) - 1);
                     }
+                    ++l;
                 }
                 m.put(type, 1);
             }
-            max++;
+            res = Math.max(res, i - l + 1);
         }
-        res = Math.max(res, max);
         return res;
     }
 
