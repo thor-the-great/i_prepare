@@ -1,5 +1,11 @@
 package path.amazon;
 
+import org.junit.jupiter.api.Test;
+
+import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class SingleNum {
 
     public int singleNumber(int[] nums) {
@@ -27,5 +33,45 @@ public class SingleNum {
             num = num ^ n;
         }
         return num;
+    }
+
+    public int singleNumberXORIt2(int[] nums) {
+        if (nums.length == 0)
+            return -1;
+
+        int mask = 0;
+        for (int num : nums) {
+            mask^=num;
+        }
+        return mask;
+    }
+}
+
+class SolutionTest {
+    SingleNum obj = new SingleNum();
+
+    @Test
+    void findElementTest1() {
+        int[] testArr = new int[] {3, 4, 2, 5, 3, 5, 2};
+        assertEquals(obj.singleNumberXORIt2(testArr), 4);
+    }
+
+    @Test
+    void findElementTest2() {
+        int[] testArr = new int[] {3};
+        assertEquals(obj.singleNumberXORIt2(testArr), 3);
+    }
+
+    @Test
+    void findElementTest3() {
+        Random r = new Random();
+        int n = r.nextInt(1_000_000);
+        int[] testArr = new int[2*n + 1];
+        for (int i = 0; i < 2*n; i+=2) {
+            testArr[i] = i;
+            testArr[i + 1] = i;
+        }
+        testArr[2*n] = 2*n;
+        assertEquals(obj.singleNumberXORIt2(testArr), 2*n);
     }
 }
