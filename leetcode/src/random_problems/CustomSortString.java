@@ -1,7 +1,5 @@
 package random_problems;
 
-import java.util.Arrays;
-
 /**
  * 791. Custom Sort String
  * Medium
@@ -32,36 +30,28 @@ import java.util.Arrays;
  */
 public class CustomSortString {
 
+    /**
+     * Count chars in T string first. Then iterate over S and one every char from S add it as many times
+     * as it was in T. After that just add the rest of the chars from T in any order
+     * @param S
+     * @param T
+     * @return
+     */
     public String customSortString(String S, String T) {
-        char[] order = new char[26];
-        int[] counts = new int[26];
-        Arrays.fill(order, '$');
-        //form the array of order in which chars are in S - index of element corresponds to order
-        for (int i = 0; i < S.length(); i++) {
-            char ch = S.charAt(i);
-            order[i] = ch;
-        }
-        //count chars in T
-        for (int i = 0; i < T.length(); i++) {
-            counts[T.charAt(i) - 'a']++;
-        }
-        //first fill chars that are in S
+        int[] count = new int[26];
+        for (char ch : T.toCharArray())
+            ++count[ch - 'a'];
         StringBuilder sb = new StringBuilder();
-        int i = 0;
-        while (i < 26 && order[i] != '$') {
-            char nextChar = order[i];
-            for (int j =0; j < counts[nextChar - 'a']; j++) {
-                sb.append(nextChar);
+        for (char ch : S.toCharArray()) {
+            for (int i = 0; i < count[ch - 'a']; i++) {
+                sb.append(ch);
             }
-            counts[nextChar - 'a'] = 0;
-            i++;
+            count[ch - 'a'] = 0;
         }
-        //now fill the rest of the string, chars that are not in S. Determine those based
-        //on non-zero count in counts
-        for (i =0; i < 26; i++) {
-            if (counts[i] > 0) {
-                char ch = (char)(i + 'a');
-                for (int j =0; j < counts[i]; j++) {
+
+        for (char ch = 'a'; ch <= 'z' ; ch++) {
+            if (count[ch - 'a'] > 0) {
+                for (int j = 0; j < count[ch - 'a']; j++) {
                     sb.append(ch);
                 }
             }
