@@ -1,12 +1,10 @@
 package segment_tree;
 
-import org.testng.annotations.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import java.util.Random;
 import segment_tree.MutableArrayImpl.CummulativeSum;
 import segment_tree.MutableArrayImpl.Naive;
-
-import java.util.Random;
-
-import static org.testng.AssertJUnit.assertEquals;
 
 public class Test1 {
 
