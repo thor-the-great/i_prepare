@@ -22,6 +22,64 @@ public class CopyListWithRandomPointer {
         return copyRandomListInsertMidNodes(head);
     }
 
+    class Node {
+        int val;
+        Node next;
+        Node random;
+
+        public Node(int val) {
+            this.val = val;
+            this.next = null;
+            this.random = null;
+        }
+    }
+
+    /**
+     * O(1) space - clone node and re-use original list by doing
+     * orig_node.next = clone_node;
+     * clone_node.next = orig_node.next;
+     * @param head
+     * @return
+     */
+    public Node copyRandomList(Node head) {
+        if (head == null)
+            return null;
+        Node fake = new Node(-1);
+        fake.next = head;
+
+        //clone main node, insert new nodes as nexts for original nodes
+        Node n = head;
+        while (n != null) {
+            Node newNode = new Node(n.val);
+            Node nNext = n.next;
+            n.next = newNode;
+            newNode.next = nNext;
+            n = nNext;
+        }
+
+        //connect random pointers of clones to clones of randomes
+        n = fake.next;
+        while (n != null) {
+            if (n.random != null) {
+                n.next.random = n.random.next;
+            }
+            n = n.next.next;
+        }
+
+        //unwire original and new nodes, prepare the new head node for result
+        n = fake.next;
+        Node res = n.next;
+        while (n != null) {
+            Node nn = n.next;
+            n.next = nn.next;
+            if (n.next != null) {
+                nn.next = nn.next.next;
+            }
+            n = n.next;
+        }
+        return res;
+    }
+
     /**
      * Idea is - create node copy right in the original list, just put every copy node after the original one and
      * re-point original next to the copy.
