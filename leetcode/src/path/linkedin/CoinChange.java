@@ -110,6 +110,32 @@ public class CoinChange {
         return -1;
     }
 
+    public int coinChangeDPRec(int[] coins, int amount) {
+        if (amount < 0)
+            return -1;
+
+        return helper(coins, amount, new int[amount + 1]);
+    }
+
+    int helper(int[] coins, int amount, int[] count) {
+        if (amount < 0)
+            return -1;
+        if (amount == 0)
+            return 0;
+
+        if (count[amount] != 0)
+            return count[amount];
+        int min = Integer.MAX_VALUE;
+        for (int coin : coins) {
+            int cur = helper(coins, amount - coin, count);
+            if (cur >= 0 && cur < min) {
+                min = cur + 1;
+            }
+        }
+        count[amount] = (min == Integer.MAX_VALUE ? -1 : min);
+        return count[amount];
+    }
+
     public static void main(String[] args) {
         CoinChange obj = new CoinChange();
         System.out.println(obj.coinChange(new int[]{1,2,5}, 11));//3
