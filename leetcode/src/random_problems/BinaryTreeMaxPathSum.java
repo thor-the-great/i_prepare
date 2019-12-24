@@ -46,32 +46,17 @@ public class BinaryTreeMaxPathSum {
      * @return
      */
     public int maxPathSum(TreeNode root) {
-        if (root == null)
-            return 0;
         res = Integer.MIN_VALUE;
-        res = Math.max(helper(root), res);
-        return res;
+        return Math.max(helper(root), res);
     }
 
     int helper(TreeNode n) {
-        if (n.left == null && n.right == null) {
-            res = Math.max(res, n.val);
-            return n.val;
-        }
-
-        int leftPath = 0;
-        if (n.left != null)
-            leftPath = helper(n.left);
-        int rightPath = 0;
-        if (n.right != null)
-            rightPath = helper(n.right);
-        //count max path of this sub-tree
-        //this one we'll return to the parent - it doesn't include this node + right + left
-        int thisNodeMax = Math.max(n.val, Math.max(n.val + leftPath, n.val + rightPath));
-        //this one only possible for this sub-tree, we can't return it to the parent
-        int thisNodeMaxExt = Math.max( n.val + leftPath + rightPath, thisNodeMax);
-        res = Math.max(res, thisNodeMaxExt);
-
-        return thisNodeMax;
+        if (n == null)
+            return 0;
+        //left and right paths - we can take part if it's greater than 0 or leave it otherwise
+        int l = Math.max(helper(n.left), 0);
+        int r = Math.max(helper(n.right), 0);
+        res = Math.max(res, l + r + n.val);
+        return Math.max(l, r) + n.val;
     }
 }
