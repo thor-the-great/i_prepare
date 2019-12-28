@@ -14,7 +14,7 @@ public class NumOfIslands {
     }
 
     public int numIslands(char[][] grid) {
-        //return bfsReuseGrid(grid);
+        //return numIslandsBFSReuseGrid(grid);
         //return bfsSetVisitedPointObjects(grid);
         return numIslandsUnionFindBased(grid);
     }
@@ -23,41 +23,46 @@ public class NumOfIslands {
             {0, -1}, {1, 0}, {0, 1}, {-1, 0}
     };
 
-    private int bfsReuseGrid(char[][] grid) {
-        if (grid == null) return 0;
+    public int numIslandsBFSReuseGrid(char[][] grid) {
         int rows = grid.length;
-        if (rows == 0) return 0;
+        if (rows == 0)
+            return 0;
         int cols = grid[0].length;
-        if (cols == 0) return 0;
 
-        int res = 0;
+        int count = 0;
         Queue<Integer> q = new ArrayDeque();
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 if (grid[r][c] == '1') {
-                    grid[r][c] = '#';
-                    //start BFS for this island
-                    res++;
+                    grid[r][c] = '0';
                     q.clear();
-                    q.add(r);
-                    q.add(c);
-                    while (!q.isEmpty()) {
-                        int nextRow = q.poll();
-                        int nextCol = q.poll();
-                        for (int d = 0; d < dir.length; d++) {
-                            int nextR = nextRow + dir[d][0];
-                            int nextC = nextCol + dir[d][1];
-                            if ((nextR >= 0 && nextR < rows && nextC >= 0 && nextC < cols) && grid[nextR][nextC] == '1') {
-                                q.add(nextR);
-                                q.add(nextC);
-                                grid[nextR][nextC] = '#';
-                            }
+                    ++count;
+                    q.add(r * cols + c);
+                    while(!q.isEmpty()) {
+                        int cell = q.poll();
+                        int row = cell / cols, col = cell - (row * cols);
+                        if (row - 1 >= 0 && grid[row - 1][col] == '1') {
+                            q.add(cell - cols);
+                            grid[row - 1][col] = '0';
+                        }
+                        if (row + 1 < rows && grid[row + 1][col] == '1') {
+                            q.add(cell + cols);
+                            grid[row + 1][col] = '0';
+                        }
+                        if (col - 1 >= 0 && grid[row][col - 1] == '1') {
+                            q.add(cell - 1);
+                            grid[row][col - 1] = '0';
+                        }
+                        if (col + 1 < cols && grid[row][col + 1] == '1') {
+                            q.add(cell + 1);
+                            grid[row][col + 1] = '0';
                         }
                     }
                 }
             }
         }
-        return res;
+
+        return count;
     }
 
     private int bfsSetVisitedPointObjects(char[][] grid) {
@@ -138,7 +143,7 @@ public class NumOfIslands {
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 if (grid[r][c] == '1') {
-                    //checking 4 cells nearby
+                    //checking 2 cells nearby - to the right and to the bottom
                     int cur = r * cols + c;
 
                     if ((r + 1) < rows && grid[r + 1][c] == '1')

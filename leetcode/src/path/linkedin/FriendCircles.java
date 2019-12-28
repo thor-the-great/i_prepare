@@ -36,6 +36,36 @@ import java.util.Set;
  * If M[i][j] = 1, then M[j][i] = 1.
  */
 public class FriendCircles {
+
+    /**
+     * Using DFS to visit all cells (connected via 1-s)
+     * increment the count of connected components for every new starting node.
+     *
+     * @param M
+     * @return
+     */
+    public int findCircleNumDFS(int[][] M) {
+        int N = M.length;
+        boolean[] visited = new boolean[N];
+        int count = 0;
+        for (int r = 0; r < N; r++) {
+            if (!visited[r]) {
+                dfs(M, visited, r);
+                ++count;
+            }
+        }
+        return count;
+    }
+
+    void dfs(int[][] M, boolean[] visited, int p) {
+        for (int i = 0; i < M.length; i++) {
+            if (M[p][i] == 1 && !visited[i]) {
+                visited[i] = true;
+                dfs(M, visited, i);
+            }
+        }
+    }
+
     /**
      * Idea - iterate over the matrix of friends and add every friend to a UF. Then count number of connected components
      * in graph - number of unique parents - it will be number of circles
