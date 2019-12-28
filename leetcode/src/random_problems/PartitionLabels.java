@@ -35,7 +35,7 @@ public class PartitionLabels {
 
   /**
    * Idea - we don't need to count every character. The partition can't end before the last character
-   * position, so we only interested in the last occurance of every char.
+   * position, so we only interested in the last occurrence of every char.
    * If partition has several letters then it ends when the last (biggest) position among all it's
    * characters met. This leads to a logic - go over the string and keep the max index of chars we met.
    * If current index == that saved position - it means we met the end of the partition.
