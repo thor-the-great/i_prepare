@@ -56,4 +56,42 @@ public class GreatestCommonDivisorofStrings {
     else
       return gcdOfStrings(str1.substring(str2.length()), str2);
   }
+
+  /**
+   * Choose the shortest string out of two, then start shrinking it's length, for each good length check that
+   * both str2 and str1 can be formed out fo that string. 
+   * @param str1
+   * @param str2
+   * @return
+   */
+  public String gcdOfStringsIt(String str1, String str2) {
+    if (str1.length() < str2.length())
+      return gcdOfStringsIt(str2, str1);
+
+    for (int i = str2.length() - 1; i > 0; i--) {
+      if (str2.length() % (i + 1) == 0) {
+        String str = str2.substring(0, i + 1);
+        //check for str2
+        boolean passed = true;
+        for (int j =0; j < str2.length(); j+=(i + 1)) {
+          if (str2.indexOf(str, j) != j) {
+            passed = false;
+            break;
+          }
+        }
+        if (!passed) continue;
+
+        for (int j =0; j < str1.length(); j+=(i + 1)) {
+          if (str1.indexOf(str, j) != j) {
+            passed = false;
+            break;
+          }
+        }
+        if (passed)
+          return str;
+      }
+    }
+
+    return "";
+  }
 }

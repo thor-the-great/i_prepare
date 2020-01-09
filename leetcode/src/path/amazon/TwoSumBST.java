@@ -35,21 +35,18 @@ import java.util.*;
  */
 public class TwoSumBST {
 
+    Set<Integer> set = new HashSet();
+
     public boolean findTarget(TreeNode root, int k) {
-        Set<Integer> compl = new HashSet();
-        Queue<TreeNode> q = new LinkedList();
-        q.add(root);
-        while (!q.isEmpty()) {
-            TreeNode n = q.poll();
-            if (compl.contains(n.val)) return true;
-            int compliment = k - n.val;
-            compl.add(compliment);
-            if (n.left != null)
-                q.add(n.left);
-            if (n.right != null)
-                q.add(n.right);
-        }
-        return false;
+        if (root == null)
+            return false;
+
+        if (set.contains(k - root.val))
+            return true;
+
+        set.add(root.val);
+
+        return findTarget(root.left, k) || findTarget(root.right, k);
     }
 
     public boolean findTargetInOrderTraverseOrdered(TreeNode root, int k) {

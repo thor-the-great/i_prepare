@@ -60,7 +60,7 @@ public class LongestCommonSubsequence {
      *
      * O(len(s)^2) time for iteration over dp array that has length == len of string. O(len(s)^2) space - required
      * for dp array.
-     * 
+     *
      * @param text1
      * @param text2
      * @return
