@@ -26,24 +26,14 @@ public class SubarrayOfSumK {
      * @return
      */
     public int subarraySum(int[] nums, int k) {
+        int res = 0, cur = 0;
         Map<Integer, Integer> m = new HashMap();
         m.put(0, 1);
-        //count of subarrays
-        int c = 0;
-        //running sum
-        int s = 0;
-        for (int num : nums) {
-            s += num;
-            //sum that gives us k
-            int s2 = s - k;
-            if (m.containsKey(s2)) {
-                c += m.get(s2);
-            }
-            if (m.containsKey(s))
-                m.put(s, m.get(s) + 1);
-            else
-                m.put(s, 1);
+        for (int n : nums) {
+            cur += n;
+            res+= m.getOrDefault(cur - k, 0);
+            m.put(cur, m.getOrDefault(cur, 0) + 1);
         }
-        return c;
+        return res;
     }
 }

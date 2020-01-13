@@ -1,8 +1,5 @@
 package path.google;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 /**
  * 42. Trapping Rain Water
  * Hard
@@ -85,5 +82,25 @@ public class TrappedRainWater {
             sum += minCapacity - height[i];
         }
         return sum;
+    }
+
+    public int trapOnePassNoSpace(int[] height) {
+        int res = 0;
+        int l = 0, r = height.length - 1;
+        int left = 0, right = 0;
+
+        while (l < r) {
+            if (height[l] < height[r]) {
+                left = Math.max(height[l], left);
+                res += (left - height[l]);
+                ++l;
+            } else {
+                right = Math.max(height[r], right);
+                res += (right - height[r]);
+                --r;
+            }
+        }
+
+        return res;
     }
 }
