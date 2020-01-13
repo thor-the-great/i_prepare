@@ -56,6 +56,33 @@ public class TrappedRainWater {
         return sum;
     }
 
+    /**
+     * Going from left to right collecting max based on the left-most higher block,
+     * then scan from the right, collecting similarly max based on the right-most high block
+     * Keep running diff between height[i] and that array
+     *
+     * @param height
+     * @return
+     */
+    public int trapOneArray(int[] height) {
+        int N = height.length;
+        if (N < 3)
+            return 0;
+
+        int[] res = new int[N];
+        res[0] = height[0];
+        for (int i = 1; i < N - 1; i++) {
+            res[i] = Math.max(res[i - 1], height[i]);
+        }
+        int r = 0;
+        res[N - 1] = height[N - 1];
+        for (int i = N - 2; i >= 0; i--) {
+            res[i] = Math.min(res[i], Math.max(res[i + 1], height[i]));
+            r += res[i] - height[i];
+        }
+        return r;
+    }
+
     public int trapTwoArraysMax(int[] height) {
         if (height == null || height.length == 0)
             return 0;
