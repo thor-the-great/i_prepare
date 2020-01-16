@@ -46,36 +46,30 @@ public class CourseSchedule {
      * @return
      */
     public boolean canFinish(int numCourses, int[][] prerequisites) {
-        int[] inDegree = new int[numCourses];
-        List<Integer>[] vertexes = new LinkedList[numCourses];
-        //count inDegree for every vertex and build graph
-        for (int[] preReqPair : prerequisites) {
-            inDegree[preReqPair[0]]++;
-            if (vertexes[preReqPair[1]] == null) {
-                vertexes[preReqPair[1]] = new LinkedList();
-            }
-            vertexes[preReqPair[1]].add(preReqPair[0]);
+        List<Integer>[] g = new ArrayList[numCourses];
+        int[] degree = new int[numCourses];
+        for (int i = 0; i < numCourses; i++)
+            g[i] = new ArrayList();
+        
+        for (int[] p : prerequisites) {
+            g[p[1]].add(p[0]);
+            ++degree[p[0]];
         }
-        //put inDegree points as our starting points for BFS
+        int c = 0;
         Queue<Integer> q = new LinkedList();
-        for (int i =0; i < inDegree.length; i++) {
-            if (inDegree[i] == 0)
+        for (int i = 0; i < numCourses; i++) {
+            if (degree[i] == 0) {
                 q.add(i);
+                ++c;
+            }
         }
-        //count courses that we can take - initially this is number of course with indegree = 0
-        int c = q.size();
-        //do BFS
-        while(!q.isEmpty()) {
-            int vertex = q.poll();
-            List<Integer> adj = vertexes[vertex];
-            if (adj != null) {
-                for (int adjVertex : adj) {
-                    inDegree[adjVertex]--;
-                    //if we took all pre-req course - we have in-degree = 0 and we can take this course
-                    if (inDegree[adjVertex] == 0) {
-                        q.add(adjVertex);
-                        c++;
-                    }
+        while (!q.isEmpty()) {
+            int v = q.poll();
+            for (int a : g[v]){
+                --degree[a];
+                if (degree[a] == 0) {
+                    ++c;
+                    q.add(a);
                 }
             }
         }
