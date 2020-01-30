@@ -6,50 +6,53 @@ import java.util.stream.IntStream;
 
 public class KthLargestElementInArray {
 
-  int nums[];
   Random rand = new Random();
+  int[] arr;
 
   public int findKthLargest(int[] nums, int k) {
-    this.nums = nums;
-    return quickSelect(0, nums.length - 1, nums.length - k);
+    this.arr = nums;
+    return qSelect(0, nums.length - 1, k);
   }
 
-  int quickSelect(int left, int right, int kSmallest) {
-    while(true) {
-      if (left >= right)
-        return nums[left];
-
-      int partIdx = left + rand.nextInt(right - left);
-      partIdx = partition(left, right, partIdx);
-      if (kSmallest == partIdx) {
-        break;
-      } else if (kSmallest < partIdx) {
-        right = partIdx - 1;
-      } else {
-        left = partIdx + 1;
-      }
+  int qSelect(int l, int r, int k) {
+    k = arr.length - k;
+    while (l < r ) {
+      int partIdx = partition(l, r, l + rand.nextInt(r - l));
+      //if we checked exactly our element - we found the solution exit
+      if (partIdx == k)
+        return arr[partIdx];
+      //if the partIdx is lower then k it means we have to work on right elements, so
+      //move left pointer
+      else if (partIdx < k) {
+        l = partIdx + 1;
+        //otherwise work on left part so move right pointer
+      } else
+        r = partIdx - 1;
     }
-    return nums[kSmallest];
+    return arr[l];
   }
 
-  int partition(int l, int r, int pivotIdx) {
-    int pivotVal = nums[pivotIdx];
-    swap(pivotIdx, r);
-
-    int saveIdx = l;
-    for (int i = l; i <= r; i++) {
-      if (nums[i] < pivotVal) {
-        swap(saveIdx++, i);
+  int partition(int l, int r, int partIdx) {
+    //save valiue of the part element
+    int partVal = arr[partIdx];
+    //move part element to the right index
+    swap(r, partIdx);
+    int idx = l;
+    for (int i = l; i < r; i++) {
+      if (arr[i] < partVal) {
+        swap(i, idx);
+        idx++;
       }
     }
-    swap(saveIdx, r);
-    return saveIdx;
+    //part the part element to the idx position (must point to the corrent location at this moment)
+    swap(r, idx);
+    return idx;
   }
 
   void swap(int i, int j) {
-    int t = nums[i];
-    nums[i] = nums[j];
-    nums[j] = t;
+    int t = arr[i];
+    arr[i] = arr[j];
+    arr[j] = t;
   }
 
   public static void main(String[] args) {
