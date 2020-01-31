@@ -48,61 +48,43 @@ public class GameOfLife {
     int cols;
 
     /**
-     * State changed in-place - we put new state as next 10-th digit - newstate*10 + oldstate. Then after turn we
-     * replace old state with new state - newstate = state / 10
+     * State changed in-place - we can save the new state of the cell as bits added to the original value.
+     * Shift by 1 bit in enough - we have 0 or 1 only. Catch - to read the value from the original grid
+     * we need now to get only lower bit - this can be achieved by %2 operation
      * @param board
      */
+    static int[][] dir = new int[][] {{-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}};
+
     public void gameOfLife(int[][] board) {
-        rows = board.length;
-        if (rows == 0) return;
-        cols = board[0].length;
+        int rows = board.length;
+        int cols = board[0].length;
         for (int r = 0; r < rows; r++) {
-            for (int c =0; c < cols; c++) {
-                int around = countAround(r, c, board);
-                if (around < 2 && board[r][c]%10 == 1)
-                    board[r][c] = board[r][c];
-                else if (around == 3 && board[r][c]%10 == 0)
-                    board[r][c] = 10 + board[r][c];
-                else if (around > 3 && board[r][c] == 1)
-                    board[r][c] = board[r][c];
-                else
-                    board[r][c] = 10*board[r][c] + board[r][c];
+            for (int c = 0; c < cols; c++) {
+                int l = 0, d = 0;
+                for (int i = 0; i < dir.length; i++) {
+                    int newR = r + dir[i][0];
+                    int newC  = c + dir[i][1];
+                    if (newR >= 0 && newR < rows && newC >= 0 && newC < cols) {
+                        if (board[newR][newC] % 2 == 0)
+                            ++d;
+                        else
+                            ++l;
+                    }
+                }
+                int newState;
+                if (board[r][c] == 1) {
+                    newState = (l >= 2 && l <= 3) ? 1 : 0;
+                } else {
+                    newState = (l == 3) ? 1 : 0;
+                }
+                board[r][c] = board[r][c] + (newState<<1);
             }
         }
-
         for (int r = 0; r < rows; r++) {
-            for (int c =0; c < cols; c++) {
-                board[r][c] = board[r][c] / 10;
+            for (int c = 0; c < cols; c++) {
+                board[r][c] = (board[r][c]>>1);
             }
         }
-    }
-
-    int countAround(int r, int c, int[][] board) {
-        int res = 0;
-        if (r > 0) {
-            res += board[r-1][c]%10;
-            if (c > 0) {
-                res+= board[r - 1][c - 1]%10;
-            }
-            if (c < cols - 1) {
-                res += board[r - 1][c + 1]%10;
-            }
-        }
-        if (r < rows - 1) {
-            res += board[r+1][c]%10;
-            if (c > 0) {
-                res+= board[r + 1][c - 1]%10;
-            }
-            if (c < cols - 1)
-                res += board[r + 1][c + 1]%10;
-        }
-        if (c > 0) {
-            res+=board[r][c - 1]%10;
-        }
-        if (c < cols - 1) {
-            res += board[r][c+1]%10;
-        }
-        return res;
     }
 
     public static void main(String[] args) {

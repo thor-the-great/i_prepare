@@ -31,53 +31,41 @@ package random_problems;
  * Explanation: The longest increasing path is [3, 4, 5, 6]. Moving diagonally is not allowed.
  */
 public class LongestIncreasingPathInMatrix {
-
-  static int[][] dir = new int [][] {
-      {1, 0}, {-1, 0}, {0, 1}, {0, -1}
-  };
-
   /**
    * Do the DFS on the each cell. Save currently longest path in the cache matrix
    * @param matrix
    * @return
    */
+  int[][] dir = new int[][] {
+      {-1, 0}, {0,1}, {1, 0}, {0, -1}
+  };
+
   public int longestIncreasingPath(int[][] matrix) {
-    int max = 0;
     int rows = matrix.length;
-    if ( rows == 0)
-      return max;
+    if (rows == 0)
+      return 0;
     int cols = matrix[0].length;
-
-    int[][] cache = new int[rows][cols];
-
+    int[][] memo = new int[rows][cols];
+    int res = 0;
     for (int r = 0; r < rows; r++) {
       for (int c = 0; c < cols; c++) {
-        int m = helper(r, c, matrix, cache);
-        max = Math.max(max, m);
+        res = Math.max(res, dfs(matrix, r, c, memo));
       }
     }
-
-    return max;
+    return res;
   }
 
-  int helper(int r, int c, int[][] matrix, int[][] cache) {
+  int dfs(int[][] matrix, int r, int c, int[][] memo) {
+    if (memo[r][c] > 0)
+      return memo[r][c];
 
-    if (cache[r][c] > 0) {
-      return cache[r][c];
-    }
-    int next = -1;
-    for ( int d = 0; d < 4; d++) {
-      int rr = r + dir[d][0];
-      int cc = c + dir[d][1];
-
-      if (rr >= 0 && cc >= 0
-          && rr < matrix.length && cc < matrix[0].length
-          && matrix[rr][cc] > matrix[r][c]) {
-        next = Math.max(next, helper(rr, cc, matrix, cache));
+    for (int[] d : dir) {
+      int newR = r + d[0], newC = c + d[1];
+      if (newR >= 0 && newC >= 0 && newR < matrix.length && newC < matrix[0].length && matrix[newR][newC] > matrix[r][c]) {
+        memo[r][c] = Math.max(memo[r][c], dfs(matrix, newR, newC, memo));
       }
     }
-
-    cache[r][c] = Math.max(cache[r][c], next);
-    return ++cache[r][c];
+    ++memo[r][c];
+    return memo[r][c];
   }
 }
