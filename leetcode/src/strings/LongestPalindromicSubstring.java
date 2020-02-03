@@ -53,4 +53,17 @@ public class LongestPalindromicSubstring {
 
         return right + 1 - left;
     }
+
+    public static void main(String[] args) {
+        LongestPalindromicSubstring obj = new LongestPalindromicSubstring();
+        String s;
+        s = "abbcd";
+        System.out.println(obj.longestPalindrome(s));
+
+        s = "rerfvabbad";
+        System.out.println(obj.longestPalindrome(s));
+
+        s = "r";
+        System.out.println(obj.longestPalindrome(s));
+    }
 }

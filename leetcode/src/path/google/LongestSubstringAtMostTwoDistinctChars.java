@@ -28,55 +28,25 @@ public class LongestSubstringAtMostTwoDistinctChars {
      * @return
      */
     public int lengthOfLongestSubstringTwoDistinct(String s) {
-        int N = s.length();
-        if (N <= 2)
-            return N;
-        //keep counts of each character
-        int[] m = new int[128];
-        int size = 0;
-        int l = 0;
-        //fill initial array to start
-        while (l < N) {
-            char ch = s.charAt(l);
-            if (m[ch] == 0 && size == 2)
-                break;
-            if (m[ch] == 0)
-                size++;
-            m[ch]++;
-            l++;
-        }
-        //edge case - if we exited due to index overflow and not because we found 3 distinct characters
-        if (l == N)
-            return N;
-        //this is right pointer in a sliding window
-        int r = 0;
-        //max length of sequence so far
-        int max = l;
-        while (l < N) {
-            char next = s.charAt(l);
-            //if we found 3-rd distinct character
-            if (m[next] == 0 && size == 2) {
-                max = Math.max(max, l - r);
-                //move right pointer forward
-                while (size == 2) {
-                    char rem = s.charAt(r);
-                    int newCount = m[rem] - 1;
-                    if (newCount == 0)
-                        size--;
-                    m[rem]--;
-                    r++;
+        int[] count = new int[128];
+        int c = 0, l = 0, res = -1;
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            ++count[ch];
+            if (count[ch] == 1)
+                ++c;
+            if (c > 2) {
+                res = Math.max(res, i - l);
+                while(c > 2) {
+                    --count[s.charAt(l)];
+                    if (count[s.charAt(l)] == 0)
+                        --c;
+                    ++l;
                 }
             }
-            if (m[next] == 0)
-                size++;
-            m[next]++;
-            l++;
         }
-        //special case for the last iteration in loop - it's not caught inside the loop
-        if (size == 2) {
-            max = Math.max(max, l - r);
-        }
-        return max;
+        res = Math.max(res, s.length() - l);
+        return res == -1 ? s.length() : res;
     }
 
     public static void main (String[] args) {
