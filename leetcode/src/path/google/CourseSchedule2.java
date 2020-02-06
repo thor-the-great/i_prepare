@@ -49,6 +49,27 @@ public class CourseSchedule2 {
      * visit all adjacent vertices,
      * decrement indegree and check if it became 0. If so - add it to the queue.
      * keep doing this until the queue is not empty
+     *
+     * 4, [[1,0],[2,0],[3,1],[3,2]]
+     * 0---->1
+     * |     |
+     * v     v
+     * 2---->3
+     *
+     * 0->1->2->3
+     *
+     * indegree 	[ 0, 1, 1, 2]
+     * graph   	[[1, 2], [3], [3], []]
+     * queue	 	[0]
+     * count		1
+     *
+     * 1. queue[]-> 0, adj[1,2] -> indegree [ 0, 0, 0, 2] count+=2 = 3 queue[1,2]
+     * 2  queue[2]->1  adj[3]   -> indegree [ 0, 0, 0, 1] count=3 queue[2]
+     * 3  queue[]->2   adj[3]   -> indegree [ 0, 0, 0, 0] count=4 queue[3]
+     * 4  queue[]->3   adj[] -> continue
+     * 5  queue isEmpty -> break
+     * count == numCourses = return true;
+     *
      * @param numCourses
      * @param prerequisites
      * @return
