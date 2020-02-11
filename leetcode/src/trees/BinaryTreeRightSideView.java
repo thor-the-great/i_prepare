@@ -1,7 +1,9 @@
 package trees;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * 199. Binary Tree Right Side View
@@ -50,5 +52,29 @@ public class BinaryTreeRightSideView {
             helper(n.right, d);
         if (n.left != null)
             helper(n.left, d);
+    }
+
+    public List<Integer> rightSideViewQueue(TreeNode root) {
+        List<Integer> res = new ArrayList();
+
+        Queue<TreeNode> q = new LinkedList();
+        if (root != null)
+            q.add(root);
+
+        while (!q.isEmpty()) {
+            int size = q.size();
+            int val = -1;
+            for (int i = 0; i < size; i++) {
+                TreeNode n = q.poll();
+                val = n.val;
+                if (n.left != null)
+                    q.add(n.left);
+                if (n.right != null)
+                    q.add(n.right);
+            }
+            res.add(val);
+        }
+
+        return res;
     }
 }

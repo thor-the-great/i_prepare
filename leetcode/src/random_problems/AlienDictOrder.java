@@ -1,10 +1,5 @@
 package random_problems;
 
-import path.amazon.AlienDict;
-
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 953. Verifying an Alien Dictionary
  * Difficulty: Easy
@@ -45,32 +40,32 @@ import java.util.Map;
  */
 public class AlienDictOrder {
 
-    Map<Character, Integer> orderMap;
-
     public boolean isAlienSorted(String[] words, String order) {
-        orderMap = new HashMap();
-        for (int i = 0; i < order.length(); i++) {
-            orderMap.put(order.charAt(i), i);
+        int N = words.length;
+        if (N < 2)
+            return true;
+        int[] dict = new int[26];
+        for (int i = 0; i < 26; i++) {
+            dict[order.charAt(i) - 'a'] = i;
         }
 
-        for (int i = 0; i < words.length - 1; i++) {
-            if (!ordered(words[i], words[i + 1]))
+        for (int i = 0; i < N - 1; i++) {
+            String w1 = words[i], w2 = words[i + 1];
+            boolean good = false;
+            for (int j = 0; j < Math.min(w1.length(), w2.length()); j++) {
+                char ch1 = w1.charAt(j), ch2 = w2.charAt(j);
+                if (dict[ch1 - 'a'] > dict[ch2 - 'a'])
+                    return false;
+                else if (dict[ch1 - 'a'] < dict[ch2 - 'a']) {
+                    good = true;
+                    break;
+                }
+            }
+            if (!good && w1.length() > w2.length())
                 return false;
         }
+
         return true;
-    }
-
-    boolean ordered(String s1, String s2) {
-        int minL = Math.min(s1.length(), s2.length());
-        for (int i = 0; i < minL; i++) {
-            int o1 = orderMap.get(s1.charAt(i));
-            int o2 = orderMap.get(s2.charAt(i));
-            if (o1 < o2)
-                return true;
-            else if (o1 > o2)
-                return false;
-        }
-        return s1.length() <= s2.length();
     }
 
     public static void main(String[] args) {
