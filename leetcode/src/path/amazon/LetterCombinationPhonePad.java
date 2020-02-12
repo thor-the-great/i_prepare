@@ -1,43 +1,35 @@
 package path.amazon;
 
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class LetterCombinationPhonePad {
 
+    List<String> res;
+    String digits;
+    String[] maps = new String[] {
+            "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"
+    };
     public List<String> letterCombinations(String digits) {
-        List<String> res = new LinkedList();
-        if (digits == null || digits.isEmpty()) return res;
+        res = new ArrayList();
+        if (digits.length() == 0)
+            return res;
 
-        char[][] map = new char[][] {
-                {},
-                {},
-                {'a', 'b', 'c'},
-                {'d', 'e', 'f'},
-                {'g', 'h', 'i'},
-                {'j', 'k', 'l'},
-                {'m', 'n', 'o'},
-                {'p', 'q', 'r', 's'},
-                {'t', 'u', 'v'},
-                {'w', 'x', 'y', 'z'}
-        };
-
-        helper(digits, 0, "", res, map);
+        this.digits = digits;
+        helper(0, new char[digits.length()]);
         return res;
     }
 
-    private void helper(String s, int index, String sSoFar, List<String> res, char[][] map) {
-        if (index >= s.length()) {
-            res.add(sSoFar);
+    void helper(int curIdx, char[] cur) {
+        if (curIdx == cur.length) {
+            res.add(new String(cur));
             return;
         }
-
-        char nextDigit = s.charAt(index);
-        char[] mapping = map[nextDigit - '0'];
-        for (char nextMapping : mapping) {
-            helper(s, index + 1, sSoFar + nextMapping, res, map);
+        int digit = digits.charAt(curIdx) - '0';
+        String mappedStr = maps[digit - 2];
+        for (char ch : mappedStr.toCharArray()) {
+            cur[curIdx] = ch;
+            helper(curIdx + 1, cur);
         }
     }
 }

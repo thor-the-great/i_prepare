@@ -13,36 +13,39 @@ public class NextPermutation {
      */
     public void nextPermutation(int[] nums) {
         int N = nums.length;
-        if (N <= 1)
+        if (N < 2)
             return;
-        int r = N - 2;
-        while (r >= 0 && nums[r] >= nums[r + 1]) {
-            r--;
-        }
-        //this is the case when array is orders desc, so we just need to return it in asc -> reverse all array
-        if (r < 0) {
+
+        //first dec
+        int dec = N - 2;
+        while (dec >= 0 && nums[dec] >= nums[dec + 1])
+            --dec;
+
+        if (dec < 0) {
             reverse(nums, 0, N - 1);
             return;
         }
-        int j = N - 1;
-        while (j >= r && nums[j] <= nums[r]) {
-            j--;
-        }
-        swap(r, j, nums);
-        reverse(nums, r + 1, N - 1);
+
+        //finding just greater
+        int grt = N - 1;
+        while(grt >= 0 && nums[grt] <= nums[dec])
+            --grt;
+
+        //swap
+        int t = nums[grt];
+        nums[grt] = nums[dec];
+        nums[dec] = t;
+
+        //revert the tail
+        reverse(nums, dec + 1, N - 1);
     }
 
-    void swap(int i, int j, int[] arr) {
-        int tmp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = tmp;
-    }
-
-    void reverse(int[] arr, int l, int r) {
-        while (l < r) {
-            swap(l, r, arr);
-            l++;
-            r--;
+    void reverse(int[] nums, int l, int r) {
+        while(l < r) {
+            int t = nums[l];
+            nums[l] = nums[r];
+            nums[r] = t;
+            ++l;--r;
         }
     }
 
