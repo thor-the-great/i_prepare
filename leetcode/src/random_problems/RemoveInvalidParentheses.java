@@ -25,8 +25,6 @@ import java.util.*;
  * Output: [""]
  */
 public class RemoveInvalidParentheses {
-    Set<String> uniqueStrings;
-
     /**
      * Idea: - first count the number of misplaced parentheses (using easy stack based approach). The number of
      * parentheses we can remove is equals to that number exactly.
@@ -37,78 +35,77 @@ public class RemoveInvalidParentheses {
      * @param s
      * @return
      */
+    Set<String> setRes;
+    String s;
     public List<String> removeInvalidParentheses(String s) {
-        int N = s.length();
-        List<String> res = new ArrayList<>();
-        if (N == 0) {
+        if (s == null || s.isEmpty()) {
+            List<String> res = new ArrayList();
             res.add("");
             return res;
         }
-        uniqueStrings = new HashSet();
-        //check number of invalid pars
-        int l = 0, r = 0;
-        Stack<Integer> stack = new Stack();
+
+        this.s = s;
+        int c = 0, invalidOpen = 0, invalidClose = 0;
         for (char ch : s.toCharArray()) {
-            int code = charToCode(ch);
-            if (code == 0) continue;
-            if (code > 0) {
-                stack.push(code);
-                continue;
-            } else {
-                if (stack.isEmpty()) {
-                    r++;
-                    continue;
-                }
-                int prev = stack.pop();
-                if (prev != 1) {
-                    r++;
-                }
+            if (ch == '(') ++c;
+            else if (ch == ')') {
+                if (c == 0) ++invalidClose;
+                else --c;
             }
         }
-        l += stack.size();
-        if (l == 0 && r == 0) {
+
+        c = 0;
+        for (int i = s.length() - 1; i >= 0; i--) {
+            char ch = s.charAt(i);
+            if (ch == ')') ++c;
+            else if (ch == '(') {
+                if (c == 0) ++invalidOpen;
+                else --c;
+            }
+        }
+
+        if (invalidOpen == 0 && invalidClose == 0) {
+            List<String> res = new ArrayList();
             res.add(s);
             return res;
         }
-        helper(s, 0,0, l, r, 0, new StringBuilder());
-        res.addAll(uniqueStrings);
+
+        setRes = new HashSet();
+
+        dfs(new StringBuilder(), 0, invalidOpen, invalidClose, 0, 0);
+
+        List<String> res = new ArrayList(setRes);
         return res;
     }
 
-    void helper(String s, int leftCount, int rightCount, int left, int right, int idx, StringBuilder expr) {
-        if (idx >= s.length() ) {
-            if (left == 0 && right == 0) {
-                uniqueStrings.add(expr.toString());
-            }
+    void dfs(StringBuilder cur, int idx, int open, int close, int openCount, int closeCount) {
+        if (idx >= s.length()) {
+            if (open == 0 && close == 0)
+                setRes.add(cur.toString());
             return;
         }
 
         char ch = s.charAt(idx);
-        //try remove character if possible
-        if (ch == '(' && left > 0) {
-            helper(s, leftCount, rightCount, left - 1, right, idx + 1, expr);
-        } else if (ch == ')' && right > 0) {
-            helper(s, leftCount, rightCount, left, right - 1, idx + 1, expr);
-        }
-        expr.append(ch);
-        //don't remove case ( means we need to add char to sb)
-        if (ch != '(' && ch != ')') {
-            helper(s, leftCount, rightCount, left, right, idx + 1, expr);
-        } else if (ch == '(') {
-            helper(s, leftCount + 1, rightCount, left, right, idx + 1, expr);
-        } else if ( ch == ')' && rightCount < leftCount) {
-            helper(s, leftCount, rightCount + 1, left, right, idx + 1, expr);
-        }
-        expr.deleteCharAt(expr.length() - 1);
-    }
 
-    int charToCode(char ch) {
-        int res = 0;
-        if (ch == '(')
-            res = 1;
-        else if (ch == ')')
-            res = -1;
-        return res;
+        //case 1 : remove char if possible - it has to be only paretheses
+        if (ch == '(' && open > 0) {
+            dfs(cur, idx + 1, open - 1, close, openCount, closeCount);
+        } else if (ch == ')' && close > 0) {
+            dfs(cur, idx + 1, open, close - 1, openCount, closeCount);
+        }
+
+        //case 2 : don't remove
+        cur.append(ch);
+        if (ch == ')') {
+            if (closeCount < openCount) {
+                dfs(cur, idx + 1, open, close, openCount, closeCount + 1);
+            }
+        } else if (ch == '(') {
+            dfs(cur, idx + 1, open, close, openCount + 1, closeCount);
+        } else  {
+            dfs(cur, idx + 1, open, close, openCount, closeCount);
+        }
+        cur.setLength(cur.length() - 1);
     }
 
     public static void main(String[] args) {

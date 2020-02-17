@@ -6,26 +6,23 @@ import java.util.Map;
 public class LongestSubstrKDistictChars {
 
     public int lengthOfLongestSubstringKDistinct(String s, int k) {
-        if (s.length() == 0 ) return 0;
-        int[] counts = new int[128];
-        int c = 0, j= 0, res = 0;
+        if (k == 0)
+            return 0;
+
+        int[] count = new int[128];
+        int c = 0, l = 0, res = 0;
+
         for (int i = 0; i < s.length(); i++) {
             char ch = s.charAt(i);
-            if (counts[ch] == 0) {
-                counts[ch] = 1;
-                c++;
-                while (c > k) {
-                    char ch2 = s.charAt(j);
-                    int newCount = counts[ch2] - 1;
-                    counts[ch2] = newCount;
-                    if (newCount == 0)
-                        c--;
-                    j++;
-                }
-            } else {
-                counts[ch] += 1;
+            ++count[ch];
+            if (count[ch] == 1) ++c;
+            while (c > k && l < i) {
+                --count[s.charAt(l)];
+                if (count[s.charAt(l)] == 0)
+                    --c;
+                ++l;
             }
-            res = Math.max(res, i - j + 1);
+            res = Math.max(res, (i - l + 1));
         }
         return res;
     }
