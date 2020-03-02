@@ -15,37 +15,29 @@ import java.util.Stack;
 public class BSTIterator {
 
     Stack<TreeNode> s;
+    TreeNode cur;
 
-    /**
-     * Idea is to do inorder traversal in steps. At each step you can add max helper2 (height of the BST) elements
-     *
-     * @param root
-     */
     public BSTIterator(TreeNode root) {
         s = new Stack();
-        TreeNode curr = root;
-        while (curr != null) {
-            s.push(curr);
-            curr = curr.left;
-        }
-    }
-
-    /** @return whether we have a next smallest number */
-    public boolean hasNext() {
-        return !s.isEmpty();
+        cur = root;
     }
 
     /** @return the next smallest number */
     public int next() {
-        TreeNode n = s.pop();
-        int next = n.val;
-        if (n.right != null) {
-            n = n.right;
-            while ( n != null) {
-                s.push(n);
-                n = n.left;
+        if (!s.isEmpty() || cur != null) {
+            while(cur != null) {
+                s.push(cur);
+                cur = cur.left;
             }
+            TreeNode n = s.pop();
+            cur = n.right;
+            return n.val;
         }
-        return next;
+        return 0;
+    }
+
+    /** @return whether we have a next smallest number */
+    public boolean hasNext() {
+        return !s.isEmpty() || cur != null;
     }
 }
