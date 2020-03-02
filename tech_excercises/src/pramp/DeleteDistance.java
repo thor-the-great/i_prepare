@@ -33,6 +33,13 @@ public class DeleteDistance {
 
     /**
      * Similar to edit distance - calculate matrix of states for DP.
+     * dp(i,j) is the delete distance for str1(0,i) and str2(0,j)
+     * transition:
+     * dp(i,j) =
+     *              1. str1(i) == str2(j) - get previous min - dp(i-1, j-1)
+     *              2. str1(i) != str2(j) - need to do 1 delete, but we can delete from str1 or
+     *              str2. Get min from two and add 1 for the delete:
+     *                  1 + MIN ( dp(i - 1, j), dp(i, j - 1))
      * @param str1
      * @param str2
      * @return
