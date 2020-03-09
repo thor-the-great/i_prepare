@@ -1,4 +1,4 @@
-package grooking_coding_patterns.topological_sort;
+package grooking_coding_patterns.graphs.topological_sort;
 
 import java.util.*;
 
