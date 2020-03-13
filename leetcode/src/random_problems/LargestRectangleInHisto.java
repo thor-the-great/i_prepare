@@ -9,6 +9,47 @@ public class LargestRectangleInHisto {
         //return largestRectangleAreaDivConq(heights);
     }
 
+    /**
+     *
+     * @param arr
+     * @return
+     */
+    public int largestRectangleAreaTwoStacks(int[] arr) {
+        int N = arr.length;
+        if (N == 0)
+            return 0;
+
+        int max = 0, tmpIdx = 0;
+        //one stack holds heights and second one - positions.
+        //each stack represents the beginning of the rectangle (the left most). As we go we check
+        //next height, if it's larger than the previous (peek()) - it's possible that this one and
+        //previous one will combine (in terms of positions). In it's smaller - we can't keep
+        //adding positions, need to go back and flush all smaller rectangles
+        Stack<Integer> vals = new Stack(), pos = new Stack();
+
+        for (int i = 0; i < N; i++) {
+            int h = arr[i];
+            if (vals.isEmpty() || vals.peek() < h) {
+                vals.push(h);
+                pos.push(i);
+            } else if (vals.peek() > h) {
+                while (!vals.isEmpty() && vals.peek() > h) {
+                    tmpIdx = pos.pop();
+                    max = Math.max(max, vals.pop() * (i - tmpIdx));
+                }
+                vals.push(h);
+                pos.push(tmpIdx);
+            }
+        }
+
+        while (!vals.isEmpty()) {
+            tmpIdx = pos.pop();
+            max = Math.max(max, vals.pop() * (N - tmpIdx));
+        }
+
+        return max;
+    }
+
     int largestRectangleAreaDivConq(int[] heights) {
         int N = heights.length;
         if (N == 0)

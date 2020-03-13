@@ -4,6 +4,43 @@ import java.util.Arrays;
 
 public class BuySellStockK {
 
+    /**
+     * At every point we get either sell or not sell.
+     * If not sell - take the profit from same k transactions but previous day
+     * If sell - get prices[d] - (some price of [d1 ... d - 1] + profit [0..d1])
+     * we need to maximize that (some price of [d1 ... d - 1] + profit [0..d1])
+     * @param k
+     * @param prices
+     * @return
+     */
+    public int maxProfitExplainedDP(int k, int[] prices) {
+        if (prices == null || prices.length == 0 || k <= 0 )
+            return 0;
+        int N = prices.length;
+        if (2*k > N) {
+            int max = 0;
+            for (int i = 1; i < N; i++) {
+                int dif = prices[i] - prices[i - 1];
+                if (dif > 0)
+                    max += dif;
+            }
+            return max;
+        }
+        int[] odd = new int[N];
+        int[] even = new int[N];
+        int[] curProf; int[] prevProf;
+        for (int t = 1; t <= k; t++) {
+            int maxCur = Integer.MIN_VALUE;
+            curProf = (t % 2 == 1) ? odd : even;
+            prevProf = (t % 2 == 1) ? even : odd;
+            for (int d = 1; d < N; d++) {
+                maxCur = Math.max(maxCur, prevProf[d - 1] - prices[d - 1]);
+                curProf[d] = Math.max(curProf[d - 1], prices[d] + maxCur);
+            }
+        }
+        return (k % 2 == 1) ? odd[N - 1] : even[N - 1];
+    }
+
     public int maxProfit1(int k, int[] prices) {
         int N = prices.length;
         if (N <= 1) return 0;

@@ -1,8 +1,5 @@
 package path.google;
 
-import java.util.Arrays;
-import java.util.Comparator;
-
 /**
  * 10. Regular Expression Matching
  * Hard
@@ -95,7 +92,7 @@ public class RegexpMatching {
                 }
             }
         }
-        Arrays.stream(new int[] {1}).(Comparator.reverseOrder()).map().toArray();
+        //Arrays.stream(new int[] {1}).(Comparator.reverseOrder()).map().toArray();
         return dp[s.length()][p.length()];
     }
 }
