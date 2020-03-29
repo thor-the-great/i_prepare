@@ -70,7 +70,7 @@ public class NumberOfDiceRollsWithTargetSum {
    * In every next step we exclude the smallest target but add the m - 1 target. So instead of one more
    * nested loop for the sum we keep running sum and do one addition and one subtraction. This changes
    * solution from cubic to quadratic
-   * 
+   *
    * We don't actually need the whole nxm grid. In reallity we only check the previous row, so two 1-d arrays
    * are fine. This lowers the space complaxity from O(nm) to O(n).
    *

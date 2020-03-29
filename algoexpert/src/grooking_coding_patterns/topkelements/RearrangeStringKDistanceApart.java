@@ -1,4 +1,4 @@
-package grooking_coding_patterns.kwaymerge;
+package grooking_coding_patterns.topkelements;
 
 import java.util.*;
 
