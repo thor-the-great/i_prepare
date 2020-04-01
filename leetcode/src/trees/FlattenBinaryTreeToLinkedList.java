@@ -3,9 +3,7 @@
  */
 package trees;
 
-import com.sun.source.tree.Tree;
-import path.google.TrappedRainWater;
-import utils.StringUtils;
+import java.util.Stack;
 
 /**
  * 114. Flatten Binary Tree to Linked List
@@ -42,6 +40,27 @@ import utils.StringUtils;
  *           6
  */
 public class FlattenBinaryTreeToLinkedList {
+
+  public void flattenIterative(TreeNode root) {
+    Stack<TreeNode> stack = new Stack();
+    if (root != null) {
+      stack.push(root);
+    }
+
+    while (!stack.isEmpty()) {
+      TreeNode cur = stack.pop();
+      if (cur.right != null)
+        stack.push(cur.right);
+
+      if (cur.left != null)
+        stack.push(cur.left);
+
+      if (!stack.isEmpty())
+        cur.right = stack.peek();
+
+      cur.left = null;
+    }
+  }
 
   public void flatten(TreeNode root) {
     if (root == null)
