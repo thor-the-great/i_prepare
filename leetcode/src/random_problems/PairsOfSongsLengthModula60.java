@@ -1,8 +1,5 @@
 package random_problems;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 1013. Pairs of Songs With Total Durations Divisible by 60
  * Easy
@@ -49,30 +46,18 @@ public class PairsOfSongsLengthModula60 {
      * convert original array to array of modulo 60.
      * iterate over that array and check for the current element. If found - arr number to res.
      * in the end add compliment of the number to the map as key, number of times met - as value
+     * Optim by time - instead of map array can be used as time[i] <= 500
      * @param time
      * @return
      */
     public int numPairsDivisibleBy60(int[] time) {
-        int N = time.length;
         int res = 0;
+        int[] m = new int[561];
 
-        for (int i = 0; i < N; i++) {
-            time[i] %= 60;
-        }
-
-        Map<Integer, Integer> m = new HashMap();
-        for (int i = 0; i <N; i++) {
-            int el = time[i];
-            int compl = 60 - el;
-            if (compl == 60)
-                compl = 0;
-            if (m.containsKey(el)) {
-                res += m.get(el);
-            }
-            if (!m.containsKey(compl))
-                m.put(compl, 1);
-            else
-                m.put(compl, m.get(compl) + 1);
+        for (int i = 0; i < time.length; i++) {
+            int el = time[i] % 60;
+            res += m[el];
+            ++m[(el == 0 ? 0 : 60 - el)];
         }
 
         return res;
