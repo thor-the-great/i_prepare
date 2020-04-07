@@ -1,10 +1,5 @@
 package random_problems;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * 997. Find the Town Judge
  * Easy
@@ -57,34 +52,25 @@ import java.util.Set;
  */
 public class FindTownJudge {
 
+    /**
+     * Count indegree for every node
+     * @param N
+     * @param trust
+     * @return
+     */
     public int findJudge(int N, int[][] trust) {
+        int[] indeg = new int[N];
 
-        if (trust.length == 0 && N == 1)
-            return 1;
-
-        Map<Integer, Integer> m = new HashMap();
-        Set<Integer> knows = new HashSet();
-
-        for (int[] p : trust) {
-            if (!m.containsKey(p[1])) {
-                m.put(p[1], 1);
-            } else {
-                m.put(p[1], m.get(p[1]) + 1);
-            }
-            knows.add(p[0]);
+        for (int[] t : trust) {
+            --indeg[t[0] - 1];
+            ++indeg[t[1] - 1];
         }
 
-        int c = N - 1;
-        int count = -1;
-        for (int i = 1; i <= N; i++) {
-            if (m.containsKey(i) && m.get(i) == c) {
-                if (count == -1 && !knows.contains(i))
-                    count = i;
-                else
-                    return -1;
-            }
+        for (int i = 0; i < N; i++) {
+            if (indeg[i] == N - 1)
+                return i + 1;
         }
 
-        return count;
+        return -1;
     }
 }
