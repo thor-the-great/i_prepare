@@ -38,6 +38,39 @@ import java.util.Stack;
  * Can you solve it in O(N) time and O(1) space?
  */
 public class BackspaceStringCompare {
+
+    public boolean backspaceCompareTwoPointersCleaner(String S, String T) {
+        if (S.isEmpty() && T.isEmpty())
+            return true;
+        int p1 = S.length() - 1, p2 = T.length() - 1;
+        while (p1 >= 0 || p2 >= 0) {
+            p1 = getNextPos(S, p1);
+            p2 = getNextPos(T, p2);
+            if (p1 < 0 && p2 < 0)
+                return true;
+            if (p1 < 0 || p2 < 0)
+                return false;
+            if (S.charAt(p1) != T.charAt(p2))
+                return false;
+            --p1; --p2;
+        }
+        return true;
+    }
+
+    int getNextPos(String s, int p) {
+        int countBackspace = 0;
+        while (p >= 0) {
+            if (s.charAt(p) == '#')
+                ++countBackspace;
+            else if (countBackspace > 0) {
+                --countBackspace;
+            } else {
+                break;
+            }
+            --p;
+        }
+        return p;
+    }
     /**
      * Idea - keep tracking of number of backspaces
      * @param S
