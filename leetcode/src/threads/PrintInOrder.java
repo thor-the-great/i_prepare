@@ -39,7 +39,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class PrintInOrder {
 
-    AtomicInteger count = new AtomicInteger(0);
+    AtomicInteger count;
 
     public PrintInOrder() {
         count = new AtomicInteger(0);
