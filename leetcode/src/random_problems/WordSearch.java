@@ -40,48 +40,46 @@ public class WordSearch {
      * @return
      */
     public boolean exist(char[][] board, String word) {
-        visited.clear();
-        w = word;
-        m = board;
-        int l = word.length();
-        int m = board.length, n = board[0].length;
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                if (word.charAt(0) != board[i][j])
-                    continue;
-                if (l == 1) return true;
-                if (dfs(i, j, 0)) return true;
+        if (board == null || board.length == 0 || board[0].length == 0)
+            return false;
+
+        for (int r = 0; r < board.length; r++) {
+            for (int c = 0; c < board[0].length; c++) {
+                if (board[r][c] == word.charAt(0)) {
+                    if (dfs(board, r, c, word, 0)) {
+                        return true;
+                    }
+                }
             }
         }
+
         return false;
     }
 
-    boolean dfs(int r, int c, int index) {
-        if (m[r][c] != w.charAt(index))
+    boolean dfs(char[][] board, int r, int c, String s, int idx) {
+        if (idx >= s.length())
             return false;
-        if (index == w.length() - 1)
-            return true;
-        int rows = m.length;
-        int cols = m[0].length;
-        int cell = r * cols + c;
-        visited.add(cell);
 
-        boolean result = false;
-        if (r > 0 && !visited.contains((r - 1) * cols + c)) {
-            result |= dfs(r - 1, c, index + 1);
-        }
-        if (r < rows - 1 && !visited.contains((r + 1) * cols + c)) {
-            result |= dfs(r + 1, c, index + 1);
-        }
-        if (c > 0 && !visited.contains(r * cols + c - 1)) {
-            result |= dfs(r, c - 1, index + 1);
-        }
-        if (c < cols - 1 && !visited.contains(r * cols + c + 1)) {
-            result |= dfs(r , c + 1, index + 1);
-        }
-        if (result) return true;
-        visited.remove(cell);
-        return false;
+        if (board[r][c] == '*' || board[r][c] != s.charAt(idx))
+            return false;
+
+        if (idx == s.length() - 1)
+            return true;
+
+        char prevChar = board[r][c];
+        board[r][c] = '*';
+
+        boolean res = false;
+        if (r - 1 >= 0)
+            res = dfs(board, r - 1, c, s, idx + 1);
+        if (c - 1 >= 0 && !res)
+            res = dfs(board, r, c - 1, s, idx + 1);
+        if (r + 1 < board.length && !res)
+            res = dfs(board, r + 1, c, s, idx + 1);
+        if (c + 1 < board[0].length && !res)
+            res = dfs(board, r, c + 1, s, idx + 1);
+        board[r][c] = prevChar;
+        return res;
     }
 
     public static void main(String[] args) {
