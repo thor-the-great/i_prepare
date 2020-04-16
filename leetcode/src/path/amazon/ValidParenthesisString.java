@@ -40,25 +40,29 @@ public class ValidParenthesisString {
      * @return
      */
     public boolean checkValidStringGreedy(String s) {
-        int h = 0, l = 0;
-        for (int i = 0; i < s.length(); i++) {
-            char ch = s.charAt(i);
+        if (s == null) return false;
+        if (s.isEmpty()) return true;
+
+        int lowest = 0, highest = 0;
+
+        for (char ch : s.toCharArray()) {
             if (ch == '(')
-                l++;
+                lowest++;
             else
-                l--;
+                lowest--;
 
-            if (ch != ')')
-                h++;
+            if (ch == ')')
+                highest--;
             else
-                h--;
+                highest++;
 
-            if (h < 0)
+            if (highest < 0)
                 return false;
 
-            if ( l < 0 ) l = 0;
+            lowest = Math.max(0, lowest);
         }
-        return l == 0;
+
+        return lowest == 0;
     }
 
     /**
