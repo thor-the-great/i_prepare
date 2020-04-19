@@ -3,10 +3,7 @@
  */
 package graphs;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * 690. Employee Importance
@@ -48,26 +45,18 @@ public class EmployeeImportance {
      * @return
      */
     public int getImportance(List<Employee> employees, int id) {
-        int[] imp = new int[2001];
-        List<Integer>[] graph = new ArrayList[2001];
+        Map<Integer, Employee> graph = new HashMap();
+        for (Employee employee : employees)
+            graph.put(employee.id, employee);
 
-        for (Employee empl : employees) {
-            imp[empl.id] = empl.importance;
-            List<Integer> sub = new ArrayList();
-            for (int oneSub : empl.subordinates) {
-                sub.add(oneSub);
-            }
-            graph[empl.id] = sub;
-        }
+        Queue<Integer> queue = new LinkedList();
+        queue.add(id);
         int res = 0;
-        Queue<Integer> q = new LinkedList();
-        q.add(id);
-        while (!q.isEmpty()) {
-            int empId = q.poll();
-            res+=imp[empId];
-            for (int oneSub : graph[empId]) {
-                q.add(oneSub);
-            }
+        while(!queue.isEmpty()) {
+            Employee employee = graph.get(queue.poll());
+            res += employee.importance;
+            for (Integer subId : employee.subordinates)
+                queue.add(subId);
         }
         return res;
     }
