@@ -2,6 +2,7 @@ package path.linkedin;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Stack;
 
 /**
  * 547. Friend Circles
@@ -64,6 +65,28 @@ public class FriendCircles {
                 dfs(M, visited, i);
             }
         }
+    }
+
+    public int findCircleNumDfsIterative(int[][] M) {
+        int N = M.length;
+        boolean[] visited = new boolean[N];
+        int res = 0;
+        for (int student = 0; student < N; student++) {
+            if (visited[student])
+                continue;
+            Stack<Integer> stack = new Stack();
+            stack.push(student);
+            while(!stack.isEmpty()) {
+                int next = stack.pop();
+                visited[next] = true;
+                for (int j = 0; j < N; j++) {
+                    if (j != next && M[j][next] == 1 && !visited[j])
+                        stack.push(j);
+                }
+            }
+            ++res;
+        }
+        return res;
     }
 
     /**
