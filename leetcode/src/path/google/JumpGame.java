@@ -1,7 +1,38 @@
 package path.google;
 
+/**
+ * 55. Jump Game
+ * Medium
+ *
+ * Given an array of non-negative integers, you are initially positioned at the first index of the array.
+ *
+ * Each element in the array represents your maximum jump length at that position.
+ *
+ * Determine if you are able to reach the last index.
+ *
+ * Example 1:
+ *
+ * Input: [2,3,1,1,4]
+ * Output: true
+ * Explanation: Jump 1 step from index 0 to 1, then 3 steps to the last index.
+ * Example 2:
+ *
+ * Input: [3,2,1,0,4]
+ * Output: false
+ * Explanation: You will always arrive at index 3 no matter what. Its maximum
+ *              jump length is 0, which makes it impossible to reach the last index.
+ */
 public class JumpGame {
 
+    /**
+     * Keep pos as maximum position we can reach so far. We don't care about every cell that we can reach, just the
+     * fact that we can go up to i means we can do i, i-1, i-2 etc.
+     * For every position that we can reach keep the max next position we can reach from there. Doing so means we
+     * keep the max position, and increment it for every next index. We do this until we can't reach position from
+     * any previous one (fail case) of unless we reach the end of array (true case)
+     * @param nums
+     * @return
+     */
     public boolean canJump_Greedy_Optimal(int[] nums) {
         if (nums.length == 1)
             return true;
@@ -13,6 +44,18 @@ public class JumpGame {
             longest = Math.max(longest, i + nums[i]);
         }
         return longest >= N - 1;
+    }
+
+    public boolean canJumpGreedyOptimal2(int[] nums) {
+        int pos = 0;
+
+        for (int i = 0; i < nums.length && pos < nums.length; i++) {
+            if (pos < i)
+                return false;
+            pos = Math.max(pos, i + nums[i]);
+        }
+
+        return true;
     }
 
     public boolean canJumpDP_Optimal(int[] nums) {
