@@ -1,5 +1,8 @@
 package random_problems;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 /**
  * 733. Flood Fill
  * Easy
@@ -70,5 +73,42 @@ public class FloodFillColorReplace {
             if (c < image[0].length - 1)
                 dfs(r, c + 1);
         }
+    }
+
+    public int[][] floodFillBFSIterative(int[][] image, int sr, int sc, int newColor) {
+        int rows = image.length;
+        if (rows == 0)
+            return image;
+        int cols = image[0].length;
+        int oldColor = image[sr][sc];
+        if (oldColor == newColor)
+            return image;
+
+
+        Queue<Integer> q = new LinkedList();
+        q.add(sr*100 + sc);
+
+        while(!q.isEmpty()) {
+            int point = q.poll();
+            int pc = point % 100, pr = point / 100;
+            if (image[pr][pc] != oldColor)
+                continue;
+            image[pr][pc] = newColor;
+
+            if (pr - 1 >= 0 && image[pr - 1][pc] == oldColor) {
+                q.add((pr - 1)*100 + pc);
+            }
+            if (pc - 1 >= 0 && image[pr][pc - 1] == oldColor) {
+                q.add(pr*100 + pc - 1);
+            }
+            if (pr + 1 < rows && image[pr + 1][pc] == oldColor) {
+                q.add((pr + 1)*100 + pc);
+            }
+            if (pc + 1 < cols && image[pr][pc + 1] == oldColor) {
+                q.add(pr*100 + pc + 1);
+            }
+        }
+
+        return image;
     }
 }
