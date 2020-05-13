@@ -1,5 +1,7 @@
 package stack;
 
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Stack;
 
 /**
@@ -75,5 +77,45 @@ public class RemoveKDigits {
       sb.deleteCharAt(sb.length() - 1);
 
     return sb.reverse().toString();
+  }
+
+  /**
+   * Same approach but based on double ended queue
+   * @param num
+   * @param k
+   * @return
+   */
+  public String removeKdigitsDeque(String num, int k) {
+    if (num == null)
+      return num;
+
+    if (k >= num.length())
+      return "0";
+
+    Deque<Character> deq = new LinkedList();
+    for (char ch : num.toCharArray()) {
+      while(!deq.isEmpty() && k > 0 && ch < deq.peekLast()) {
+        deq.pollLast();
+        --k;
+      }
+      deq.addLast(ch);
+    }
+
+    while (k > 0) {
+      deq.pollLast();
+      --k;
+    }
+    while(!deq.isEmpty() && deq.peekFirst() == '0') {
+      deq.pollFirst();
+    }
+    if (deq.isEmpty())
+      return "0";
+
+    StringBuilder sb = new StringBuilder();
+    while(!deq.isEmpty()) {
+      sb.append(deq.pollFirst());
+    }
+
+    return sb.toString();
   }
 }
