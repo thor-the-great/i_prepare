@@ -34,6 +34,40 @@ public class LargestTimeForDigits {
         }
         return false;
     }
+    
+    /**
+     * Just check every combination, it's O(n^4), but because n == 4 it's small 
+     * @param A
+     * @return
+     */
+    public String largestTimeFromDigitsSimpler(int[] A) {
+        int max = -1;
+        String res = "";
+        for (int i = 0; i < 4; i++) {
+            if (A[i] > 2)
+                continue;
+            for (int j = 0; j < 4; j++) {
+                if (j == i || (A[i]*10 + A[j]) > 23) 
+                    continue;
+                for (int k = 0; k < 4; k++) {
+                    if (k == i || k == j || A[k] > 5) 
+                        continue;
+                    for (int l = 0; l < 4; l++) {
+                        if (l == i || l == j || l == k)
+                            continue;
+                        int minutes =  A[i]*1000 + A[j]*100 + A[k]*10 + A[l];
+                        if (minutes > max) {
+                            max = minutes;
+                            StringBuilder sb = new StringBuilder();
+                            sb.append(A[i]).append(A[j]).append(':').append(A[k]).append(A[l]);
+                            res = sb.toString();
+                        }
+                    }
+                }
+            }
+        }
+        return res;
+    }
 
     public static void main(String[] args) {
         LargestTimeForDigits obj = new LargestTimeForDigits();
