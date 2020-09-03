@@ -35,20 +35,25 @@ public class RepeatedSubstringPattern {
      */
     public boolean repeatedSubstringPattern(String s) {
         int N = s.length();
-
-        for (int len = N / 2; len >= 1; len--) {
-            if (N % len == 0) {
-                StringBuilder sb = new StringBuilder();
-                String subStr = s.substring(0, len);
-                for (int t = 0; t < N/ len; t++) {
-                    sb.append(subStr);
+        if (N <= 1)
+            return false;
+        int pos = 0;
+        while (pos < N /2) {
+            if (N % (pos + 1) == 0) {
+                //check if possible
+                int subStrPos = 0, i = pos + 1;
+                for (; i < N; i++) {
+                    if (s.charAt(i) != s.charAt(subStrPos)) {
+                        break;
+                    }
+                    subStrPos = (subStrPos == pos) ? 0 : subStrPos + 1;
                 }
-
-                if (s.equals(sb.toString()))
+                if (i == N) {
                     return true;
+                }
             }
+            ++pos;
         }
-
         return false;
     }
 }
