@@ -63,4 +63,39 @@ public class InsertInterval {
     return mergedIntervals;
   }
 
+  /**
+   * Same algorithm but just for 2D array
+   * @param intervals
+   * @param newInterval
+   * @return
+   */
+  public int[][] insert(int[][] intervals, int[] newInterval) {
+    List<int[]> list = new ArrayList();
+    int p = 0, N = intervals.length;
+
+    while (p < N && intervals[p][1] < newInterval[0]) {
+      list.add(intervals[p++]);
+    }
+
+    if (p == N) {
+      list.add(newInterval);
+    } else {
+      while (p < N && intervals[p][0] <= newInterval[1]) {
+        newInterval[0] = Math.min(newInterval[0], intervals[p][0]);
+        newInterval[1] = Math.max(newInterval[1], intervals[p][1]);
+        p++;
+      }
+      list.add(newInterval);
+
+      while (p < N) {
+        list.add(intervals[p++]);
+      }
+    }
+
+    int[][] res = new int[list.size()][2];
+    for (int i = 0; i < list.size(); i++) {
+      res[i] = list.get(i);
+    }
+    return res;
+  }
 }
