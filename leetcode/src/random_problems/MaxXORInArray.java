@@ -39,18 +39,18 @@ public class MaxXORInArray {
      */
     public int findMaximumXOR(int[] nums) {
         int max = 0, mask = 0;
-        Set<Integer> set = new HashSet();
         for (int i = 31; i >=0; i--) {
-            mask |= (1<<i);
-            set.clear();
+            int nextPartOfMask = (1<<i);
+            mask |= nextPartOfMask;
+            Set<Integer> set = new HashSet();
             for (int num : nums) {
                 set.add(num & mask);
             }
 
-            int t = max | (1<<i);
-            for (int p : set) {
-                if (set.contains(t ^ p)) {
-                    max = t;
+            int greedyAssumption = max | nextPartOfMask;
+            for (int leftPartAsPerMask : set) {
+                if (set.contains(greedyAssumption ^ leftPartAsPerMask)) {
+                    max = greedyAssumption;
                     break;
                 }
             }
