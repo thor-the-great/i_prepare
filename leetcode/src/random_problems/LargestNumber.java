@@ -54,4 +54,52 @@ public class LargestNumber {
 
         return sb.toString();
     }
+
+    public String largestNumberIntegerSorting(int[] nums) {
+        Comparator<Integer> comp = new Comparator<>() {
+            public int compare (Integer i1, Integer i2) {
+                int shift1 = 1;
+                int numOfDigits = numOfDigits(i1);
+                while (numOfDigits > 0) {
+                    shift1*=10;
+                    --numOfDigits;
+                }
+
+                int shift2 = 1;
+                numOfDigits = numOfDigits(i2);
+                while (numOfDigits > 0) {
+                    shift2*=10;
+                    --numOfDigits;
+                }
+
+                return Long.compare((long)i2*shift1 + i1, (long)i1*shift2 + i2);
+            }
+        };
+        
+        Integer[] integArray = new Integer[nums.length];
+        for (int i = 0; i < nums.length; i++) {
+            integArray[i] = nums[i];
+        }
+        Arrays.sort(integArray, comp);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < integArray.length; i++) {
+            int n = integArray[i];
+            if (n == 0 && sb.length() == 0 && i < integArray.length - 1) {
+                continue;
+            }
+            sb.append(n);
+        }
+        return sb.toString();
+    }
+    
+    int numOfDigits(int n) {
+        if (n == 0)
+            return 1;
+        int res = 0;
+        while(n > 0) {
+            n/=10;
+            ++res;
+        }
+        return res;
+    }
 }
