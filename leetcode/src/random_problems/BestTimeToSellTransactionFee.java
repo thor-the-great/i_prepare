@@ -49,4 +49,15 @@ public class BestTimeToSellTransactionFee {
 
         return sell;
     }
+
+    public int maxProfitGoingToOptimal(int[] prices, int fee) {
+        int N = prices.length;
+        int[] buys = new int[N], sells = new int[N];
+        buys[0] = prices[0]; sells[0] = 0;
+        for (int i = 1; i < N; i++) {
+            buys[i] = Math.min(buys[i - 1], prices[i] - sells[i - 1]);
+            sells[i] = Math.max(sells[i - 1], prices[i] - buys[i - 1] - fee);
+        }
+        return sells[N - 1];
+    }
 }
