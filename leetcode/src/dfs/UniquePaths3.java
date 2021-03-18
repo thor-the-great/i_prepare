@@ -57,64 +57,57 @@ public class UniquePaths3 {
    * @return
    */
   public int uniquePathsIII(int[][] grid) {
-    rows = grid.length;
-    cols = grid[0].length;
-    this.grid = grid;
-    count = 0;
-
-    int toVisit = 0;
-    int startR = 0, startC = 0;
-
+    int rows = grid.length, cols = grid[0].length;
+    int startR = -1, startC = -1;
+    int steps = 0;
     for (int r = 0; r < rows; r++) {
       for (int c = 0; c < cols; c++) {
-        if (grid[r][c] == -1) continue;
-
-        if (grid[r][c] == 1) {
-          startC = c;
-          startR = r;
+        //if anything where we can walk - save important values
+        if (grid[r][c] != -1) {
+          ++steps;
+          if (grid[r][c] == 1) {
+            startR = r;
+            startC = c;
+          }
         }
-        toVisit++;
       }
     }
-
-    dfs(startR, startC, toVisit);
-
-    return count;
+    return dfs(startR, startC, grid, steps);
   }
 
-  void dfs(int r, int c, int toVisit) {
-    toVisit--;
-    if (toVisit < 0)
-      return;
-    if (grid[r][c] == 2 && toVisit == 0) {
-      count++;
-      return;
+  int dfs(int r, int c, int[][] grid, int steps) {
+    //base case 1 - we reached the final cell
+    if (grid[r][c] == 2) {
+      //if we visited all cell add one path to result
+      if (steps == 1) {
+        return 1;
+      }
+      //if not all cells were visited ignore this path
+      return 0;
     }
+    //if cell has been visited return
     if (grid[r][c] == -1)
-      return;
-
-    grid[r][c] = 3;
-
-    if (r > 0 && grid[r - 1][c] != 3) {
-      int state = grid[r - 1][c];
-      dfs(r - 1, c, toVisit);
-      grid[r - 1][c] = state;
+      return 0;
+    //good cell found on the path - mark it as visited and trying all neighbours
+    grid[r][c] = -1;
+    int res = 0;
+    //visit neighbours in all foure directions
+    if (r - 1 >= 0) {
+      res += dfs(r - 1, c, grid, steps - 1);
     }
-    if (c > 0 && grid[r][c - 1] != 3) {
-      int state = grid[r][c - 1];
-      dfs(r, c - 1, toVisit);
-      grid[r][c - 1] = state;
+    if (c - 1 >= 0) {
+      res += dfs(r, c - 1, grid, steps - 1);
     }
-    if (r < rows - 1 && grid[r + 1][c] != 3) {
-      int state = grid[r + 1][c];
-      dfs(r + 1, c, toVisit);
-      grid[r + 1][c] = state;
+    if (r + 1 < grid.length) {
+      res += dfs(r + 1, c, grid, steps - 1);
     }
-    if (c < cols - 1 && grid[r][c + 1] != 3) {
-      int state = grid[r][c + 1];
-      dfs(r, c + 1, toVisit);
-      grid[r][c + 1] = state;
+    if (c + 1 < grid[0].length) {
+      res += dfs(r, c + 1, grid, steps - 1);
     }
+    //unmark this cell from visited so it can be visited by other paths
+    grid[r][c] = 0;
+    //return number of paths that we get after visiting this cell
+    return res;
   }
 
   public static void main(String[] args) {
