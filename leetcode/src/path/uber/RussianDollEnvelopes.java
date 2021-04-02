@@ -61,6 +61,35 @@ public class RussianDollEnvelopes {
         return len;
     }
 
+    /**
+     * Simple DP, based on longest increasing subsequence. 
+     * Going from left to right, each right pointer cares only of what was to it's left. Next element
+     * can take that result from memo and count after one next element 
+     * 
+     * O(n^2) time
+     * @param envelopes
+     * @return
+     */
+    public int maxEnvelopesSimpleDP(int[][] envelopes) {
+        Comparator<int[]> comp = (ar1, ar2) -> ar1[0] - ar2[0];
+        Arrays.sort(envelopes, comp);
+        int N = envelopes.length;
+        int[] dp = new int[N];
+        dp[0] = 1;
+        int max = 1;
+        for (int i = 1; i < N; i++) {
+            int cur = 0;
+            for (int j = 0; j < i; j++) {
+                if (envelopes[i][0] > envelopes[j][0] && envelopes[i][1] > envelopes[j][1]) {
+                    cur = Math.max(cur, dp[j]);
+                }
+            }
+            dp[i] = cur + 1;
+            max = Math.max(max, dp[i]);
+        }
+        return max;
+    }
+
      public static void main(String[] args) {
         RussianDollEnvelopes obj = new RussianDollEnvelopes();
         System.out.println(obj.maxEnvelopes(new int[][] {
