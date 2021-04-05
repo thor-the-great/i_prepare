@@ -28,8 +28,8 @@ public class LongestValidParetheses {
      * If this is closing one - pop element (close the pair) and then calculate
      * length of sequence as i - stack.peek. If stack is empty we push current index to the 
      * stack first, so in case of invalid pair length is 0.
-     * @param s
-     * @return
+     * 
+     * O(n) time and space
      */
     public int longestValidParentheses(String s) {
         int res = 0;
@@ -48,5 +48,43 @@ public class LongestValidParetheses {
             }
         }
         return res;
+    }   
+    
+    /**
+     * DP solution. 
+     * dp[i] has the longest length at index i. 
+     * If char(i) == '(' skip
+     * If char(i) == ')' check char(i - 1)
+     *   if char(i - 1) == '(' dp[i] = dp[i - 2] + 2;
+     *   else string can be ')))))'. checking i - dp[i - 1] index and do + 2
+     * 
+     * O(n) time and O(n) space
+     * @param s
+     * @return
+     */
+    public int longestValidParenthesesDP(String s) {
+        int[] dp = new int[s.length()];
+        int res = 0;
+        for (int i = 1; i < s.length(); i++) {
+            if (s.charAt(i) == ')') {
+                if (s.charAt(i - 1) == '(') {
+                    dp[i] = 2;
+                    if ( i - 2 >= 0) {
+                        dp[i]+=dp[i - 2];    
+                    }
+                } else {
+                    int idx = i - dp[i - 1];
+                    if (idx > 0 && s.charAt(idx - 1) == '(') {
+                        dp[i] = dp[i - 1] + 2;
+                        if (i - dp[i - 1] >= 2) {
+                            dp[i]+=dp[idx - 2];
+                        } 
+                    }
+                }
+                res = Math.max(res, dp[i]);
+            }
+        }
+        return res;
     }
+
 }
