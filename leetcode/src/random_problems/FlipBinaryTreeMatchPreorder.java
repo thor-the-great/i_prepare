@@ -53,11 +53,6 @@ import java.util.List;
  * 1 <= N <= 100
  */
 public class FlipBinaryTreeMatchPreorder {
-
-    List<Integer> res;
-    int[] v;
-    int idx;
-
     /**
      * Idea - doing preorder recursively and keep tracking the elements in voyage, if element is different - the only
      * chance is that it has been flipped. If it doesn't match then flip is not possible
@@ -65,30 +60,31 @@ public class FlipBinaryTreeMatchPreorder {
      * @param voyage
      * @return
      */
+    
+    List<Integer> res;
+    int[] v;
+    int idx;
+
     public List<Integer> flipMatchVoyage(TreeNode root, int[] voyage) {
         res = new ArrayList();
         v = voyage;
         idx = 0;
-        helper(root);
-        return res;
+        if (helper(root)) {
+            return res;
+        }
+        return List.of(-1);
     }
 
-    void helper(TreeNode n) {
+    boolean helper(TreeNode n) {
         if (n == null)
-            return;
-        if (n.val != v[idx]) {
-            res.clear();
-            res.add(-1);
-            return;
+            return true;
+        if (n.val != v[idx++]) {
+            return false;
         }
-        idx++;
-        if (idx < v.length && n.left != null && n.left.val != v[idx]) {
+        if (n.left != null && n.left.val != v[idx]) {
             res.add(n.val);
-            helper(n.right);
-            helper(n.left);
-        } else {
-            helper(n.left);
-            helper(n.right);
-        }
+            return helper(n.right) && helper(n.left);
+        } 
+        return helper(n.left) && helper(n.right);
     }
 }

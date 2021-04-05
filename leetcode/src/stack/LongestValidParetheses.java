@@ -22,7 +22,15 @@ import java.util.Stack;
  *
  */
 public class LongestValidParetheses {
-
+    /**
+     * Keep the index of previous unclosed pair of parethesis in stack.
+     * Every opening one - we just add index to stack.
+     * If this is closing one - pop element (close the pair) and then calculate
+     * length of sequence as i - stack.peek. If stack is empty we push current index to the 
+     * stack first, so in case of invalid pair length is 0.
+     * @param s
+     * @return
+     */
     public int longestValidParentheses(String s) {
         int res = 0;
         Stack<Integer> stack = new Stack();
