@@ -34,6 +34,8 @@ import java.util.*;
  *
  * 1 <= words.length <= 50
  * 1 <= pattern.length = words[i].length <= 20
+ * 
+ * https://leetcode.com/problems/find-and-replace-pattern/
  */
 public class FindAndReplacePatterns {
 
@@ -59,4 +61,49 @@ public class FindAndReplacePatterns {
     return res;
   }
 
+  /**
+   * Replace chars in pattern based on char mapping starting with 'a' in increased order (e.g. "bbsttyb" -> "aabccda").
+   * Do same with every word and compare transformed strings.
+   * @param words
+   * @param pattern
+   * @return
+   */
+  public List<String> findAndReplacePattern2(String[] words, String pattern) {
+    char[] patternDecoded = decodeWord(pattern);
+    
+    List<String> res = new ArrayList();
+    
+    for (String w : words) {
+        char[] wordDecoded = decodeWord(w);
+        boolean match = true;
+        for (int i = 0; i < wordDecoded.length; i++) {
+            if (wordDecoded[i] != patternDecoded[i]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) {
+            res.add(w);
+        }
+    }
+    
+    return res;
+  }
+
+  char[] decodeWord(String s) {
+      char cur = 'a';
+      char[] map = new char[26];
+      for (char ch : s.toCharArray()) {
+          if (map[ch - 'a'] == 0) {
+              map[ch - 'a'] = cur;    
+              cur++;
+          }
+      }
+      
+      char[] res = new char[s.length()];
+      for (int i = 0; i < s.length(); i++) {
+          res[i] = map[s.charAt(i) - 'a'];
+      }
+      return res;
+  }
 }
