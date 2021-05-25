@@ -32,6 +32,49 @@ public class EvaluateReversivePolishNotation {
         return s.pop();
     }
 
+    public int evalRPNSecondAttempt(String[] tokens) {
+        Stack<String> stack = new Stack();
+        
+        for (String t : tokens) {
+            if (isAction(t)) {
+                computeOneAction(stack, t);
+            } else {
+                stack.push(t);
+            }
+        }
+        
+        while(stack.size() > 1) {
+            computeOneAction(stack, stack.pop());
+        }
+        
+        return Integer.valueOf(stack.peek());
+    }
+    
+    void computeOneAction(Stack<String> stack, String actionStr) {
+            char action = actionStr.charAt(0);
+            int op2 = Integer.valueOf(stack.pop());
+            int op1 = Integer.valueOf(stack.pop());
+            int res = 0; 
+            if (action == '+') {
+                res = op1 + op2;
+            } else if (action == '-') {
+                res = op1 - op2;
+            } else if (action == '/') {
+                res = op1 / op2;
+            } else {
+                res = op1 * op2;
+            }
+            stack.push(Integer.toString(res));
+    }
+    
+    boolean isAction(String s) {
+        if (s.length() == 1 
+            && (s.charAt(0) < '0' || s.charAt(0) > '9')) {
+            return true;
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         EvaluateReversivePolishNotation obj = new EvaluateReversivePolishNotation();
         String[] arr;
