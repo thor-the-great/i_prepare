@@ -63,42 +63,50 @@ public class SearchSuggestionsSystem {
      * @return
      */
     public List<List<String>> suggestedProducts(String[] products, String searchWord) {
-        //sort words so they will be added in a sorted order to nodes
         Arrays.sort(products);
-        //create trie
-        Trie root = new Trie();
-        for (String prod : products) {
-            Trie n = root;
-            for (char ch : prod.toCharArray()) {
-                //extend trie deeper one level
-                int i = ch - 'a';
-                if (n.next[i] == null) {
-                    n.next[i] = new Trie();
-                }
-                n = n.next[i];
-                //if we haven't reached size 3 - add word to the node
-                if (n.words.size() < 3)
-                    n.words.add(prod);
-            }
-        }
+        Trie root = buildTrie(products);
         List<List<String>> res = new ArrayList();
-        Trie n = root;
-        //iterate over the search word
+        
+        Trie cur = root;
         for (char ch : searchWord.toCharArray()) {
-            //get trie's node for next character
-            n = n == null ? null : n.next[ch - 'a'];
-            //add words from node if any
-            res.add( n != null ? n.words : new ArrayList());
+            List<String> oneCharResults = new ArrayList();
+            if (cur == null) {
+                res.add(oneCharResults);
+                continue;
+            }
+            cur = cur.next[ch - 'a'];
+            if (cur == null) {
+                res.add(oneCharResults);
+                continue;
+            }
+            for (int idx : cur.matches) {
+                oneCharResults.add(products[idx]);
+            }
+            res.add(oneCharResults);
         }
         return res;
     }
-    //trie node
-    class Trie {
-        Trie[] next;
-        List<String> words;
-        Trie() {
-            words = new ArrayList();
-            next = new Trie[26];
+    
+    Trie buildTrie(String[] products) {
+        Trie root = new Trie();
+        for (int i = 0; i < products.length; i++) {
+            String word = products[i];
+            Trie cur = root;
+            for (char ch : word.toCharArray()) {
+                if (cur.next[ch - 'a'] == null) {
+                    cur.next[ch - 'a'] = new Trie();
+                }
+                cur = cur.next[ch - 'a'];
+                //add word to the list for one node
+                if (cur.matches.size() < 3) {
+                    cur.matches.add(i);
+                }
+            }
         }
+        return root;
     }
+    class Trie {
+        Trie[] next = new Trie[26];
+        List<Integer> matches = new ArrayList();
+    } 
 }
