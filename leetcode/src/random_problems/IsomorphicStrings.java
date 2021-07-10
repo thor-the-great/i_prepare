@@ -53,6 +53,27 @@ public class IsomorphicStrings {
         return true;
     }
 
+    public boolean isIsomorphicBasedOnMaps(String s, String t) {
+        Map<Character, Integer> map1 = new HashMap(), map2 = new HashMap();
+        
+        int cur1 = 0, cur2 = 0;
+        for (int i = 0; i < s.length(); i++) {
+            char sCh = s.charAt(i), tCh = t.charAt(i);
+            if (!map1.containsKey(sCh)) {
+                map1.put(sCh, cur1);
+                cur1++;
+            }
+            if (!map2.containsKey(tCh)) {
+                map2.put(tCh, cur2);
+                cur2++;
+            }
+            if (map1.get(sCh) != map2.get(tCh)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static void main(String[] args) {
         IsomorphicStrings obj = new IsomorphicStrings();
         System.out.println(obj.isIsomorphic("ab", "aa"));
