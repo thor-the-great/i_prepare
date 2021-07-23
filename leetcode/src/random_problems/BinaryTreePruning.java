@@ -47,23 +47,31 @@ public class BinaryTreePruning {
      * @return
      */
     public TreeNode pruneTree(TreeNode root) {
-        helper(root);
+        if (helper(root)) {
+            return null;
+        }
         return root;
     }
-
+    
     boolean helper(TreeNode n) {
-        boolean pruneLeft = true;
-        if (n.left != null ) {
-            pruneLeft = helper(n.left);
-            if (pruneLeft)
-                n.left = null;
+        boolean left = true;
+        if (n.left != null) {
+            left = helper(n.left);
         }
-        boolean pruneRight = true;
-        if (n.right != null ) {
-            pruneRight = helper(n.right);
-            if (pruneRight)
-                n.right = null;
+        if (left) {
+            n.left = null;
         }
-        return (n.val == 0) && pruneLeft && pruneRight;
+        boolean right = true;
+        if (n.right != null) {
+            right = helper(n.right);
+        }
+        if (right) {
+            n.right = null;
+        }
+        
+        if (n.val == 0 && left && right) {
+            return true;
+        }
+        return false;
     }
 }
