@@ -84,4 +84,45 @@ public class Matrix01 {
 
         return res;
     }
+
+    /**
+     * BFS approach, add to the queue all coordinates of 0-s. Then do BFS from every point and
+     * recond distance when reach point with 1.  
+     * 
+     * O(n*m) time
+     * O(n*m) space for queue
+     * @param mat
+     * @return
+     */
+    public int[][] updateMatrix(int[][] mat) {
+        int[][] dir = new int[][] {{1,0}, {-1,0}, {0,1}, {0,-1}};
+        
+        int rows = mat.length, cols = mat[0].length;
+
+        Queue<int[]> q = new LinkedList();
+        
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (mat[r][c] == 1) {
+                    mat[r][c] = Integer.MAX_VALUE;
+                } else {
+                    q.add(new int[] {r, c});
+                }
+            }
+        }
+    
+        while (!q.isEmpty()) {
+            int[] newPoint = q.poll();
+            for (int[] d : dir) {
+                int newR = newPoint[0] + d[0], newC = newPoint[1] + d[1];
+                if (newR >= 0 && newR < rows &&
+                    newC >= 0 && newC < cols && mat[newR][newC] > mat[newPoint[0]][newPoint[1]] + 1) {
+                    q.add(new int[] {newR, newC});
+                    mat[newR][newC] = mat[newPoint[0]][newPoint[1]] + 1;
+                }
+            }
+        }
+        
+        return mat;
+    }
 }
