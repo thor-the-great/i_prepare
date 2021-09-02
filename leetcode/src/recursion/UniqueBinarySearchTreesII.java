@@ -69,4 +69,32 @@ public class UniqueBinarySearchTreesII {
         }
         return res;
     }
+
+    public List<TreeNode> generateTreesDP(int n) {
+        List<TreeNode>[][] dp = new List[n + 1][n + 1]; 
+        return helper(1, n, dp);
+    }
+    
+    public List<TreeNode> helper(int left, int right, List<TreeNode>[][] dp) {
+        if (left > right) {
+            ArrayList ret = new ArrayList();
+            ret.add(null);
+            return ret;
+        } 
+        if (dp[left][right] != null)
+             return dp[left][right];
+        
+        dp[left][right] = new ArrayList();
+        for (int i = left; i <= right; i++) {
+            List<TreeNode> leftToHead = helper(left, i - 1, dp);
+            List<TreeNode> rightToHead = helper(i + 1, right, dp);
+            
+            for (TreeNode leftN : leftToHead) {
+                for (TreeNode rightN : rightToHead) {
+                    dp[left][right].add(new TreeNode(i, leftN, rightN));
+                }
+            }
+        }
+        return dp[left][right];
+    }
 }
