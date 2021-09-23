@@ -47,23 +47,19 @@ public class BreakPalindrome {
      */
     public String breakPalindrome(String palindrome) {
         int N = palindrome.length();
-        if (N == 1)
+        if (N == 1) {
             return "";
-
-        StringBuilder sb = new StringBuilder(palindrome);
-        //get the max index we should check for the !='a' char
-        int l = 0, mid = (palindrome.length() / 2 ) - 1;
-        //iterate from 0 to middle of the string to check if there is any not 'a' char
-        while (l <= mid ) {
-            if (sb.charAt(l) != 'a') {
-                sb.setCharAt(l, 'a');
-                return sb.toString();
-            }
-            ++l;
         }
-        //if no such chars found there is only one option left - we have all 'a' in string, os replace the last
-        //char with 'b'
-        sb.setCharAt(N - 1, 'b');
-        return sb.toString();
+        
+        char[] strAsArray = palindrome.toCharArray();
+        for (int i = 0; i < N / 2; i++) {
+            if (strAsArray[i] != 'a') {
+                strAsArray[i] = 'a';
+                return new String(strAsArray);
+            }
+        }
+        
+        strAsArray[N - 1] = 'b';
+        return new String(strAsArray);
     }
 }
