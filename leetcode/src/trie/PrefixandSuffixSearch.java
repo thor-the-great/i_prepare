@@ -1,4 +1,9 @@
-    /**
+package trie;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
      * 745. Prefix and Suffix Search
 Hard
 
