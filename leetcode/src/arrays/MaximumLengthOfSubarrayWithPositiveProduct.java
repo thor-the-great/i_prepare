@@ -77,4 +77,35 @@ public class MaximumLengthOfSubarrayWithPositiveProduct {
     }
     return max;
   }
+
+  /**
+   * Simpler idea - count num of nums that gives positive and negative product
+   * - 0 - we rest both pos and neg
+   * - positive - increment pos and increment neg if it's not 0
+   * - negative - set neg = positive + 1, pos = neg + 1 (if neg is > 0)
+   * 
+   * on each step save result as max of (current result, pos)
+   */
+  public int getMaxLenPositiveNegative(int[] nums) {
+    int neg = 0, pos = 0;
+    int res = 0;
+    for (int n : nums) {
+        if (n == 0) {
+            neg = 0; pos = 0;
+        }
+        else if (n > 0) {
+            pos++;
+            if (neg > 0 ) {
+                ++neg;
+            } 
+        } else {
+            int posTmp = pos;
+            pos = neg == 0 ? 0 : neg + 1;
+            neg = posTmp + 1;
+        }
+        res = Math.max(res, pos);
+    }
+    return res;
 }
+}
+
