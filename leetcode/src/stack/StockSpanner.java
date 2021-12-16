@@ -46,7 +46,7 @@ import java.util.Stack;
  */
 public class StockSpanner {
 
-  Stack<Integer> stack;
+  Stack<int[]> stack;
 
   /**
    *
@@ -56,11 +56,11 @@ public class StockSpanner {
   }
 
   public int next(int price) {
-    int num = 1;
-    while (!stack.isEmpty() && stack.peek()%100_000 <= price) {
-      num+=stack.pop()/100_000;
+    int res = 1;
+    while(!stack.isEmpty() && stack.peek()[0] <= price) {
+        res+=stack.pop()[1];
     }
-    stack.push(100_000*num + price);
-    return num;
+    stack.push(new int[] {price, res});
+    return res;
   }
 }
