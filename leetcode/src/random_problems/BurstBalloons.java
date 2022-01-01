@@ -20,12 +20,23 @@ package random_problems;
  * Output: 167
  * Explanation: nums = [3,1,5,8] --> [3,5,8] -->   [3,8]   -->  [8]  --> []
  *              coins =  3*1*5      +  3*5*8    +  1*3*8      + 1*8*1   = 167
+ * 
+ * https://leetcode.com/problems/burst-balloons/
  */
 public class BurstBalloons {
     int[][] memo;
     int[] balloons;
 
-
+    /**
+     * Idea: 
+     * - for each last i it's number will be nums[i] as res = 1*nums[i]*1
+     * - for each initial point res = nums[i - 1] * nums[i] * nums[i + 1]
+     * 
+     * Now apporach with memoization:
+     * - for each pair (i,j) memo[i][j] is best number we can get for interval  [i, ..., j]
+     * - we start from the "end". last element for each i is the nums[i] (look idea 1)
+     * - check each combination of interval (i, j) and each possible middle element, save the best number in memo
+     */
     public int maxCoins(int[] nums) {
         int N = nums.length;
         memo = new int[N + 2][N + 2];
