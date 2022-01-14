@@ -1,8 +1,5 @@
 package arrays;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * 80. Remove Duplicates from Sorted Array II
 Medium
