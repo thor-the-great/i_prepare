@@ -28,13 +28,66 @@ package arrays;
 public class MatrixBlockSum {
 
     /**
+     *  [*, *, *, *,  *]
+     *  [*,|*, *, *,| *]
+     *  [*,|*, *, *,| *]
+     *  [*,|*,_*,_*,| *]
+     *  [*, *, *, *,  *]
+     *  if we count all prefix sum square - wise then the answer will be:
+     * sum of large square (r - k, c - k) ( r + k,c + k) minus two smaller rectangles (r - k - 1, c + k) and (r + k, c - k - 1) and plus smaller square (r - k, c - k) as it's substracted
+     * two time when we do minus two rectangles
+     * 
+     * O(r x c) time
+     * O(r x c) space
+     */
+    public int[][] matrixBlockSum(int[][] mat, int k) {
+        int rows = mat.length, cols = mat[0].length;
+        
+        int[][] sums = new int[rows][cols];
+        sums[0][0] = mat[0][0];
+        for (int r = 1; r < rows; r++) {
+            sums[r][0] = sums[r - 1][0] + mat[r][0];
+        }
+        for (int c = 1; c < cols; c++) {
+            sums[0][c] = sums[0][c - 1] + mat[0][c];
+        }
+        
+        for (int r = 1; r < rows; r++) {
+            for (int c = 1; c < cols; c++) {
+                sums[r][c] = sums[r - 1][c] + sums[r][c - 1] + mat[r][c] - sums[r - 1][c - 1];
+            }
+        }
+        
+        int[][] res = new int[rows][cols];
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                int upLeftR = Math.max(0, r - k), upLeftC = Math.max(0, c - k);
+                int downRightR = Math.min(rows - 1, r + k), downRightC = Math.min(cols - 1, c + k);
+
+                res[r][c] = sums[downRightR][downRightC];
+                if (upLeftR > 0 && upLeftC > 0) {
+                    res[r][c] += sums[upLeftR - 1][upLeftC - 1];
+                }
+                if (upLeftR > 0) {
+                    res[r][c] -= sums[upLeftR - 1][downRightC];
+                }
+                if (upLeftC > 0) {
+                    res[r][c] -= sums[downRightR][upLeftC - 1];
+                }
+            }
+        }
+        
+        return res;
+    }
+
+    /**
      * Start with the square of the sum, move it to the right by one column and on each move decrement the left
      * column and increment by right column.
      * @param mat
      * @param K
      * @return
      */
-    public int[][] matrixBlockSum(int[][] mat, int K) {
+    public int[][] matrixBlockSum2(int[][] mat, int K) {
         int rows = mat.length, cols = mat[0].length;
 
         int[][] res = new int[rows][cols];
@@ -67,4 +120,6 @@ public class MatrixBlockSum {
         }
         return res;
     }
+
+    
 }
