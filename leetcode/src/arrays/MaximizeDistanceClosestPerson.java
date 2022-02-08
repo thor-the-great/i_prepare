@@ -55,31 +55,18 @@ public class MaximizeDistanceClosestPerson {
      * Then we do 2 pointers for each two adj seats and find the distance as (seat_idx - pre_seat_idx)/2. Compare with rolling max  
      */
     public int maxDistToClosest(int[] seats) {
-        int l = -1, r = -1;
+        int prev = -1, res = 0;
         for (int i = 0; i < seats.length; i++) {
             if (seats[i] == 1) {
-                l = i;
-                break;
+                if (prev == -1) {
+                    res = i;
+                } else {
+                    res = Math.max(res, (i - prev) / 2);
+                }
+                prev = i;
             }
         }
-        for (int i = seats.length - 1; i >= 0; i--) {
-            if (seats[i] == 1) {
-                r = i;
-                break;
-            }
-        }
-        
-        int max = Math.max(l, seats.length - 1 - r);
-        if (l == r) {
-            return max;
-        }
-        int prev = l;
-        for (int i = l + 1; i <= r; i++) {
-            if (seats[i] == 1) {
-                max = Math.max((i - l)/2, max);
-                l = i;
-            }
-        }
-        return max;
+        //checking rightmost case
+        return Math.max(res, seats.length - 1 - prev);
     }
 }

@@ -30,6 +30,35 @@ Constraints:
  * https://leetcode.com/problems/daily-temperatures/
  */
 public class DailyTemperatures {
+
+    /**
+     * Idea - we fill result array from the back. We know if the temp[j] > temp[i] then we need 
+     * to wait at least res[i] days because there are no warmer temp in res[i] + i days. 
+     * @param temperatures
+     * @return
+     */
+    public int[] dailyTemperaturesConstSpace(int[] temperatures) {
+        int N = temperatures.length;
+        int[] res = new int[N];
+        
+        if (N < 2) {
+            return res;
+        }
+        
+        for (int i = N - 2; i >= 0; i--) {
+            int backIdx = i + 1;
+            while (temperatures[i] >= temperatures[backIdx] && res[backIdx] > 0) {
+                backIdx += res[backIdx];
+            }
+            if (temperatures[backIdx] > temperatures[i]) {
+                res[i] = backIdx - i;
+            }
+        }
+        
+        return res;
+    }
+
+
     /**
      * Idea - keep stack of days, on each new day checking if it's warmer than ones in stack
      * starting from the top. If this is the case - pop out the day from the stack and save the 
@@ -39,7 +68,7 @@ public class DailyTemperatures {
      * O(n) time
      * O(n) space
      */
-    public int[] dailyTemperatures(int[] temperatures) {
+    public int[] dailyTemperaturesStack(int[] temperatures) {
         int N = temperatures.length;
         int[] res = new int[N];
         Stack<Integer> stack = new Stack();
