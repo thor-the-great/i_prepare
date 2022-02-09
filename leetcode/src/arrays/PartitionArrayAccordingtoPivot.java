@@ -64,11 +64,8 @@ public class PartitionArrayAccordingtoPivot {
             if (nums[i] < pivot) {
                 res[++l] = nums[i];
             }
-        }
-        //collect elements greater than pivot
-        for (int i = N - 1; i >= 0; i--) {
-            if (nums[i] > pivot) {
-                res[--r] = nums[i];
+            if (nums[N - 1 - i] > pivot) {
+                res[--r] = nums[N - 1 - i];
             }
         }
         //fill the pivot elements if any

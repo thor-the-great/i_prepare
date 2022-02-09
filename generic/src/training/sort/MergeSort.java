@@ -1,6 +1,7 @@
-import utils.ArrayUtil;
+package training.sort;
 
 import java.util.Arrays;
+import utils.ArrayUtil;
 
 public class MergeSort {
 
