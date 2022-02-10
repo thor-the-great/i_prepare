@@ -45,87 +45,46 @@ package queue;
  */
 public class MyCircularQueue {
 
+    int head = 0, tail = -1, k = 0, len = 0;
     int[] arr;
-    int head;
-    int tail;
-    int lastIdx;
-
-    /** Initialize your data structure here. Set the size of the queue to be k. */
+    
     public MyCircularQueue(int k) {
+        this.k = k;
         arr = new int[k];
-        head = -1;
-        tail = -1;
-        lastIdx = k -1;
     }
-
-    /** Insert an element into the circular queue. Return true if the operation is successful. */
+    
     public boolean enQueue(int value) {
-        if (isEmpty()) {
-            arr[++tail] = value;
-            head++;
-            return true;
-        }
-
         if (!isFull()) {
-            if (tail == lastIdx) {
-                tail = 0;
-            } else {
-                tail++;
-            }
+            tail = (tail + 1) % k;
             arr[tail] = value;
+            len++;
             return true;
-        }
-        else
-            return false;
+        } 
+        return false;
     }
-
-    /** Delete an element from the circular queue. Return true if the operation is successful. */
-    public boolean deQueue() {
-        if (head == -1 && tail == -1)
-            return false;
-        if (head == tail) {
-            head = -1;
-            tail = -1;
+    
+    public boolean deQueue() {    
+        if (!isEmpty()) {
+            head = (head + 1) % k;
+            len--;
             return true;
         }
-        else {
-            if (head == lastIdx)
-                head = 0;
-            else
-                head++;
-            return true;
-        }
+        return false;
     }
-
-    /** Get the front item from the queue. */
+    
     public int Front() {
-        if (head != -1)
-            return arr[head];
-        else
-            return -1;
+        return isEmpty() ? -1 : arr[head];
     }
-
-    /** Get the last item from the queue. */
+    
     public int Rear() {
-        if (tail != -1)
-            return arr[tail];
-        else
-            return -1;
+        return isEmpty() ? -1 : arr[tail];
     }
-
-    /** Checks whether the circular queue is empty or not. */
+    
     public boolean isEmpty() {
-        return tail == -1 && head == -1;
+        return len == 0;
     }
-
-    /** Checks whether the circular queue is full or not. */
+    
     public boolean isFull() {
-        int t = tail;
-        if (t == lastIdx)
-            t = 0;
-        else
-            t++;
-        return t == head;
-
+        return len == k;
     }
 }
